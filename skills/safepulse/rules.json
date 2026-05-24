@@ -4,7 +4,10 @@
       "id": "critical_electronic_failure",
       "condition": {
         "lock_type": "electronic",
-        "symptoms": ["electronic_failure", "battery_corrosion"]
+        "symptoms": [
+          "electronic_failure",
+          "battery_corrosion"
+        ]
       },
       "risk": "critical",
       "likely_cause": "Battery terminal corrosion has damaged the keypad or control board. Intermittent electronic failure indicates imminent lockout.",
@@ -18,7 +21,10 @@
       "id": "critical_mechanical_seizure",
       "condition": {
         "lock_type": "mechanical_combination",
-        "symptoms": ["dial_drag", "handle_pressure"],
+        "symptoms": [
+          "dial_drag",
+          "handle_pressure"
+        ],
         "age_min": 15
       },
       "risk": "high",
@@ -32,12 +38,17 @@
     {
       "id": "high_handle_bolt_binding",
       "condition": {
-        "symptoms": ["handle_pressure", "locking_bolts_sticky"],
-        "environment": { "humidity": "high" }
+        "symptoms": [
+          "handle_pressure",
+          "locking_bolts_sticky"
+        ],
+        "environment": {
+          "humidity": "high"
+        }
       },
       "risk": "high",
       "likely_cause": "Rust or debris in the bolt mechanism. High humidity environment accelerates corrosion on bolt slide surfaces.",
-      "technician_notes": "Test bolt throw with door open. Inspect bolt slides for rust/pitting. Check linkage pins — dry pivot points are common. Pay attention to relock trigger area.",
+      "technician_notes": "Test bolt throw with door open. Inspect bolt slides for rust/pitting. Check linkage pins \u2014 dry pivot points are common. Pay attention to relock trigger area.",
       "recommended_action": "Clean and lubricate bolt slides and linkage. Wire-brush rust. Apply dry-film lubricant to sliding surfaces, light oil to pivots. Cycle door 20x.",
       "parts_tools": "Wire brush, dry-film lubricant (Tri-Flow or equivalent), light machine oil, rags, flashlight",
       "customer_explanation": "The bolts that lock the door are sticking because of moisture and lack of maintenance. Cleaning and lubricating them will make the handle operate smoothly again.",
@@ -46,8 +57,13 @@
     {
       "id": "moderate_door_alignment",
       "condition": {
-        "symptoms": ["door_drag", "handle_pressure"],
-        "environment": { "garage_or_outbuilding": true }
+        "symptoms": [
+          "door_drag",
+          "handle_pressure"
+        ],
+        "environment": {
+          "garage_or_outbuilding": true
+        }
       },
       "risk": "moderate",
       "likely_cause": "Door sag from foundation settling or hinge wear. Garage/outbuilding temperature swings cause expansion/contraction issues.",
@@ -61,7 +77,9 @@
       "id": "moderate_electronic_battery",
       "condition": {
         "lock_type": "electronic",
-        "symptoms": ["intermittent_opening"],
+        "symptoms": [
+          "intermittent_opening"
+        ],
         "usage_frequency": "daily"
       },
       "risk": "moderate",
@@ -69,14 +87,16 @@
       "technician_notes": "Test battery voltage under load (press keypad while metering). Check spring contacts. Many electronic locks beep but don't fire solenoid when voltage drops below 4.8V for 6V systems.",
       "recommended_action": "Replace batteries with fresh alkaline. Clean contacts. Test 5 cycles. Advise customer on annual battery replacement schedule.",
       "parts_tools": "Fresh alkaline batteries (correct size), multimeter, contact cleaner",
-      "customer_explanation": "The batteries are getting weak and don't have enough power to reliably unlock the safe every time. Fresh batteries will fix this — I recommend changing them once a year.",
+      "customer_explanation": "The batteries are getting weak and don't have enough power to reliably unlock the safe every time. Fresh batteries will fix this \u2014 I recommend changing them once a year.",
       "follow_up_months": 12
     },
     {
       "id": "low_mechanical_dryness",
       "condition": {
         "lock_type": "mechanical_combination",
-        "symptoms": ["dial_drag"],
+        "symptoms": [
+          "dial_drag"
+        ],
         "last_service_min": 5
       },
       "risk": "low",
@@ -90,7 +110,9 @@
     {
       "id": "low_dial_loose_monitor",
       "condition": {
-        "symptoms": ["dial_loose"],
+        "symptoms": [
+          "dial_loose"
+        ],
         "lock_type": "mechanical_combination"
       },
       "risk": "low",
@@ -100,6 +122,21 @@
       "parts_tools": "Small flathead screwdriver, hex key set (usually 3/32 or 5/64 for set-screws), needle-nose pliers",
       "customer_explanation": "The dial has a small loose connection. It won't cause a lockout now, but if it gets worse, it could throw off your combination. A quick adjustment now will fix it.",
       "follow_up_months": 24
+    },
+    {
+      "id": "critical_handle_slipping",
+      "condition": {
+        "symptoms": [
+          "handle_slipping"
+        ]
+      },
+      "risk": "critical",
+      "likely_cause": "Handle spindle or clutch mechanism has stripped or disengaged. This is a mechanical failure that prevents lock operation entirely.",
+      "technician_notes": "With the door open, observe handle engagement. Check handle hub splines, clutch plate engagement (common on AMSEC and Gardall), and link arm connections to the bolt bar. The handle turning freely without engaging bolts indicates a broken spindle, stripped gear, or disengaged clutch.",
+      "recommended_action": "Inspect and replace handle mechanism. Remove handle, check spindle splines and clutch assembly. Replace damaged parts. Test full throw cycle before closing.",
+      "parts_tools": "Replacement handle assembly, clutch rebuild kit (AMSEC/Gardall), spline grease, snap-ring pliers, hex key set, socket set, replacement bolts if sheared",
+      "customer_explanation": "The handle is spinning freely because an internal part has broken or stripped inside the lock mechanism. This requires immediate repair \u2014 the safe is currently inoperable and needs a technician.",
+      "follow_up_months": 3
     },
     {
       "id": "moderate_no_service_history",
