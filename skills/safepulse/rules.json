@@ -1,0 +1,119 @@
+{
+  "risk_rules": [
+    {
+      "id": "critical_electronic_failure",
+      "condition": {
+        "lock_type": "electronic",
+        "symptoms": ["electronic_failure", "battery_corrosion"]
+      },
+      "risk": "critical",
+      "likely_cause": "Battery terminal corrosion has damaged the keypad or control board. Intermittent electronic failure indicates imminent lockout.",
+      "technician_notes": "Test voltage at battery contacts. Inspect PCB for corrosion wicking. If unit powers but fails sporadically, replace keypad assembly. For LaGard/ILS models, check ribbon connector.",
+      "recommended_action": "Replace battery contacts and keypad assembly. Clean terminals. Test full cycle 10x before closing door.",
+      "parts_tools": "Replacement keypad assembly, battery contacts, contact cleaner (DeoxIT D5), multimeter, small flathead, 1.5mm hex, sacrificial batteries",
+      "customer_explanation": "The battery area has corrosion that is damaging the electronics. It may stop working entirely at any moment. Replacing the keypad and battery contacts now will prevent a lockout.",
+      "follow_up_months": 12
+    },
+    {
+      "id": "critical_mechanical_seizure",
+      "condition": {
+        "lock_type": "mechanical_combination",
+        "symptoms": ["dial_drag", "handle_pressure"],
+        "age_min": 15
+      },
+      "risk": "high",
+      "likely_cause": "Dried or contaminated lubricant in the lock case combined with worn wheel pack bearings. Dial drag of 2+ inch-pounds indicates imminent failure.",
+      "technician_notes": "Check dial torque with inch-pound gauge. Listen for grinding. Remove lock case and inspect wheel pack bushings. S&G 6730/6735 bearing failures common after 20 yrs.",
+      "recommended_action": "Remove lock case, clean old lubricant, inspect wheel pack bushings, apply graphite or appropriate lubricant, reinstall and test. Replace bushings if worn.",
+      "parts_tools": "Lock case removal tools, graphite powder (not oil), inch-pound torque gauge, replacement bushings (if S&G R-series or LaGard), inspection mirror",
+      "customer_explanation": "The internal mechanism is dry and worn from years of use. It's getting harder to turn because the parts are binding. A professional cleaning and lubrication will restore smooth operation and prevent a future lockout.",
+      "follow_up_months": 6
+    },
+    {
+      "id": "high_handle_bolt_binding",
+      "condition": {
+        "symptoms": ["handle_pressure", "locking_bolts_sticky"],
+        "environment": { "humidity": "high" }
+      },
+      "risk": "high",
+      "likely_cause": "Rust or debris in the bolt mechanism. High humidity environment accelerates corrosion on bolt slide surfaces.",
+      "technician_notes": "Test bolt throw with door open. Inspect bolt slides for rust/pitting. Check linkage pins — dry pivot points are common. Pay attention to relock trigger area.",
+      "recommended_action": "Clean and lubricate bolt slides and linkage. Wire-brush rust. Apply dry-film lubricant to sliding surfaces, light oil to pivots. Cycle door 20x.",
+      "parts_tools": "Wire brush, dry-film lubricant (Tri-Flow or equivalent), light machine oil, rags, flashlight",
+      "customer_explanation": "The bolts that lock the door are sticking because of moisture and lack of maintenance. Cleaning and lubricating them will make the handle operate smoothly again.",
+      "follow_up_months": 6
+    },
+    {
+      "id": "moderate_door_alignment",
+      "condition": {
+        "symptoms": ["door_drag", "handle_pressure"],
+        "environment": { "garage_or_outbuilding": true }
+      },
+      "risk": "moderate",
+      "likely_cause": "Door sag from foundation settling or hinge wear. Garage/outbuilding temperature swings cause expansion/contraction issues.",
+      "technician_notes": "Check door gap top-to-bottom. Measure with feeler gauge. Check hinge pins for wear. Verify floor is level within 1/8\". Check hinge bolts aren't loose.",
+      "recommended_action": "Tighten hinge bolts. Shim if needed. Adjust strike plates. If door is out of square, note it for structural evaluation.",
+      "parts_tools": "Socket set, feeler gauge, shim stock, level, torque wrench",
+      "customer_explanation": "The door is slightly out of alignment, likely from the floor settling or temperature changes in your garage. Adjusting the hinges will fix the drag.",
+      "follow_up_months": 12
+    },
+    {
+      "id": "moderate_electronic_battery",
+      "condition": {
+        "lock_type": "electronic",
+        "symptoms": ["intermittent_opening"],
+        "usage_frequency": "daily"
+      },
+      "risk": "moderate",
+      "likely_cause": "Low battery voltage under load or loose battery connections. Heavy daily use drains batteries faster than expected.",
+      "technician_notes": "Test battery voltage under load (press keypad while metering). Check spring contacts. Many electronic locks beep but don't fire solenoid when voltage drops below 4.8V for 6V systems.",
+      "recommended_action": "Replace batteries with fresh alkaline. Clean contacts. Test 5 cycles. Advise customer on annual battery replacement schedule.",
+      "parts_tools": "Fresh alkaline batteries (correct size), multimeter, contact cleaner",
+      "customer_explanation": "The batteries are getting weak and don't have enough power to reliably unlock the safe every time. Fresh batteries will fix this — I recommend changing them once a year.",
+      "follow_up_months": 12
+    },
+    {
+      "id": "low_mechanical_dryness",
+      "condition": {
+        "lock_type": "mechanical_combination",
+        "symptoms": ["dial_drag"],
+        "last_service_min": 5
+      },
+      "risk": "low",
+      "likely_cause": "Original factory lubrication has dried out. No immediate danger but will worsen over time.",
+      "technician_notes": "Check dial torque. If below 2 in-lbs and operation is consistent, service is preventive. If not addressed within 12-18 months, may progress to mechanical seizure.",
+      "recommended_action": "Open lock case, clean and regraphite. Check wheel pack and drive cam. Educate customer on symptoms of worsening condition.",
+      "parts_tools": "Lock case tools, graphite powder, cleaning solvent, inspection light",
+      "customer_explanation": "The internal lubricant has dried out over time. It's not urgent, but servicing it now will keep it operating smoothly for years. If you wait, it could eventually get hard to open.",
+      "follow_up_months": 18
+    },
+    {
+      "id": "low_dial_loose_monitor",
+      "condition": {
+        "symptoms": ["dial_loose"],
+        "lock_type": "mechanical_combination"
+      },
+      "risk": "low",
+      "likely_cause": "Dial set-screw loosened or drive cam retaining ring working loose. Not immediately critical but can lead to inaccurate dialing.",
+      "technician_notes": "Check set-screw on dial hub. Verify drive cam retaining ring is tight. For S&G dials, check that the spring washer is present under the dial.",
+      "recommended_action": "Tighten set-screw or drive cam retaining ring. Test dial operation through full rotation.",
+      "parts_tools": "Small flathead screwdriver, hex key set (usually 3/32 or 5/64 for set-screws), needle-nose pliers",
+      "customer_explanation": "The dial has a small loose connection. It won't cause a lockout now, but if it gets worse, it could throw off your combination. A quick adjustment now will fix it.",
+      "follow_up_months": 24
+    },
+    {
+      "id": "moderate_no_service_history",
+      "condition": {
+        "last_service_never": true,
+        "approx_age_min": 10
+      },
+      "risk": "moderate",
+      "likely_cause": "No maintenance history. Risk factors unknown. Preventative inspection warranted regardless of current symptoms.",
+      "technician_notes": "Perform full inspection: check lock case, bolt work, door alignment, hinge pins, relock device condition. Document all findings for baseline.",
+      "recommended_action": "Complete preventive service: clean lock, lubricate bolts, verify combination, test all functions, inspect relock device.",
+      "parts_tools": "Full service kit (lock tools, lubricants, cleaning supplies, replacement batteries, flashlight, inspection mirror)",
+      "customer_explanation": "Your safe has never been serviced, and safes need regular maintenance just like cars. I'll do a full inspection to make sure everything is in good shape and catch any problems early.",
+      "follow_up_months": 12
+    }
+  ]
+}
