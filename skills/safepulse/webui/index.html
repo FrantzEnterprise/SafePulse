@@ -212,20 +212,20 @@
 
 <script>
 //--- Checkbox UI ---
-document.querySelectorAll('.checkbox-label').forEach(el => {
-  el.addEventListener('click', function(e) {
-    if (e.target.tagName === 'INPUT') return;
-    const cb = this.querySelector('input');
-    cb.checked = !cb.checked;
-    this.classList.toggle('checked', cb.checked);
+// Checkbox: listen only on input change (not label click) to avoid double-fire
+function setupCheckbox(labelSelector) {
+  document.querySelectorAll(labelSelector).forEach(el => {
+    const cb = el.querySelector('input');
+    if (!cb) return;
+    cb.addEventListener('change', function() {
+      el.classList.toggle('checked', this.checked);
+    });
+    // Init state
+    if (cb.checked) el.classList.add('checked');
   });
-  const cb = el.querySelector('input');
-  if (cb) cb.addEventListener('change', function() { el.classList.toggle('checked', this.checked); });
-});
-['garage','corrosion'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('change', function() { document.getElementById(id+'-label').classList.toggle('checked', this.checked); });
-});
+}
+setupCheckbox('.checkbox-label');
+setupCheckbox('#garage-label, #corrosion-label');
 
 //--- Rules (from rules.json, embedded for static use) ---
 const RISK_RULES = [
@@ -285,6 +285,14 @@ const RISK_RULES = [
     parts_tools:"Small flathead screwdriver, hex key set (usually 3/32 or 5/64 for set-screws), needle-nose pliers",
     customer_explanation:"The dial has a small loose connection. It won\u2019t cause a lockout now, but if it gets worse, it could throw off your combination. A quick adjustment now will fix it.",
     follow_up_months:24 },
+  { id:"critical_handle_slipping", risk:"Critical",
+    condition:{ symptoms:["handle_slipping"] },
+    likely_cause:"Handle spindle or clutch mechanism has stripped or disengaged. This is a mechanical failure that prevents lock operation entirely.",
+    technician_notes:"With the door open, observe handle engagement. Check handle hub splines, clutch plate engagement (common on AMSEC and Gardall), and link arm connections to the bolt bar. The handle turning freely without engaging bolts indicates a broken spindle, stripped gear, or disengaged clutch.",
+    recommended_action:"Inspect and replace handle mechanism. Remove handle, check spindle splines and clutch assembly. Replace damaged parts. Test full throw cycle before closing.",
+    parts_tools:"Replacement handle assembly, clutch rebuild kit (AMSEC/Gardall), spline grease, snap-ring pliers, hex key set, socket set, replacement bolts if sheared",
+    customer_explanation:"The handle is spinning freely because an internal part has broken or stripped inside the lock mechanism. This requires immediate repair — the safe is currently inoperable and needs a technician.",
+    follow_up_months:3 },
   { id:"moderate_no_service_history", risk:"Moderate",
     condition:{ last_service_never:true, approx_age_min:10 },
     likely_cause:"No maintenance history. Risk factors unknown. Preventative inspection warranted regardless of current symptoms.",
