@@ -3,393 +3,542 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SafePulse — Safe Failure Prediction</title>
+<title>SafePulse — Safe Service Triage</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f172a; color: #f1f5f9; min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; padding: 1.5rem;
+    background: #f1f5f9; color: #1e293b; min-height: 100vh; padding: 1.5rem;
   }
-  .container { max-width: 800px; width: 100%; }
-  header { text-align: center; margin-bottom: 2rem; }
-  header h1 { font-size: 1.75rem; font-weight: 700; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { margin-bottom: 1.5rem; }
+  header h1 { font-size: 1.75rem; font-weight: 700; color: #0f172a; }
   header h1 span { color: #3b82f6; }
-  header p { color: #94a3b8; margin-top: 0.25rem; font-size: 0.9rem; }
+  header p { color: #64748b; margin-top: 0.25rem; }
+  .grid { display: grid; gap: 1.5rem; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
   .card {
-    background: #1e293b; border: 1px solid #475569; border-radius: 12px;
-    padding: 1.5rem; margin-bottom: 1.5rem;
+    background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
+    padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
-  .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #3b82f6; }
-  label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.35rem; font-weight: 500; }
-  textarea {
-    width: 100%; padding: 0.75rem; background: #0f172a; border: 1px solid #475569;
-    border-radius: 8px; color: #f1f5f9; font-size: 0.95rem; font-family: inherit;
-    resize: vertical; min-height: 120px; transition: border-color 0.2s;
+  .card h2 { font-size: 1.15rem; font-weight: 600; margin-bottom: 1rem; }
+  .card label { display: block; font-size: 0.85rem; color: #475569; margin-bottom: 0.25rem; font-weight: 500; }
+  input, select, textarea {
+    width: 100%; padding: 0.65rem 0.75rem; background: #fff;
+    border: 1px solid #cbd5e1; border-radius: 10px; color: #1e293b;
+    font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s;
   }
-  textarea:focus { outline: none; border-color: #3b82f6; }
-  .textarea-hint { color: #64748b; font-size: 0.8rem; margin-top: 0.3rem; }
-
-  .submit-btn {
-    width: 100%; padding: 0.85rem; background: #3b82f6; color: #fff;
-    border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
-    cursor: pointer; transition: background 0.2s; margin-top: 1rem;
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+  textarea { resize: vertical; min-height: 70px; }
+  select { cursor: pointer; }
+  .field { margin-bottom: 0.75rem; }
+  .btn {
+    padding: 0.55rem 1rem; border: none; border-radius: 10px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.4rem;
   }
-  .submit-btn:hover { background: #2563eb; }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  #result { display: none; }
-  #result.visible { display: block; }
-
-  .risk-badge {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.4rem 1rem; border-radius: 20px; font-weight: 700;
-    font-size: 0.95rem; margin-bottom: 1rem;
+  .btn-primary { background: #3b82f6; color: #fff; }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #475569; }
+  .btn-outline:hover { background: #f1f5f9; border-color: #94a3b8; }
+  .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+  .symptom-group { margin-bottom: 1rem; }
+  .symptom-group h3 { font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .symptom-btn {
+    width: 100%; text-align: left; padding: 0.6rem 0.75rem;
+    border: 1px solid #e2e8f0; border-radius: 10px; background: #fff;
+    font-size: 0.85rem; cursor: pointer; transition: all 0.15s; margin-bottom: 0.4rem;
   }
-  .risk-badge.low { background: rgba(34,197,94,0.15); color: #22c55e; }
-  .risk-badge.moderate { background: rgba(234,179,8,0.15); color: #eab308; }
-  .risk-badge.high { background: rgba(249,115,22,0.15); color: #f97316; }
-  .risk-badge.critical { background: rgba(220,38,38,0.15); color: #dc2626; }
-
-  .result-section { margin-bottom: 1rem; }
-  .result-section h3 { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
-  .result-section p { line-height: 1.5; }
-
-  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #475569; }
-  .result-stat { background: #0f172a; border-radius: 8px; padding: 0.75rem; }
-  .result-stat .stat-label { font-size: 0.75rem; color: #94a3b8; }
-  .result-stat .stat-value { font-size: 0.9rem; font-weight: 600; margin-top: 0.15rem; }
-
-  .safety-notice {
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.3);
-    border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.8rem;
-    color: #fca5a5; margin-bottom: 1rem; text-align: center;
+  .symptom-btn:hover { background: #f8fafc; border-color: #94a3b8; }
+  .symptom-btn.selected { background: #e2e8f0; border-color: #475569; font-weight: 600; }
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.5rem 0; gap: 1rem;
   }
-
-  .spinner { display: none; text-align: center; padding: 1rem; }
-  .spinner.show { display: block; }
-  .spinner-inner {
-    width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.2);
-    border-top-color: #3b82f6; border-radius: 50%;
-    animation: spin 0.6s linear infinite; margin: 0 auto;
+  .toggle-row p { font-weight: 500; font-size: 0.95rem; }
+  .toggle-row .sub { color: #64748b; font-size: 0.8rem; font-weight: 400; }
+  .history-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    background: #fed7aa; color: #7c2d12; padding: 0.25rem 0.6rem;
+    border-radius: 20px; font-size: 0.8rem; font-weight: 500;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .diag-badge { display: inline-block; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 4px; margin: 0.15rem; }
-  .diag-badge.symptom { background: rgba(59,130,246,0.15); color: #93c5fd; }
-  .diag-badge.env { background: rgba(139,92,246,0.15); color: #c4b5fd; }
-  .diag-badge.lock { background: rgba(34,197,94,0.15); color: #86efac; }
-
-  .reset-link { text-align: center; margin-top: 1.5rem; }
-  .reset-link a { color: #64748b; font-size: 0.85rem; text-decoration: underline dotted; cursor: pointer; }
-  .reset-link a:hover { color: #3b82f6; }
-
-  @media (max-width: 600px) { .result-grid { grid-template-columns: 1fr; } }
+  .chip.symptom-chip { background: #e2e8f0; color: #334155; cursor: default; }
+  .risk-banner {
+    border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .risk-banner.low { background: #dcfce7; border: 1px solid #86efac; }
+  .risk-banner.moderate { background: #fef9c3; border: 1px solid #fde047; }
+  .risk-banner.high { background: #ffedd5; border: 1px solid #fdba74; }
+  .risk-banner.urgent { background: #fee2e2; border: 1px solid #fca5a5; }
+  .risk-banner .status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .risk-banner.low .status { color: #16a34a; }
+  .risk-banner.moderate .status { color: #ca8a04; }
+  .risk-banner.high .status { color: #ea580c; }
+  .risk-banner.urgent .status { color: #dc2626; }
+  .risk-banner .level-big { font-size: 1.5rem; font-weight: 700; }
+  .risk-banner .score-big { font-size: 2rem; font-weight: 800; text-align: right; }
+  .risk-banner.low .score-big { color: #16a34a; }
+  .risk-banner.moderate .score-big { color: #ca8a04; }
+  .risk-banner.high .score-big { color: #ea580c; }
+  .risk-banner.urgent .score-big { color: #dc2626; }
+  .advice-block { margin: 0.75rem 0; }
+  .advice-block h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem; }
+  .advice-block p, .advice-block li { font-size: 0.9rem; line-height: 1.5; }
+  .advice-block ul { margin-left: 1.25rem; }
+  .damage-warning {
+    background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px;
+    padding: 0.75rem; display: flex; gap: 0.75rem; align-items: flex-start;
+    margin: 0.75rem 0; color: #991b1b; font-size: 0.85rem;
+  }
+  .damage-warning .icon { font-size: 1.5rem; flex-shrink: 0; }
+  .cost-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 0.75rem 0; }
+  .cost-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem; }
+  .cost-box .label { font-size: 0.75rem; color: #64748b; }
+  .cost-box .value { font-size: 1rem; font-weight: 600; }
+  .cause-card {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 0.75rem; margin: 0.5rem 0;
+  }
+  .cause-card h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .cause-card ul { margin-left: 1.25rem; font-size: 0.85rem; }
+  .cause-card li { margin-bottom: 0.15rem; }
+  .feedback-row { display: flex; gap: 0.75rem; margin-top: 1rem; }
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-overlay.dim { background: rgba(0,0,0,0.5); }
+  .modal-overlay.lockout { background: rgba(127,29,29,0.85); }
+  .modal-box {
+    max-width: 500px; width: 100%; border-radius: 16px;
+    padding: 1.5rem; background: #fff; box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  }
+  .modal-box h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .modal-box p { font-size: 0.9rem; color: #475569; margin-bottom: 0.75rem; line-height: 1.5; }
+  .modal-box .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+  .photo-slot { border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem; margin: 0.4rem 0; }
+  .photo-slot label { font-weight: 600; }
+  .photo-slot .hint { font-size: 0.8rem; color: #64748b; }
+  .photo-slot input { margin-top: 0.3rem; }
+  .photo-slot .attached { color: #16a34a; font-size: 0.8rem; font-weight: 500; margin-top: 0.25rem; }
+  .report-box { margin-top: 1.5rem; }
+  .report-box textarea {
+    height: 300px; font-family: 'Courier New', monospace; font-size: 0.8rem;
+  }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
     <h1>Safe<span>Pulse</span></h1>
-    <p>Safe Failure Prediction — Describe the issue in your own words</p>
+    <p>Safe service triage for customers and technicians</p>
   </header>
 
-  <div class="safety-notice">
-    &#9888;&#65069; Preventive diagnostics only. No bypass, drill points, or defeat instructions.
+  <div class="grid grid-2">
+    <!-- LEFT COLUMN -->
+    <div>
+      <div class="card">
+        <h2>Customer Intake</h2>
+        <div class="field">
+          <label>Customer name</label>
+          <input id="cust-name" placeholder="Customer name" oninput="updateForm()">
+        </div>
+        <div class="field">
+          <label>Phone or text number</label>
+          <input id="cust-phone" placeholder="Phone or text number" oninput="updateForm()">
+        </div>
+        <div class="field">
+          <label>Safe brand / model</label>
+          <input id="cust-brand" placeholder="e.g. AMSEC, Sentry, Gardall" oninput="updateForm()">
+        </div>
+        <div class="field">
+          <label>Type of lock</label>
+          <select id="lock-type" onchange="updateForm(); renderSymptoms()">
+            <option value="Electronic keypad">Electronic keypad</option>
+            <option value="Mechanical dial">Mechanical dial</option>
+            <option value="Key lock">Key lock</option>
+            <option value="Unknown">Unknown</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Is the safe currently open?</label>
+          <select id="safe-open" onchange="updateForm()">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Years since last service</label>
+          <select id="service-age" onchange="updateForm()">
+            <option value="">Select service history</option>
+            <option value="1">Less than 1 year</option>
+            <option value="3">Less than 3 years</option>
+            <option value="7">Less than 7 years</option>
+            <option value="8">8 years or more</option>
+            <option value="50">Antique, 50+ years</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top:1rem;">
+          <label>What have you already tried?</label>
+          <textarea id="cust-tried" placeholder="Describe any steps, battery changes, combinations attempted..." oninput="updateForm()"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="toggle-row">
+          <div>
+            <p>Symptoms</p>
+            <span class="sub">Select one at a time. Results update automatically.</span>
+          </div>
+          <button class="btn btn-outline btn-sm" id="toggle-symptoms-btn" onclick="toggleSymptoms()">Show Symptoms</button>
+        </div>
+        <div id="history-chips"></div>
+        <div id="current-selected"></div>
+        <div id="symptom-groups" style="display:none;"></div>
+      </div>
+
+      <div class="card">
+        <div class="toggle-row">
+          <div>
+            <p>Photo Upload</p>
+            <span class="sub">Optional photos help identify the safe</span>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="togglePhotos()">Add Photos</button>
+        </div>
+        <div id="photo-summary"></div>
+        <div id="photo-slots" style="display:none; margin-top:0.75rem;"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div>
+      <div class="card" id="results-card">
+        <h2>AI Triage Result</h2>
+        <div id="risk-banner"></div>
+        <div id="advice-section"></div>
+        <div id="symptom-analysis"></div>
+        <div id="damage-warning"></div>
+        <div id="dispatch-recommendation"></div>
+        <div id="cost-framework"></div>
+        <div id="possible-causes"></div>
+        <div id="feedback-section"></div>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Describe the Safe Issue</h2>
-    <label for="report">What's happening with the safe? Include what you know (make, age, symptoms, environment, etc.)</label>
-    <textarea id="report" placeholder='e.g. "2004 AMSEC safe in a garage. Handle is spinning freely and the safe won&#39;t open. Dial feels fine. Never been serviced."'></textarea>
-    <div class="textarea-hint">Include as much or as little detail as you want — brand, age, symptoms, environment, last service, lock type.</div>
-    <button class="submit-btn" id="submit-btn" onclick="analyze()">Analyze</button>
-    <div class="spinner" id="spinner"><div class="spinner-inner"></div></div>
+  <div class="card report-box">
+    <h2>Technician Text Report</h2>
+    <textarea id="report-output" readonly></textarea>
   </div>
+</div>
 
-  <div class="card" id="result">
-    <div id="risk-badge-container"></div>
-    <div id="result-content"></div>
-    <div class="result-grid" id="result-stats"></div>
-    <div class="reset-link"><a onclick="resetForm()">&#8592; New Analysis</a></div>
+<div id="lockout-modal" class="modal-overlay lockout" style="display:none;">
+  <div class="modal-box" style="text-align:center;border:3px solid #ef4444;">
+    <div style="font-size:3rem;">⛔</div>
+    <h2 style="color:#991b1b;">Contact for Safe Service</h2>
+    <p>This triage has reached the maximum risk threshold. Based on the symptoms selected, this safe should be evaluated by a qualified safe technician.</p>
+    <div style="background:#fef2f2;border-radius:10px;padding:0.75rem;text-align:left;margin-top:0.75rem;">
+      <p style="font-weight:600;">Recommended next step:</p>
+      <p>Stop repeated attempts and schedule safe service.</p>
+    </div>
+  </div>
+</div>
+
+<div id="battery-modal" class="modal-overlay dim" style="display:none;">
+  <div class="modal-box">
+    <h2>Recommended Battery Replacement</h2>
+    <p>Many electronic safe lock problems are caused by weak or poor-quality batteries.</p>
+    <div style="background:#fefce8;border:1px solid #fde047;border-radius:12px;padding:0.75rem;margin:0.75rem 0;">
+      <p style="font-weight:600;">Recommended Batteries</p>
+      <ul style="margin-left:1.25rem;margin-top:0.25rem;"><li>Duracell Quantum</li><li>Energizer</li></ul>
+      <p style="font-weight:600;margin-top:0.75rem;">Do NOT Use:</p>
+      <ul style="margin-left:1.25rem;margin-top:0.25rem;"><li>Cheap batteries</li><li>Rechargeable batteries</li></ul>
+    </div>
+    <p style="font-size:0.85rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:0.75rem;">
+      Install fresh premium batteries first, then retry. If keypad is beeping every 10-15 seconds, remove batteries, press every keypad button for one second, then install fresh Duracell Quantum or Energizer batteries and retry after timeout.
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="batteryTry()">I Will Try Recommended Batteries</button>
+      <button class="btn btn-outline" onclick="closeBatteryModal()">Continue Triage</button>
+    </div>
+  </div>
+</div>
+
+<div id="map-modal" class="modal-overlay dim" style="display:none;">
+  <div class="modal-box" style="max-width:550px;">
+    <div class="toggle-row" style="padding:0 0 0.75rem 0;">
+      <div><h2>Service Area Calculator</h2><span class="sub">Demo: enter driving miles from your shop</span></div>
+      <button class="btn btn-outline btn-sm" onclick="closeMapModal()">Close</button>
+    </div>
+    <div style="background:#f1f5f9;border-radius:12px;height:120px;display:flex;align-items:center;justify-content:center;border:2px dashed #cbd5e1;margin-bottom:0.75rem;color:#64748b;font-size:0.85rem;text-align:center;">
+      <div>Map Placeholder<br><span style="font-size:0.75rem;">Future: live route distance via API</span></div>
+    </div>
+    <div class="cost-grid" style="margin:0;">
+      <div class="field"><label>Distance from shop (miles)</label><input type="number" id="map-distance" min="0" placeholder="e.g. 24" oninput="updateTripFee()"></div>
+      <div class="cost-box"><div class="label">Calculated Service / Trip Fee</div><div class="value" id="map-fee">$75.00</div><div style="font-size:0.7rem;color:#94a3b8;">$75 min, $2.50/mi after 17</div></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcFee()">Calculate Fee</button>
+      <button class="btn btn-outline" onclick="resetFee()">Reset to Minimum</button>
+    </div>
   </div>
 </div>
 
 <script>
-// Keyword-to-symptom/feature mapping
-const KEYWORDS = [
-  // Symptoms
-  { words:['dial drag','dial is stiff','hard to turn the dial','dial feels rough','dial sticking'], cats:['symptom'], val:'dial_drag' },
-  { words:['dial loose','wobbly dial','dial spins freely','dial feels loose'], cats:['symptom'], val:'dial_loose' },
-  { words:['handle pressure','handle is hard','hard to turn handle','handle is stiff','handle tight'], cats:['symptom'], val:'handle_pressure' },
-  { words:['handle spinning','handle slips','handle spins','handle won\'t engage','handle turns freely','spinning handle','handle does nothing'], cats:['symptom'], val:'handle_slipping' },
-  { words:['intermittent','works sometimes','sometimes opens','sporadic','hit or miss'], cats:['symptom'], val:'intermittent_opening' },
-  { words:['keypad not working','electronic lock dead','keypad dead','no lights','keypad no response','electronic failure'], cats:['symptom'], val:'electronic_failure' },
-  { words:['battery corrosion','corroded battery','battery leaking','terminals corroded'], cats:['symptom'], val:'battery_corrosion' },
-  { words:['door drag','door is hard','door sticks','door rubbing','tight door'], cats:['symptom'], val:'door_drag' },
-  { words:['bolts sticking','bolts won\'t retract','lock bolts stuck','handle won\'t retract bolts'], cats:['symptom'], val:'locking_bolts_sticky' },
-  { words:['no spin change','can\'t change combo','won\'t change combination','dial won\'t spin change'], cats:['symptom'], val:'no_spin_change' },
-  // Lock types
-  { words:['electronic lock','electronic','keypad lock','digital lock','electronic safe'], cats:['lock'], val:'electronic' },
-  { words:['mechanical','combination lock','dial lock','mechanical combination'], cats:['lock'], val:'mechanical_combination' },
-  { words:['key lock','keyed lock','key operated'], cats:['lock'], val:'key_lock' },
-  // Environment
-  { words:['garage','outbuilding','barn','shed','outside','exterior','outdoor','unheated'], cats:['env'], val:'garage_or_outbuilding' },
-  { words:['humid','moisture','damp','wet','high humidity','coastal'], cats:['env'], val:'high_humidity' },
-  { words:['corrosion','rust','rusted','corroded'], cats:['env'], val:'corrosion_visible' },
-  // Usage
-  { words:['daily','every day','used a lot','multiple times'], cats:['usage'], val:'daily' },
-  { words:['rarely','seldom','never opened','monthly','barely used','not used'], cats:['usage'], val:'rarely' },
-  // Service
-  { words:['never serviced','no service','never been serviced','original factory','never maintained'], cats:['service'], val:'never' },
+const symptomGroups = [
+  { category:"Mechanical Lock Issues", symptoms:[
+    { id:"dial_drag", label:"Dial feels rough or drags", points:20, recommendation:"Possible contamination, worn dial ring, spindle friction, or internal mechanical wear." },
+    { id:"stiff_dial", label:"Dial became stiff recently", points:20, recommendation:"Possible lubrication breakdown, contamination, or spindle alignment issue." },
+    { id:"combo_changed", label:"Combination suddenly stopped working", points:35, recommendation:"Possible user error, slipping component, or internal lock failure. Stop repeated attempts." }
+  ]},
+  { category:"Electronic Lock Issues", symptoms:[
+    { id:"intermittent_keypad", label:"Keypad works sometimes", points:20, recommendation:"Possible weak batteries, keypad cable issue, contact corrosion, or lock body failure." },
+    { id:"battery_issue", label:"Battery/keypad issue", points:10, recommendation:"Replace with fresh premium batteries and inspect battery contacts for corrosion." },
+    { id:"beeping_no_open", label:"Keypad beeps but safe will not open", points:30, recommendation:"Possible low battery timeout mode, lock body failure, solenoid issue, bolt pressure, or keypad failure." },
+    { id:"repeating_beep_timeout", label:"Keypad beeps every 10-15 seconds", points:25, recommendation:"Low battery timeout mode, repeated incorrect attempts, temporary lockout, or failing keypad." },
+    { id:"click_no_release", label:"Click is heard but handle will not release", points:35, recommendation:"Possible bolt pressure or disconnected internal linkage preventing unlock." },
+    { id:"handle_slipping", label:"Handle spins freely, won't open", points:50, recommendation:"CRITICAL: Stripped spindle or disengaged clutch. Safe is inoperable - technician required." }
+  ]},
+  { category:"Door / Boltwork Issues", symptoms:[
+    { id:"handle_pressure", label:"Handle is hard to turn", points:25, recommendation:"Possible bolt pressure, door alignment issue, or boltwork friction. Avoid forcing." },
+    { id:"door_drag", label:"Door drags or rubs", points:15, recommendation:"Possible hinge sag, foundation movement, or boltwork misalignment." }
+  ]},
+  { category:"Environment / Age Related", symptoms:[
+    { id:"corrosion", label:"Visible corrosion or moisture", points:15, recommendation:"High humidity or corrosion may affect electronics and moving internal components." },
+    { id:"no_service_history", label:"Never been serviced (10+ yrs)", points:10, recommendation:"Safe has no maintenance history. Baseline inspection recommended." }
+  ]}
 ];
-
-// Age: extract numbers near "year" context
-function extractAge(text) {
-  const ageMatch = text.match(/(\d{1,3})\s*y(?:ea)?r/gi);
-  if (ageMatch) return parseInt(ageMatch[0]);
-  const yearMatch = text.match(/20\d{2}/);
-  if (yearMatch) {
-    const y = parseInt(yearMatch[0]);
-    const age = 2026 - y;
-    if (age > 0 && age < 150) return age;
-  }
-  return null;
-}
-
-function extractLastService(text) {
-  const svc = text.match(/(\d+)\s*y(?:ea)?r[^s\w]/gi);
-  if (!svc) return null;
-  for (const m of svc) {
-    const n = parseInt(m);
-    if (n && n < 100) return n;
-  }
-  return null;
-}
-
-function extractBrand(text) {
-  const brands = ['AMSEC','Sentry','Mosler','Gardall','Liberty','Sturdy','Chubb','Hayman','Browning','Cannon','Homak','Stack-On','Fort Knox','Rhino','KASO','S&G','LaGard','ILS','Kaba','Diebold','Wheelock'];
-  const lower = text.toLowerCase();
-  for (const b of brands) {
-    if (lower.includes(b.toLowerCase())) return b;
-  }
-  return 'Unknown';
-}
-
-const RISK_RULES = [
-  { id:"critical_electronic_failure", risk:"critical",
-    condition:{ lock_type:"electronic", symptoms:["electronic_failure","battery_corrosion"] },
-    likely_cause:"Battery terminal corrosion has damaged the keypad or control board. Intermittent electronic failure indicates imminent lockout.",
-    technician_notes:"Test voltage at battery contacts. Inspect PCB for corrosion wicking. If unit powers but fails sporadically, replace keypad assembly. For LaGard/ILS models, check ribbon connector.",
-    recommended_action:"Replace battery contacts and keypad assembly. Clean terminals. Test full cycle 10x before closing door.",
-    parts_tools:"Replacement keypad assembly, battery contacts, contact cleaner (DeoxIT D5), multimeter, small flathead, 1.5mm hex, sacrificial batteries",
-    customer_explanation:"The battery area has corrosion that is damaging the electronics. It may stop working entirely at any moment. Replacing the keypad and battery contacts now will prevent a lockout.",
-    follow_up_months:12 },
-  { id:"critical_mechanical_seizure", risk:"high",
-    condition:{ lock_type:"mechanical_combination", symptoms:["dial_drag","handle_pressure"], age_min:15 },
-    likely_cause:"Dried or contaminated lubricant in the lock case combined with worn wheel pack bearings. Dial drag of 2+ inch-pounds indicates imminent failure.",
-    technician_notes:"Check dial torque with inch-pound gauge. Listen for grinding. Remove lock case and inspect wheel pack bushings. S&G 6730/6735 bearing failures common after 20 yrs.",
-    recommended_action:"Remove lock case, clean old lubricant, inspect wheel pack bushings, apply graphite or appropriate lubricant, reinstall and test. Replace bushings if worn.",
-    parts_tools:"Lock case removal tools, graphite powder (not oil), inch-pound torque gauge, replacement bushings (if S&G R-series or LaGard), inspection mirror",
-    customer_explanation:"The internal mechanism is dry and worn from years of use. It\u2019s getting harder to turn because the parts are binding. A professional cleaning and lubrication will restore smooth operation and prevent a future lockout.",
-    follow_up_months:6 },
-  { id:"high_handle_bolt_binding", risk:"high",
-    condition:{ symptoms:["handle_pressure","locking_bolts_sticky"], env_humidity:"high" },
-    likely_cause:"Rust or debris in the bolt mechanism. High humidity environment accelerates corrosion on bolt slide surfaces.",
-    technician_notes:"Test bolt throw with door open. Inspect bolt slides for rust/pitting. Check linkage pins \u2014 dry pivot points are common. Pay attention to relock trigger area.",
-    recommended_action:"Clean and lubricate bolt slides and linkage. Wire-brush rust. Apply dry-film lubricant to sliding surfaces, light oil to pivots. Cycle door 20x.",
-    parts_tools:"Wire brush, dry-film lubricant (Tri-Flow or equivalent), light machine oil, rags, flashlight",
-    customer_explanation:"The bolts that lock the door are sticking because of moisture and lack of maintenance. Cleaning and lubricating them will make the handle operate smoothly again.",
-    follow_up_months:6 },
-  { id:"moderate_door_alignment", risk:"moderate",
-    condition:{ symptoms:["door_drag","handle_pressure"], env_garage:true },
-    likely_cause:"Door sag from foundation settling or hinge wear. Garage/outbuilding temperature swings cause expansion/contraction issues.",
-    technician_notes:"Check door gap top-to-bottom. Measure with feeler gauge. Check hinge pins for wear. Verify floor is level within 1/8\u2033. Check hinge bolts aren\u2019t loose.",
-    recommended_action:"Tighten hinge bolts. Shim if needed. Adjust strike plates. If door is out of square, note it for structural evaluation.",
-    parts_tools:"Socket set, feeler gauge, shim stock, level, torque wrench",
-    customer_explanation:"The door is slightly out of alignment, likely from the floor settling or temperature changes in your garage. Adjusting the hinges will fix the drag.",
-    follow_up_months:12 },
-  { id:"moderate_electronic_battery", risk:"moderate",
-    condition:{ lock_type:"electronic", symptoms:["intermittent_opening"], usage:"daily" },
-    likely_cause:"Low battery voltage under load or loose battery connections. Heavy daily use drains batteries faster than expected.",
-    technician_notes:"Test battery voltage under load (press keypad while metering). Check spring contacts. Many electronic locks beep but don\u2019t fire solenoid when voltage drops below 4.8V for 6V systems.",
-    recommended_action:"Replace batteries with fresh alkaline. Clean contacts. Test 5 cycles. Advise customer on annual battery replacement schedule.",
-    parts_tools:"Fresh alkaline batteries (correct size), multimeter, contact cleaner",
-    customer_explanation:"The batteries are getting weak and don\u2019t have enough power to reliably unlock the safe every time. Fresh batteries will fix this \u2014 I recommend changing them once a year.",
-    follow_up_months:12 },
-  { id:"low_mechanical_dryness", risk:"low",
-    condition:{ lock_type:"mechanical_combination", symptoms:["dial_drag"], last_svc_min:5 },
-    likely_cause:"Original factory lubrication has dried out. No immediate danger but will worsen over time.",
-    technician_notes:"Check dial torque. If below 2 in-lbs and operation is consistent, service is preventive. If not addressed within 12-18 months, may progress to mechanical seizure.",
-    recommended_action:"Open lock case, clean and regraphite. Check wheel pack and drive cam. Educate customer on symptoms of worsening condition.",
-    parts_tools:"Lock case tools, graphite powder, cleaning solvent, inspection light",
-    customer_explanation:"The internal lubricant has dried out over time. It\u2019s not urgent, but servicing it now will keep it operating smoothly for years. If you wait, it could eventually get hard to open.",
-    follow_up_months:18 },
-  { id:"low_dial_loose_monitor", risk:"low",
-    condition:{ symptoms:["dial_loose"], lock_type:"mechanical_combination" },
-    likely_cause:"Dial set-screw loosened or drive cam retaining ring working loose. Not immediately critical but can lead to inaccurate dialing.",
-    technician_notes:"Check set-screw on dial hub. Verify drive cam retaining ring is tight. For S&G dials, check that the spring washer is present under the dial.",
-    recommended_action:"Tighten set-screw or drive cam retaining ring. Test dial operation through full rotation.",
-    parts_tools:"Small flathead screwdriver, hex key set (usually 3/32 or 5/64 for set-screws), needle-nose pliers",
-    customer_explanation:"The dial has a small loose connection. It won\u2019t cause a lockout now, but if it gets worse, it could throw off your combination. A quick adjustment now will fix it.",
-    follow_up_months:24 },
-  { id:"critical_handle_slipping", risk:"critical",
-    condition:{ symptoms:["handle_slipping"] },
-    likely_cause:"Handle spindle or clutch mechanism has stripped or disengaged. This is a mechanical failure that prevents lock operation entirely.",
-    technician_notes:"With the door open, observe handle engagement. Check handle hub splines, clutch plate engagement (common on AMSEC and Gardall), and link arm connections to the bolt bar. The handle turning freely without engaging bolts indicates a broken spindle, stripped gear, or disengaged clutch.",
-    recommended_action:"Inspect and replace handle mechanism. Remove handle, check spindle splines and clutch assembly. Replace damaged parts. Test full throw cycle before closing.",
-    parts_tools:"Replacement handle assembly, clutch rebuild kit (AMSEC/Gardall), spline grease, snap-ring pliers, hex key set, socket set, replacement bolts if sheared",
-    customer_explanation:"The handle is spinning freely because an internal part has broken or stripped inside the lock mechanism. This requires immediate repair \u2014 the safe is currently inoperable and needs a technician.",
-    follow_up_months:3 },
-  { id:"moderate_no_service_history", risk:"moderate",
-    condition:{ service_never:true, age_min:10 },
-    likely_cause:"No maintenance history. Risk factors unknown. Preventative inspection warranted regardless of current symptoms.",
-    technician_notes:"Perform full inspection: check lock case, bolt work, door alignment, hinge pins, relock device condition. Document all findings for baseline.",
-    recommended_action:"Complete preventive service: clean lock, lubricate bolts, verify combination, test all functions, inspect relock device.",
-    parts_tools:"Full service kit (lock tools, lubricants, cleaning supplies, replacement batteries, flashlight, inspection mirror)",
-    customer_explanation:"Your safe has never been serviced, and safes need regular maintenance just like cars. I\u2019ll do a full inspection to make sure everything is in good shape and catch any problems early.",
-    follow_up_months:12 }
+const symptomOptions = symptomGroups.flatMap(g=>g.symptoms);
+const lockTypeVisibility = {
+  "Electronic keypad":["Electronic Lock Issues","Door / Boltwork Issues","Environment / Age Related"],
+  "Mechanical dial":["Mechanical Lock Issues","Door / Boltwork Issues","Environment / Age Related"],
+  "Key lock":["Door / Boltwork Issues","Environment / Age Related"],
+  "Unknown":symptomGroups.map(g=>g.category)
+};
+const serviceFramework = {
+  low:{laborRange:"$0 - $125",notes:"Issue may be resolved with simple troubleshooting or preventive service."},
+  medium:{laborRange:"$150 - $450",notes:"Moderate service may be required depending on lock condition and accessibility."},
+  high:{laborRange:"$350 - $950+",notes:"Likely requires onsite safe technician evaluation and possible repair work."},
+  urgent:{laborRange:"$500 - $2500+",notes:"Urgent condition with increased risk of lockout, major repair, or specialized service."}
+};
+const damageRiskTriggers = ["handle_pressure","combo_changed","click_no_release","beeping_no_open","repeating_beep_timeout","handle_slipping"];
+const batteryTriggers = ["battery_issue","intermittent_keypad","beeping_no_open","repeating_beep_timeout"];
+const dispatchRecs = {
+  Low:{type:"Phone Assistance Recommended",time:"15-30 minutes"},
+  Medium:{type:"Standard Service Call Recommended",time:"30-90 minutes"},
+  High:{type:"Priority Same-Day Service Recommended",time:"1-3 hours"},
+  Urgent:{type:"Emergency Safe Service Recommended",time:"2-6+ hours"}
+};
+const photoSlots = [
+  {id:"full_safe_photo",label:"Full safe photo",helper:"Stand back and capture the entire safe."},
+  {id:"lock_or_keypad_photo",label:"Lock, dial, or keypad photo",helper:"Capture the keypad, dial, or key lock area clearly."},
+  {id:"door_edge_photo",label:"Door edge / hinge side photo",helper:"Useful for drag, sag, boltwork alignment."},
+  {id:"damage_or_corrosion_photo",label:"Damage, rust, or moisture photo",helper:"Show visible corrosion, impact damage, or moisture."}
 ];
+const causeLib = {
+  dial_drag:{causes:["Internal contamination","Dial ring wear","Spindle friction","Mechanical lock wear"],remedy:"Inspect lock operation and service internal moving components.",parts:["Dial ring","Spindle components","Lubrication/service materials"]},
+  stiff_dial:{causes:["Lubrication breakdown","Contamination","Spindle alignment"],remedy:"Clean and lubricate lock case. Check spindle alignment.",parts:["Graphite powder","Cleaning solvent","Spindle components"]},
+  combo_changed:{causes:["User error","Slipping wheel pack","Drive cam wear","Internal lock failure"],remedy:"Verify combination. Inspect wheel pack and drive cam.",parts:["Lock case tools","Combo card","Replacement wheel pack"]},
+  intermittent_keypad:{causes:["Weak batteries","Battery contact corrosion","Keypad cable issue","Electronic lock failure"],remedy:"Test batteries, keypad operation, inspect electronic lock components.",parts:["9V batteries","Keypad","Lock body","Battery contacts"]},
+  battery_issue:{causes:["Old batteries","Corroded contacts","Poor connection"],remedy:"Replace with fresh Duracell Quantum or Energizer. Clean contacts.",parts:["Duracell Quantum batteries","Contact cleaner"]},
+  beeping_no_open:{causes:["Low battery timeout","Lock body failure","Solenoid issue","Bolt pressure","Keypad failure"],remedy:"Replace batteries. If still fails, check solenoid and bolt pressure.",parts:["Fresh premium batteries","Multimeter","Solenoid","Keypad"]},
+  repeating_beep_timeout:{causes:["Low battery timeout mode","Repeated incorrect attempts","Temporary keypad lockout","Failing keypad"],remedy:"Remove batteries, press each keypad button 1 sec, install fresh Duracell Quantum or Energizer, retry after timeout.",parts:["Duracell Quantum batteries","Energizer batteries","Replacement keypad"]},
+  click_no_release:{causes:["Bolt pressure","Disconnected linkage","Solenoid not retracting"],remedy:"Check linkage connections. Test solenoid. Relieve bolt pressure if possible.",parts:["Linkage hardware","Solenoid","Lock body tools"]},
+  handle_pressure:{causes:["Bolt pressure","Door misalignment","Boltwork friction","Warped frame"],remedy:"Inspect boltwork alignment. Reduce repeated force attempts.",parts:["Boltwork components","Adjustment hardware","Lubrication materials"]},
+  door_drag:{causes:["Hinge sag","Foundation movement","Boltwork misalignment"],remedy:"Check door gap, hinge pins, floor level. Shim if needed.",parts:["Shim stock","Socket set","Feeler gauge","Level"]},
+  corrosion:{causes:["High humidity","Water exposure","Poor ventilation"],remedy:"Clean affected areas. Consider dehumidifier rod. Address moisture source.",parts:["Contact cleaner","Wire brush","Dehumidifier rod","Corrosion spray"]},
+  no_service_history:{causes:["No maintenance baseline","Unknown internal condition","Preventable wear"],remedy:"Full inspection: lock case, bolt work, door alignment, relock device.",parts:["Full service kit","Lubricants","Cleaning supplies"]},
+  handle_slipping:{causes:["Stripped spindle","Disengaged clutch","Broken handle hub"],remedy:"Inspect handle mechanism. Replace spindle, clutch, or handle assembly. Technician required.",parts:["Replacement handle assembly","Clutch rebuild kit","Spline grease","Snap-ring pliers"]}
+};
+function getLabel(id){const s=symptomOptions.find(x=>x.id===id);return s?s.label:id;}
+function getRisk(score){
+  if(score>=75) return {level:"Urgent",advice:"Stop repeated attempts and contact a safe technician immediately.",color:"urgent"};
+  if(score>=50) return {level:"High",advice:"Schedule service soon. Continued use may increase lockout risk.",color:"high"};
+  if(score>=25) return {level:"Medium",advice:"Try basic non-invasive checks, then monitor symptoms closely.",color:"moderate"};
+  return {level:"Low",advice:"Issue may be simple, but continue monitoring for worsening symptoms.",color:"low"};
+}
+let form={name:"",phone:"",brand:"",lockType:"Electronic keypad",safeOpen:"Yes",serviceAge:"",symptoms:[],tried:"",helped:"Not answered yet",batteryAttempted:false};
+let triageHistory=[],lockedForService=false,showSymptoms=false,showPhotos=false,distanceMiles="",calculatedTripFee=75,uploadedPhotos={};
 
-function matchRule(rule, input) {
-  const c = rule.condition;
-  if (c.symptoms && c.symptoms.length > 0) {
-    if (!c.symptoms.some(s => input.symptoms.includes(s))) return false;
-  }
-  if (c.lock_type && c.lock_type !== input.lock_type) return false;
-  if (c.age_min && (input.age === null || input.age < c.age_min)) return false;
-  if (c.env_humidity && input.env_humidity !== c.env_humidity) return false;
-  if (c.env_garage && !input.garage_outbuilding) return false;
-  if (c.usage && c.usage !== input.usage) return false;
-  if (c.last_svc_min && (input.last_svc === null || input.last_svc < c.last_svc_min)) return false;
-  if (c.service_never && input.last_svc !== null) return false;
-  return true;
+function updateForm(){
+  form.name=$('cust-name');form.phone=$('cust-phone');form.brand=$('cust-brand');
+  form.lockType=document.getElementById('lock-type').value;form.safeOpen=document.getElementById('safe-open').value;
+  form.serviceAge=document.getElementById('service-age').value;form.tried=$('cust-tried');
+  recalc();
+}
+function $(id){return document.getElementById(id).value;}
+
+function getScore(){
+  let total=0;
+  for(const id of triageHistory){const s=symptomOptions.find(x=>x.id===id);if(s)total+=s.points;}
+  if(form.safeOpen==="No")total+=20;
+  if(Number(form.serviceAge)>=5)total+=15;
+  return Math.min(total,100);
 }
 
-function analyze() {
-  const text = document.getElementById('report').value.trim();
-  if (!text) return;
+function recalc(){
+  const score=getScore(),risk=getRisk(score);
+  renderHistory();renderCurrent();renderResults(score,risk);renderReport();
+}
 
-  const btn = document.getElementById('submit-btn');
-  const spinner = document.getElementById('spinner');
-  const result = document.getElementById('result');
+function toggleSymptoms(){
+  showSymptoms=!showSymptoms;
+  document.getElementById('symptom-groups').style.display=showSymptoms?'block':'none';
+  document.getElementById('toggle-symptoms-btn').textContent=showSymptoms?'Hide Symptoms':'Show Symptoms';
+  if(showSymptoms)renderSymptoms();
+}
 
-  btn.disabled = true;
-  btn.textContent = 'Analyzing...';
-  spinner.classList.add('show');
-  result.classList.remove('visible');
+function togglePhotos(){
+  showPhotos=!showPhotos;
+  document.getElementById('photo-slots').style.display=showPhotos?'block':'none';
+  renderPhotoSlots();renderPhotoSummary();
+}
 
-  const lower = text.toLowerCase();
-  let found_symptoms = [];
-  let lock_type = null;
-  let usage = null;
-  let service_never = false;
-  let garage_outbuilding = false;
-  let high_humidity = false;
-
-  for (const kw of KEYWORDS) {
-    const matches = kw.words.some(w => lower.includes(w));
-    if (!matches) continue;
-    if (kw.cats.includes('symptom') && !found_symptoms.includes(kw.val)) found_symptoms.push(kw.val);
-    if (kw.cats.includes('lock')) lock_type = kw.val;
-    if (kw.cats.includes('usage')) usage = kw.val;
-    if (kw.cats.includes('service') && kw.val === 'never') service_never = true;
-    if (kw.cats.includes('env') && kw.val === 'garage_or_outbuilding') garage_outbuilding = true;
-    if (kw.cats.includes('env') && kw.val === 'high_humidity') high_humidity = true;
+function toggleSymptom(id){
+  if(lockedForService)return;
+  if(batteryTriggers.includes(id)&&!form.batteryAttempted) document.getElementById('battery-modal').style.display='flex';
+  if(!triageHistory.includes(id)) triageHistory.push(id);
+  const idx=form.symptoms.indexOf(id);
+  if(idx===-1) form.symptoms.push(id); else form.symptoms.splice(idx,1);
+  if(getScore()>=100){
+    lockedForService=true;showSymptoms=false;
+    document.getElementById('symptom-groups').style.display='none';
+    document.getElementById('toggle-symptoms-btn').textContent='Show Symptoms';
+    document.getElementById('lockout-modal').style.display='flex';
   }
+  recalc();
+}
 
-  const age = extractAge(text);
-  const last_svc = service_never ? null : extractLastService(text);
-  const brand = extractBrand(text);
+function renderSymptoms(){
+  const c=document.getElementById('symptom-groups');
+  const v=lockTypeVisibility[form.lockType]||symptomGroups.map(g=>g.category);
+  let h='';
+  for(const g of symptomGroups){
+    if(!v.includes(g.category))continue;
+    h+=`<div class="symptom-group"><h3>${g.category}</h3>`;
+    for(const s of g.symptoms) h+=`<div class="symptom-btn${form.symptoms.includes(s.id)?' selected':''}" onclick="toggleSymptom('${s.id}')">${s.label}</div>`;
+    h+='</div>';
+  }
+  c.innerHTML=h;
+}
 
-  const input = {
-    symptoms: found_symptoms,
-    lock_type: lock_type,
-    age: age,
-    usage: usage,
-    last_svc: last_svc,
-    env_humidity: high_humidity ? 'high' : null,
-    garage_outbuilding: garage_outbuilding,
-    service_never: service_never,
-    brand: brand
-  };
+function renderHistory(){
+  const c=document.getElementById('history-chips');
+  if(!triageHistory.length){c.innerHTML='';return;}
+  c.innerHTML='<div style="font-size:0.8rem;color:#64748b;margin-bottom:0.25rem;">Symptoms Counted Toward Risk:</div><div class="history-chips">'+
+    triageHistory.map(id=>'<span class="chip">'+getLabel(id)+'</span>').join('')+'</div>';
+}
 
-  setTimeout(() => {
-    let matched = null;
-    for (const rule of RISK_RULES) {
-      if (matchRule(rule, input)) {
-        matched = rule;
-        break;
-      }
+function renderCurrent(){
+  const c=document.getElementById('current-selected');
+  if(!form.symptoms.length){c.innerHTML='';return;}
+  c.innerHTML='<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:0.5rem;margin:0.5rem 0;">'+
+    '<div style="font-size:0.75rem;color:#64748b;margin-bottom:0.25rem;">Current Selected:</div>'+
+    '<div class="history-chips">'+form.symptoms.map(id=>'<span class="chip symptom-chip">'+getLabel(id)+'</span>').join('')+'</div></div>';
+}
+
+function renderResults(score,risk){
+  // banner
+  const r=document.getElementById('risk-banner');
+  const names={Low:"✓ LOW RISK",Medium:"⚠ MODERATE RISK",High:"⚠ HIGH RISK",Urgent:"⛔ URGENT CONDITION"};
+  r.innerHTML=`<div class="risk-banner ${risk.color}"><div><div class="status">Safe Status</div><div class="level-big">${names[risk.level]}</div></div><div style="text-align:right"><div class="status">Risk Score</div><div class="score-big">${score}/100</div></div></div>`;
+
+  // advice
+  document.getElementById('advice-section').innerHTML=`<div class="advice-block"><h3>General Recommendation</h3><p>${risk.advice}</p></div>`;
+
+  // symptom analysis
+  const sa=document.getElementById('symptom-analysis');
+  const recs=symptomOptions.filter(s=>triageHistory.includes(s.id)).map(s=>s.recommendation);
+  if(recs.length){
+    sa.innerHTML='<div class="advice-block"><h3>Symptom Analysis</h3><ul>'+recs.map(r=>`<li>${r}</li>`).join('')+'</ul></div>';
+  } else sa.innerHTML='';
+
+  // damage warning
+  const dw=document.getElementById('damage-warning');
+  if(triageHistory.some(s=>damageRiskTriggers.includes(s))){
+    dw.innerHTML='<div class="damage-warning"><div class="icon">⚠</div><div><strong>Continued Attempts May Increase Repair Costs</strong><br>Repeated attempts, excessive handle pressure, or forcing the lock may worsen the condition or create a complete lockout.</div></div>';} else dw.innerHTML='';
+
+  // dispatch recommendation
+  const dr=document.getElementById('dispatch-recommendation');
+  const d=dispatchRecs[risk.level];
+  dr.innerHTML='<div class="cost-box" style="margin:0.75rem 0;"><div class="label">Recommended Service Type</div><div class="value">'+d.type+'</div><div style="font-size:0.8rem;color:#64748b;margin-top:0.25rem;">Estimated onsite time: '+d.time+'</div></div>';
+
+  // cost framework
+  const cf=document.getElementById('cost-framework');
+  const s=serviceFramework[risk.color];
+  cf.innerHTML='<div class="advice-block"><h3>Possible Service & Cost Framework</h3><p style="font-size:0.8rem;color:#64748b;margin-bottom:0.5rem;">Ballpark estimates only. Final pricing depends on safe type, lock condition, parts required, and service complexity.</p><div class="cost-grid"><div class="cost-box"><div class="label">Estimated Service / Trip Fee</div><div class="value">$'+calculatedTripFee.toFixed(2)+' minimum</div><div style="font-size:0.7rem;color:#94a3b8;">$75 base + $2.50/mi after 17</div></div><div class="cost-box"><div class="label">Estimated Labor Range</div><div class="value">'+s.laborRange+'</div></div></div><div style="margin:0.5rem 0;"><button class="btn btn-outline btn-sm" onclick="openMap()">Open Map Calculator</button></div><div class="cost-box"><div class="label">Service Notes</div><div style="font-size:0.85rem;margin-top:0.15rem;">'+s.notes+'</div></div></div>';
+
+  // possible causes
+  const pc=document.getElementById('possible-causes');
+  const causes=triageHistory.map(id=>causeLib[id]).filter(Boolean);
+  if(causes.length){
+    pc.innerHTML='<div class="advice-block"><h3>Possible Causes & Remedies</h3>'+causes.map(c=>'<div class="cause-card"><h4>Possible Causes</h4><ul>'+c.causes.map(x=>'<li>'+x+'</li>').join('')+'</ul><h4 style="margin-top:0.5rem;">Suggested Remedy</h4><p style="font-size:0.85rem;">'+c.remedy+'</p><h4 style="margin-top:0.5rem;">Possible Parts Needed</h4><ul>'+c.parts.map(p=>'<li>'+p+'</li>').join('')+'</ul></div>').join('')+'</div>';
+  } else pc.innerHTML='';
+
+  // feedback
+  const fb=document.getElementById('feedback-section');
+  fb.innerHTML='<div class="feedback-row"><button class="btn btn-primary" onclick="feedbackYes()">Advice Helped</button><button class="btn btn-outline" onclick="feedbackNo()">Still Needs Tech</button><span id="feedback-status" style="font-size:0.85rem;color:#64748b;align-self:center;">'+form.helped+'</span></div>';
+}
+
+function feedbackYes(){form.helped='Advice Helped ✓';document.getElementById('feedback-status').textContent=form.helped;recalc();}
+function feedbackNo(){form.helped='Still Needs Tech';document.getElementById('feedback-status').textContent=form.helped;recalc();}
+function batteryTry(){form.batteryAttempted=true;closeBatteryModal();recalc();}
+function closeBatteryModal(){document.getElementById('battery-modal').style.display='none';}
+function openMap(){document.getElementById('map-modal').style.display='flex';}
+function closeMapModal(){document.getElementById('map-modal').style.display='none';}
+function updateTripFee(){const d=parseFloat(document.getElementById('map-distance').value);if(d>17)calculatedTripFee=75+((d-17)*2.5);else calculatedTripFee=75;document.getElementById('map-fee').textContent='$'+calculatedTripFee.toFixed(2);}
+function calcFee(){updateTripFee();closeMapModal();recalc();}
+function resetFee(){document.getElementById('map-distance').value='';calculatedTripFee=75;document.getElementById('map-fee').textContent='$75.00';}
+
+// Photo uploads
+function renderPhotoSlots(){const c=document.getElementById('photo-slots');let h='';for(const s of photoSlots){h+='<div class="photo-slot"><label>'+s.label+'</label><div class="hint">'+s.helper+'</div><input type="file" accept="image/*" id="'+s.id+'" onchange="photoAttached(\''+s.id+'\')">';if(uploadedPhotos[s.id])h+='<div class="attached">✓ Photo attached</div>';h+='</div>';}c.innerHTML=h;}
+function renderPhotoSummary(){const c=document.getElementById('photo-summary');const n=Object.keys(uploadedPhotos).filter(k=>uploadedPhotos[k]).length;c.innerHTML=n?'<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:0.5rem;margin-top:0.5rem;font-size:0.85rem;">📸 '+n+' photo(s) attached</div>':'';}
+function photoAttached(id){uploadedPhotos[id]=true;renderPhotoSummary();}
+
+// Report building
+function renderReport(){
+  const ta=document.getElementById('report-output');
+  let r='';r+='=== SafePulse Technician Report ===\n';
+  r+='Report Generated: '+new Date().toLocaleString()+'\n\n';
+  r+='CUSTOMER\n';
+  r+='Name: '+(form.name||'(not provided)')+'\n';
+  r+='Phone: '+(form.phone||'(not provided)')+'\n';
+  r+='Safe Brand: '+(form.brand||'(not provided)')+'\n';
+  r+='Lock Type: '+form.lockType+'\n';
+  r+='Safe Open: '+form.safeOpen+'\n';
+  r+='Service Age: '+(form.serviceAge?form.serviceAge+' years':'Unknown')+'\n\n';
+  r+='SYMPTOMS REPORTED\n';
+  if(triageHistory.length){
+    for(const id of triageHistory){
+      const s=symptomOptions.find(x=>x.id===id);
+      if(s)r+='- '+s.label+' ('+s.points+' pts\n';
     }
-
-    showResult(text, input, matched);
-    btn.disabled = false;
-    btn.textContent = 'Analyze';
-    spinner.classList.remove('show');
-  }, 350);
-}
-
-function showResult(rawText, parsed, rule) {
-  const container = document.getElementById('result');
-  const badgeContainer = document.getElementById('risk-badge-container');
-  const content = document.getElementById('result-content');
-  const stats = document.getElementById('result-stats');
-  container.classList.add('visible');
-
-  const icons = { low:'✅', moderate:'⚡', high:'🚨', critical:'🔴' };
-
-  if (rule) {
-    const icon = icons[rule.risk] || '⚠️';
-    badgeContainer.innerHTML = `<div class="risk-badge ${rule.risk}">${icon} ${rule.risk.charAt(0).toUpperCase()}${rule.risk.slice(1)} Risk</div>`;
-
-    content.innerHTML = `
-      <div class="result-section"><h3>What You Said</h3><p>${rawText}</p></div>
-      <div class="result-section"><h3>Likely Failure Cause</h3><p>${rule.likely_cause}</p></div>
-      <div class="result-section"><h3>Technician Notes</h3><p>${rule.technician_notes}</p></div>
-      <div class="result-section"><h3>Recommended Action</h3><p>${rule.recommended_action}</p></div>
-      <div class="result-section"><h3>Customer-Friendly Explanation</h3><p>${rule.customer_explanation}</p></div>
-    `;
-
-    let detected = '';
-    if (parsed.symptoms.length) detected += '<span class="diag-badge symptom">Symptoms: ' + parsed.symptoms.join(', ').replace(/_/g,' ') + '</span> ';
-    if (parsed.lock_type) detected += '<span class="diag-badge lock">Lock: ' + parsed.lock_type.replace(/_/g,' ') + '</span> ';
-    if (parsed.age) detected += '<span class="diag-badge lock">Age: ~' + parsed.age + 'yrs</span> ';
-    if (parsed.brand !== 'Unknown') detected += '<span class="diag-badge lock">Brand: ' + parsed.brand + '</span> ';
-    if (parsed.garage_outbuilding) detected += '<span class="diag-badge env">Garage/Outbuilding</span> ';
-    if (parsed.env_humidity === 'high') detected += '<span class="diag-badge env">High Humidity</span> ';
-
-    stats.innerHTML = `
-      <div class="result-stat"><div class="stat-label">Detected Signals</div><div class="stat-value" style="font-weight:400;font-size:0.85rem;">${detected || '<span style="color:#64748b;">No specific signals detected</span>'}</div></div>
-      <div class="result-stat"><div class="stat-label">Parts / Tools to Bring</div><div class="stat-value" style="font-weight:400;font-size:0.85rem;">${rule.parts_tools}</div></div>
-      <div class="result-stat"><div class="stat-label">Follow-Up</div><div class="stat-value">${rule.follow_up_months} months</div></div>
-    `;
-  } else {
-    badgeContainer.innerHTML = `<div class="risk-badge low">✅ Low Risk</div>`;
-
-    content.innerHTML = `
-      <div class="result-section"><h3>What You Said</h3><p>${rawText}</p></div>
-      <div class="result-section"><h3>Likely Failure Cause</h3><p>No immediate failure cause identified from the provided description.</p></div>
-      <div class="result-section"><h3>Technician Notes</h3><p>Perform a general preventive inspection. Check lock case lubrication, bolt throw smoothness, door alignment, hinge pins, and relock device condition.</p></div>
-      <div class="result-section"><h3>Recommended Action</h3><p>General preventive service: clean and regraphite lock case, lubricate bolt slides and hinge pins, test all functions, document baseline.</p></div>
-      <div class="result-section"><h3>Customer-Friendly Explanation</h3><p>I didn\u2019t find any specific problems \u2014 your safe is in decent shape. I\u2019ll do a routine service to keep it that way and set a baseline.</p></div>
-    `;
-
-    stats.innerHTML = `
-      <div class="result-stat"><div class="stat-label">Detected Signals</div><div class="stat-value" style="font-weight:400;font-size:0.85rem;">${parsed.symptoms.length ? parsed.symptoms.join(', ').replace(/_/g,' ') : '<span style="color:#64748b;">None — try adding more detail</span>'}</div></div>
-      <div class="result-stat"><div class="stat-label">Brand / Age</div><div class="stat-value">${parsed.brand}${parsed.age ? ' ~'+parsed.age+'yrs' : ''}</div></div>
-    `;
+  } else r+='(none selected)\n';
+  const score=getScore();const risk=getRisk(score);
+  r+='\nASSESSMENT\n';
+  r+='Risk Score: '+score+'/100 ('+risk.level+')\n';
+  r+='Recommendation: '+risk.advice+'\n\n';
+  r+='SERVICE RECOMMENDATION\n';
+  r+='Dispatch: '+dispatchRecs[risk.level].type+'\n';
+  r+='Estimated Labor: '+serviceFramework[risk.color].laborRange+'\n';
+  r+='Trip Fee: $'+calculatedTripFee.toFixed(2)+'\n\n';
+  r+='CAUSES & REMEDIES\n';
+  for(const id of triageHistory){
+    const c=causeLib[id];
+    if(c){r+='\n['+getLabel(id)+']\n';r+='  Causes: '+c.causes.join(', ')+'\n';r+='  Remedy: '+c.remedy+'\n';r+='  Parts: '+c.parts.join(', ')+'\n';}
   }
-
-  container.scrollIntoView({ behavior:'smooth', block:'start' });
+  r+='\nCUSTOMER FEEDBACK: '+form.helped+'\n';
+  ta.value=r;
 }
 
-function resetForm() {
-  document.getElementById('result').classList.remove('visible');
-  document.getElementById('report').value = '';
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
+function closeLockoutModal(){document.getElementById('lockout-modal').style.display='none';}
+
+// Initial render
+renderSymptoms();
+recalc();
 </script>
 </body>
 </html>
