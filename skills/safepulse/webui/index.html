@@ -5,177 +5,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SafePulse — Safe Failure Prediction</title>
 <style>
-  :root {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface-2: #334155;
-    --border: #475569;
-    --text: #f1f5f9;
-    --text-muted: #94a3b8;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --green: #22c55e;
-    --yellow: #eab308;
-    --orange: #f97316;
-    --red: #ef4444;
-    --critical: #dc2626;
-  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1.5rem;
+    background: #0f172a; color: #f1f5f9; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; padding: 1.5rem;
   }
   .container { max-width: 800px; width: 100%; }
-  header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
+  header { text-align: center; margin-bottom: 2rem; }
   header h1 { font-size: 1.75rem; font-weight: 700; }
-  header h1 span { color: var(--accent); }
-  header p { color: var(--text-muted); margin-top: 0.25rem; font-size: 0.9rem; }
-
+  header h1 span { color: #3b82f6; }
+  header p { color: #94a3b8; margin-top: 0.25rem; font-size: 0.9rem; }
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    background: #1e293b; border: 1px solid #475569; border-radius: 12px;
+    padding: 1.5rem; margin-bottom: 1.5rem;
   }
-  .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent); }
-
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
+  .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #3b82f6; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .form-grid .full { grid-column: 1 / -1; }
-
-  label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem; font-weight: 500; }
+  label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.35rem; font-weight: 500; }
   input, select, textarea {
-    width: 100%;
-    padding: 0.6rem 0.75rem;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 0.9rem;
-    transition: border-color 0.2s;
+    width: 100%; padding: 0.6rem 0.75rem; background: #0f172a;
+    border: 1px solid #475569; border-radius: 8px; color: #f1f5f9;
+    font-size: 0.9rem; transition: border-color 0.2s;
   }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; }
   textarea { resize: vertical; min-height: 60px; font-family: inherit; }
   select { cursor: pointer; }
-
   .checkbox-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .checkbox-label {
     display: flex; align-items: center; gap: 0.4rem;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.4rem 0.75rem;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
+    background: #0f172a; border: 1px solid #475569; border-radius: 8px;
+    padding: 0.4rem 0.75rem; font-size: 0.85rem; cursor: pointer;
+    transition: all 0.2s; user-select: none;
   }
-  .checkbox-label:hover { border-color: var(--accent); }
-  .checkbox-label.checked { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+  .checkbox-label:hover { border-color: #3b82f6; }
+  .checkbox-label.checked { border-color: #3b82f6; background: rgba(59,130,246,0.1); }
   .checkbox-label input { display: none; }
-  .checkbox-label .check { width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.2s; flex-shrink: 0; }
-  .checkbox-label.checked .check { background: var(--accent); border-color: var(--accent); }
-  .checkbox-label.checked .check::after { content: "✓"; color: #fff; font-weight: 700; }
-
-  .submit-btn {
-    width: 100%;
-    padding: 0.85rem;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-top: 0.5rem;
+  .checkbox-label .check {
+    width: 16px; height: 16px; border: 2px solid #475569; border-radius: 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 10px; transition: all 0.2s; flex-shrink: 0;
   }
-  .submit-btn:hover { background: var(--accent-hover); }
+  .checkbox-label.checked .check { background: #3b82f6; border-color: #3b82f6; }
+  .checkbox-label.checked .check::after { content: "\2713"; color: #fff; font-weight: 700; }
+  .env-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .submit-btn {
+    width: 100%; padding: 0.85rem; background: #3b82f6; color: #fff;
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s; margin-top: 0.5rem;
+  }
+  .submit-btn:hover { background: #2563eb; }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .spinner { display: none; }
-  .submit-btn.loading .spinner { display: inline-block; }
-  .submit-btn.loading .label { display: none; }
-
-  /* Result */
   #result { display: none; }
   #result.visible { display: block; }
 
   .risk-badge {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
+    padding: 0.4rem 1rem; border-radius: 20px; font-weight: 700;
+    font-size: 0.95rem; margin-bottom: 1rem;
   }
-  .risk-badge.low { background: rgba(34,197,94,0.15); color: var(--green); }
-  .risk-badge.moderate { background: rgba(234,179,8,0.15); color: var(--yellow); }
-  .risk-badge.high { background: rgba(249,115,22,0.15); color: var(--orange); }
-  .risk-badge.critical { background: rgba(220,38,38,0.15); color: var(--critical); }
+  .risk-badge.Low { background: rgba(34,197,94,0.15); color: #22c55e; }
+  .risk-badge.Moderate { background: rgba(234,179,8,0.15); color: #eab308; }
+  .risk-badge.High { background: rgba(249,115,22,0.15); color: #f97316; }
+  .risk-badge.Critical { background: rgba(220,38,38,0.15); color: #dc2626; }
 
   .result-section { margin-bottom: 1rem; }
-  .result-section h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+  .result-section h3 { font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
   .result-section p { line-height: 1.5; }
 
-  .result-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-  .result-stat { background: var(--bg); border-radius: 8px; padding: 0.75rem; }
-  .result-stat .stat-label { font-size: 0.75rem; color: var(--text-muted); }
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #475569; }
+  .result-stat { background: #0f172a; border-radius: 8px; padding: 0.75rem; }
+  .result-stat .stat-label { font-size: 0.75rem; color: #94a3b8; }
   .result-stat .stat-value { font-size: 0.9rem; font-weight: 600; margin-top: 0.15rem; }
 
-  /* Safety notice */
   .safety-notice {
     background: rgba(239,68,68,0.08);
     border: 1px solid rgba(239,68,68,0.3);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.8rem;
-    color: #fca5a5;
-    margin-bottom: 1rem;
-    text-align: center;
+    border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.8rem;
+    color: #fca5a5; margin-bottom: 1rem; text-align: center;
   }
+
+  .spinner { display: none; text-align: center; padding: 1rem; }
+  .spinner.show { display: block; }
+  .spinner-inner {
+    width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: #3b82f6; border-radius: 50%;
+    animation: spin 0.6s linear infinite; margin: 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .batch-link { text-align: center; margin-top: 1.5rem; }
+  .batch-link a { color: #94a3b8; font-size: 0.85rem; text-decoration: underline dotted; cursor: pointer; }
+  .batch-link a:hover { color: #3b82f6; }
 
   @media (max-width: 600px) {
     .form-grid { grid-template-columns: 1fr; }
     .result-grid { grid-template-columns: 1fr; }
   }
-
-  .spinner-icon {
-    width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff; border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-    display: inline-block; vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .batch-link {
-    text-align: center; margin-top: 1.5rem;
-  }
-  .batch-link a {
-    color: var(--text-muted); font-size: 0.85rem;
-    text-decoration: underline dotted;
-  }
-  .batch-link a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -186,7 +114,7 @@
   </header>
 
   <div class="safety-notice">
-    ⚠️ Preventive diagnostics only. No bypass, drill points, or defeat instructions.
+    &#9888;&#65039; Preventive diagnostics only. No bypass, drill points, or defeat instructions.
   </div>
 
   <div class="card">
@@ -237,23 +165,19 @@
       </div>
       <div>
         <label for="last_service">Years Since Last Service</label>
-        <input type="number" id="last_service" min="0" max="100" value="5">
+        <input type="number" id="last_service" min="0" max="100" placeholder="Leave blank if never">
       </div>
-
       <div class="full">
-        <label>Environment Conditions</label>
-        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <label>Environment</label>
+        <div class="env-group">
           <label class="checkbox-label" id="garage-label">
-            <input type="checkbox" id="garage">
-            <span class="check"></span> Garage / Outbuilding
+            <input type="checkbox" id="garage"><span class="check"></span> Garage / Outbuilding
           </label>
           <label class="checkbox-label" id="corrosion-label">
-            <input type="checkbox" id="corrosion">
-            <span class="check"></span> Corrosion Visible
+            <input type="checkbox" id="corrosion"><span class="check"></span> Corrosion Visible
           </label>
         </div>
       </div>
-
       <div class="full">
         <label>Symptoms (select all that apply)</label>
         <div class="checkbox-group" id="symptoms-group">
@@ -269,73 +193,156 @@
           <label class="checkbox-label" data-symptom="locking_bolts_sticky"><input type="checkbox"><span class="check"></span> Locking Bolts Sticky</label>
         </div>
       </div>
-
       <div class="full">
         <label for="report">Customer Report (free text)</label>
         <textarea id="report" placeholder="e.g. It's getting harder to open every month..."></textarea>
       </div>
     </div>
-
-    <button class="submit-btn" id="submit-btn" onclick="runPrediction()">
-      <span class="label">Run Prediction</span>
-      <span class="spinner"><span class="spinner-icon"></span> Analyzing...</span>
-    </button>
+    <button class="submit-btn" id="submit-btn" onclick="runPrediction()">Run Prediction</button>
+    <div class="spinner" id="spinner"><div class="spinner-inner"></div></div>
   </div>
 
   <div class="card" id="result">
     <div id="risk-badge-container"></div>
     <div id="result-content"></div>
     <div class="result-grid" id="result-stats"></div>
-    <div class="batch-link">
-      <a href="#" onclick="resetForm();return false;">← New Assessment</a>
-    </div>
+    <div class="batch-link"><a onclick="resetForm()">&#8592; New Assessment</a></div>
   </div>
 </div>
 
 <script>
-// Toggle checkbox label styling
+//--- Checkbox UI ---
 document.querySelectorAll('.checkbox-label').forEach(el => {
   el.addEventListener('click', function(e) {
     if (e.target.tagName === 'INPUT') return;
-    const cb = this.querySelector('input[type=checkbox]');
+    const cb = this.querySelector('input');
     cb.checked = !cb.checked;
     this.classList.toggle('checked', cb.checked);
   });
   const cb = el.querySelector('input');
-  if (cb) {
-    cb.addEventListener('change', function() {
-      el.classList.toggle('checked', this.checked);
-    });
-  }
+  if (cb) cb.addEventListener('change', function() { el.classList.toggle('checked', this.checked); });
 });
-
-// Single condition toggles
-['garage', 'corrosion'].forEach(id => {
+['garage','corrosion'].forEach(id => {
   const el = document.getElementById(id);
-  if (el) {
-    el.addEventListener('change', function() {
-      document.getElementById(id+'-label').classList.toggle('checked', this.checked);
-    });
-  }
+  if (el) el.addEventListener('change', function() { document.getElementById(id+'-label').classList.toggle('checked', this.checked); });
 });
 
-async function runPrediction() {
-  const btn = document.getElementById('submit-btn');
-  btn.classList.add('loading');
-  btn.disabled = true;
-  document.getElementById('result').classList.remove('visible');
+//--- Rules (from rules.json, embedded for static use) ---
+const RISK_RULES = [
+  { id:"critical_electronic_failure", risk:"Critical",
+    condition:{ lock_type:"electronic", symptoms:["electronic_failure","battery_corrosion"] },
+    likely_cause:"Battery terminal corrosion has damaged the keypad or control board. Intermittent electronic failure indicates imminent lockout.",
+    technician_notes:"Test voltage at battery contacts. Inspect PCB for corrosion wicking. If unit powers but fails sporadically, replace keypad assembly. For LaGard/ILS models, check ribbon connector.",
+    recommended_action:"Replace battery contacts and keypad assembly. Clean terminals. Test full cycle 10x before closing door.",
+    parts_tools:"Replacement keypad assembly, battery contacts, contact cleaner (DeoxIT D5), multimeter, small flathead, 1.5mm hex, sacrificial batteries",
+    customer_explanation:"The battery area has corrosion that is damaging the electronics. It may stop working entirely at any moment. Replacing the keypad and battery contacts now will prevent a lockout.",
+    follow_up_months:12 },
+  { id:"critical_mechanical_seizure", risk:"High",
+    condition:{ lock_type:"mechanical_combination", symptoms:["dial_drag","handle_pressure"], age_min:15 },
+    likely_cause:"Dried or contaminated lubricant in the lock case combined with worn wheel pack bearings. Dial drag of 2+ inch-pounds indicates imminent failure.",
+    technician_notes:"Check dial torque with inch-pound gauge. Listen for grinding. Remove lock case and inspect wheel pack bushings. S&G 6730/6735 bearing failures common after 20 yrs.",
+    recommended_action:"Remove lock case, clean old lubricant, inspect wheel pack bushings, apply graphite or appropriate lubricant, reinstall and test. Replace bushings if worn.",
+    parts_tools:"Lock case removal tools, graphite powder (not oil), inch-pound torque gauge, replacement bushings (if S&G R-series or LaGard), inspection mirror",
+    customer_explanation:"The internal mechanism is dry and worn from years of use. It\u2019s getting harder to turn because the parts are binding. A professional cleaning and lubrication will restore smooth operation and prevent a future lockout.",
+    follow_up_months:6 },
+  { id:"high_handle_bolt_binding", risk:"High",
+    condition:{ symptoms:["handle_pressure","locking_bolts_sticky"], environment:{ humidity:"high" } },
+    likely_cause:"Rust or debris in the bolt mechanism. High humidity environment accelerates corrosion on bolt slide surfaces.",
+    technician_notes:"Test bolt throw with door open. Inspect bolt slides for rust/pitting. Check linkage pins \u2014 dry pivot points are common. Pay attention to relock trigger area.",
+    recommended_action:"Clean and lubricate bolt slides and linkage. Wire-brush rust. Apply dry-film lubricant to sliding surfaces, light oil to pivots. Cycle door 20x.",
+    parts_tools:"Wire brush, dry-film lubricant (Tri-Flow or equivalent), light machine oil, rags, flashlight",
+    customer_explanation:"The bolts that lock the door are sticking because of moisture and lack of maintenance. Cleaning and lubricating them will make the handle operate smoothly again.",
+    follow_up_months:6 },
+  { id:"moderate_door_alignment", risk:"Moderate",
+    condition:{ symptoms:["door_drag","handle_pressure"], environment:{ garage_or_outbuilding:true } },
+    likely_cause:"Door sag from foundation settling or hinge wear. Garage/outbuilding temperature swings cause expansion/contraction issues.",
+    technician_notes:"Check door gap top-to-bottom. Measure with feeler gauge. Check hinge pins for wear. Verify floor is level within 1/8\u2033. Check hinge bolts aren\u2019t loose.",
+    recommended_action:"Tighten hinge bolts. Shim if needed. Adjust strike plates. If door is out of square, note it for structural evaluation.",
+    parts_tools:"Socket set, feeler gauge, shim stock, level, torque wrench",
+    customer_explanation:"The door is slightly out of alignment, likely from the floor settling or temperature changes in your garage. Adjusting the hinges will fix the drag.",
+    follow_up_months:12 },
+  { id:"moderate_electronic_battery", risk:"Moderate",
+    condition:{ lock_type:"electronic", symptoms:["intermittent_opening"], usage_frequency:"daily" },
+    likely_cause:"Low battery voltage under load or loose battery connections. Heavy daily use drains batteries faster than expected.",
+    technician_notes:"Test battery voltage under load (press keypad while metering). Check spring contacts. Many electronic locks beep but don\u2019t fire solenoid when voltage drops below 4.8V for 6V systems.",
+    recommended_action:"Replace batteries with fresh alkaline. Clean contacts. Test 5 cycles. Advise customer on annual battery replacement schedule.",
+    parts_tools:"Fresh alkaline batteries (correct size), multimeter, contact cleaner",
+    customer_explanation:"The batteries are getting weak and don\u2019t have enough power to reliably unlock the safe every time. Fresh batteries will fix this \u2014 I recommend changing them once a year.",
+    follow_up_months:12 },
+  { id:"low_mechanical_dryness", risk:"Low",
+    condition:{ lock_type:"mechanical_combination", symptoms:["dial_drag"], last_service_min:5 },
+    likely_cause:"Original factory lubrication has dried out. No immediate danger but will worsen over time.",
+    technician_notes:"Check dial torque. If below 2 in-lbs and operation is consistent, service is preventive. If not addressed within 12-18 months, may progress to mechanical seizure.",
+    recommended_action:"Open lock case, clean and regraphite. Check wheel pack and drive cam. Educate customer on symptoms of worsening condition.",
+    parts_tools:"Lock case tools, graphite powder, cleaning solvent, inspection light",
+    customer_explanation:"The internal lubricant has dried out over time. It\u2019s not urgent, but servicing it now will keep it operating smoothly for years. If you wait, it could eventually get hard to open.",
+    follow_up_months:18 },
+  { id:"low_dial_loose_monitor", risk:"Low",
+    condition:{ symptoms:["dial_loose"], lock_type:"mechanical_combination" },
+    likely_cause:"Dial set-screw loosened or drive cam retaining ring working loose. Not immediately critical but can lead to inaccurate dialing.",
+    technician_notes:"Check set-screw on dial hub. Verify drive cam retaining ring is tight. For S&G dials, check that the spring washer is present under the dial.",
+    recommended_action:"Tighten set-screw or drive cam retaining ring. Test dial operation through full rotation.",
+    parts_tools:"Small flathead screwdriver, hex key set (usually 3/32 or 5/64 for set-screws), needle-nose pliers",
+    customer_explanation:"The dial has a small loose connection. It won\u2019t cause a lockout now, but if it gets worse, it could throw off your combination. A quick adjustment now will fix it.",
+    follow_up_months:24 },
+  { id:"moderate_no_service_history", risk:"Moderate",
+    condition:{ last_service_never:true, approx_age_min:10 },
+    likely_cause:"No maintenance history. Risk factors unknown. Preventative inspection warranted regardless of current symptoms.",
+    technician_notes:"Perform full inspection: check lock case, bolt work, door alignment, hinge pins, relock device condition. Document all findings for baseline.",
+    recommended_action:"Complete preventive service: clean lock, lubricate bolts, verify combination, test all functions, inspect relock device.",
+    parts_tools:"Full service kit (lock tools, lubricants, cleaning supplies, replacement batteries, flashlight, inspection mirror)",
+    customer_explanation:"Your safe has never been serviced, and safes need regular maintenance just like cars. I\u2019ll do a full inspection to make sure everything is in good shape and catch any problems early.",
+    follow_up_months:12 }
+];
 
+function matchRule(rule, input) {
+  const c = rule.condition;
+  // Symptoms: at least one must match if rule has symptoms
+  if (c.symptoms && c.symptoms.length > 0) {
+    if (!c.symptoms.some(s => input.symptoms.includes(s))) return false;
+  }
+  // Lock type
+  if (c.lock_type && c.lock_type !== input.lock_type) return false;
+  // Age minimum
+  if (c.age_min && input.age < c.age_min) return false;
+  // Approx age minimum
+  if (c.approx_age_min && input.age < c.approx_age_min) return false;
+  // Environment humidity
+  if (c.environment && c.environment.humidity && c.environment.humidity !== input.environment.humidity) return false;
+  // Garage/outbuilding
+  if (c.environment && c.environment.garage_or_outbuilding !== undefined && c.environment.garage_or_outbuilding !== input.environment.garage_or_outbuilding) return false;
+  // Usage frequency
+  if (c.usage_frequency && c.usage_frequency !== input.usage_frequency) return false;
+  // Last service min
+  if (c.last_service_min && (input.last_service_years_ago === null || input.last_service_years_ago < c.last_service_min)) return false;
+  // Last service never
+  if (c.last_service_never && input.last_service_years_ago !== null) return false;
+
+  return true;
+}
+
+function runPrediction() {
+  const btn = document.getElementById('submit-btn');
+  const spinner = document.getElementById('spinner');
+  const result = document.getElementById('result');
+  btn.disabled = true;
+  btn.textContent = 'Analyzing...';
+  spinner.classList.add('show');
+  result.classList.remove('visible');
+
+  // Collect input
   const symptoms = [];
   document.querySelectorAll('#symptoms-group .checkbox-label').forEach(el => {
-    if (el.querySelector('input').checked) {
-      symptoms.push(el.dataset.symptom);
-    }
+    if (el.querySelector('input').checked) symptoms.push(el.dataset.symptom);
   });
+
+  const lastSvc = document.getElementById('last_service').value;
+  const lastServiceYearsAgo = lastSvc === '' || lastSvc === null ? null : parseInt(lastSvc);
 
   const input = {
     safe_brand: document.getElementById('brand').value,
     lock_type: document.getElementById('lock_type').value,
-    approx_age_years: parseInt(document.getElementById('age').value) || 0,
+    age: parseInt(document.getElementById('age').value) || 0,
     symptoms: symptoms,
     environment: {
       humidity: document.getElementById('humidity').value,
@@ -343,107 +350,87 @@ async function runPrediction() {
       corrosion_visible: document.getElementById('corrosion').checked
     },
     usage_frequency: document.getElementById('usage').value,
-    last_service_years_ago: parseInt(document.getElementById('last_service').value) || null,
+    last_service_years_ago: lastServiceYearsAgo,
     customer_report: document.getElementById('report').value
   };
 
-  // Avoid sending 0 as "never" — if age is 0 or last_service is 0 that's misleading
-  if (input.last_service_years_ago === 0) input.last_service_years_ago = null;
-
-  try {
-    const resp = await fetch('/api/predict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input)
-    });
-
-    if (!resp.ok) {
-      const err = await resp.text();
-      showResult(input, null, 'Error: ' + err);
-      return;
+  setTimeout(() => {
+    // Match rules
+    let matched = null;
+    for (const rule of RISK_RULES) {
+      if (matchRule(rule, input)) {
+        matched = rule;
+        break;
+      }
     }
 
-    const data = await resp.json();
-    showResult(input, data, null);
-  } catch (e) {
-    // If server not available, run prediction via local call
-    try {
-      const data = await localPredict(input);
-      showResult(input, data, null);
-    } catch(e2) {
-      showResult(input, null, 'Prediction failed: ' + e2.message);
+    if (matched) {
+      showResult(input, matched);
+    } else {
+      showFallback(input);
     }
-  } finally {
-    btn.classList.remove('loading');
+
     btn.disabled = false;
-  }
+    btn.textContent = 'Run Prediction';
+    spinner.classList.remove('show');
+  }, 300);
 }
 
-function showResult(input, data, error) {
+function showResult(input, rule) {
   const container = document.getElementById('result');
   const badgeContainer = document.getElementById('risk-badge-container');
   const content = document.getElementById('result-content');
   const stats = document.getElementById('result-stats');
-
   container.classList.add('visible');
 
-  if (error) {
-    badgeContainer.innerHTML = `<div class="risk-badge" style="background:rgba(239,68,68,0.15);color:#ef4444;">⚠️ Error</div>`;
-    content.innerHTML = `<p style="color:#fca5a5;">${error}</p>`;
-    stats.innerHTML = '';
-    return;
-  }
+  const icons = { Low:'✅', Moderate:'⚡', High:'\uD83D\uDEA8', Critical:'\uD83D\uDD34' };
+  const icon = icons[rule.risk] || '\u26A0\uFE0F';
 
-  const risk = (data.risk || 'low').toLowerCase();
-  const icons = { low: '✅', moderate: '⚡', high: '🚨', critical: '🔴' };
-  const icon = icons[risk] || '⚠️';
-
-  badgeContainer.innerHTML = `<div class="risk-badge ${risk}">${icon} ${data.risk} Risk</div>`;
+  badgeContainer.innerHTML = `<div class="risk-badge ${rule.risk}">${icon} ${rule.risk} Risk</div>`;
 
   content.innerHTML = `
-    <div class="result-section">
-      <h3>Likely Failure Cause</h3>
-      <p>${data.likely_cause || data.likelyFailureCause || 'Not identified.'}</p>
-    </div>
-    <div class="result-section">
-      <h3>Technician Notes</h3>
-      <p>${data.technician_notes || data.technicianNotes || '—'}</p>
-    </div>
-    <div class="result-section">
-      <h3>Recommended Action</h3>
-      <p>${data.recommended_action || data.recommendedAction || '—'}</p>
-    </div>
-    <div class="result-section">
-      <h3>Customer-Friendly Explanation</h3>
-      <p>${data.customer_explanation || data.customerExplanation || '—'}</p>
-    </div>
+    <div class="result-section"><h3>Likely Failure Cause</h3><p>${rule.likely_cause}</p></div>
+    <div class="result-section"><h3>Technician Notes</h3><p>${rule.technician_notes}</p></div>
+    <div class="result-section"><h3>Recommended Action</h3><p>${rule.recommended_action}</p></div>
+    <div class="result-section"><h3>Customer-Friendly Explanation</h3><p>${rule.customer_explanation}</p></div>
   `;
 
   stats.innerHTML = `
-    <div class="result-stat"><div class="stat-label">Safe</div><div class="stat-value">${input.safe_brand} (${input.approx_age_years} yrs)</div></div>
+    <div class="result-stat"><div class="stat-label">Safe</div><div class="stat-value">${input.safe_brand} (${input.age} yrs)</div></div>
     <div class="result-stat"><div class="stat-label">Lock Type</div><div class="stat-value">${input.lock_type.replace(/_/g,' ')}</div></div>
-    <div class="result-stat"><div class="stat-label">Parts / Tools</div><div class="stat-value" style="font-weight:400;font-size:0.85rem;">${data.parts_tools || data.partsTools || 'Standard service kit'}</div></div>
-    <div class="result-stat"><div class="stat-label">Follow-Up</div><div class="stat-value">${data.follow_up_months || data.followUpMonths || '12'} months</div></div>
+    <div class="result-stat"><div class="stat-label">Parts / Tools</div><div class="stat-value" style="font-weight:400;font-size:0.85rem;">${rule.parts_tools}</div></div>
+    <div class="result-stat"><div class="stat-label">Follow-Up</div><div class="stat-value">${rule.follow_up_months} months</div></div>
+  `;
+  container.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function showFallback(input) {
+  const container = document.getElementById('result');
+  const badgeContainer = document.getElementById('risk-badge-container');
+  const content = document.getElementById('result-content');
+  const stats = document.getElementById('result-stats');
+  container.classList.add('visible');
+
+  badgeContainer.innerHTML = `<div class="risk-badge Low">\u2705 Low Risk</div>`;
+
+  content.innerHTML = `
+    <div class="result-section"><h3>Likely Failure Cause</h3><p>No immediate failure cause identified from the provided symptoms.</p></div>
+    <div class="result-section"><h3>Technician Notes</h3><p>Perform a general preventive inspection. Check lock case lubrication, bolt throw smoothness, door alignment, and relock device condition.</p></div>
+    <div class="result-section"><h3>Recommended Action</h3><p>General preventive service: clean and regraphite lock case, lubricate bolt slides and hinge pins, test all functions, document baseline.</p></div>
+    <div class="result-section"><h3>Customer-Friendly Explanation</h3><p>I didn\u2019t find any specific problems \u2014 your safe is in decent shape. I\u2019ll do a routine service to keep it that way and set a baseline.</p></div>
   `;
 
-  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  stats.innerHTML = `
+    <div class="result-stat"><div class="stat-label">Safe</div><div class="stat-value">${input.safe_brand} (${input.age} yrs)</div></div>
+    <div class="result-stat"><div class="stat-label">Lock Type</div><div class="stat-value">${input.lock_type.replace(/_/g,' ')}</div></div>
+    <div class="result-stat"><div class="stat-label">Parts / Tools</div><div class="stat-value" style="font-weight:400;font-size:0.85rem;">Standard safe service kit</div></div>
+    <div class="result-stat"><div class="stat-label">Follow-Up</div><div class="stat-value">12 months</div></div>
+  `;
 }
 
 function resetForm() {
   document.getElementById('result').classList.remove('visible');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// --- Local fallback prediction (calls predict.sh via fetch or inline) ---
-async function localPredict(input) {
-  // If the server endpoint is not available, we POST to predict.sh through Node
-  const resp = await fetch('/api/predict', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(input)
-  });
-  if (!resp.ok) throw new Error(await resp.text());
-  return resp.json();
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 </script>
 </body>
