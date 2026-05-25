@@ -134,7 +134,7 @@ export default function SymptomEditor({ onClose }) {
                 <button onClick={addCategory} className="text-xs bg-primary text-white rounded-full px-3 py-1 hover:bg-primary-hover">+ Add</button>
               </div>
               {groups.map((group, idx) => (
-                <div key={idx} className={`rounded-xl p-2 text-sm cursor-pointer transition-colors ${activeTab === idx ? 'bg-primary text-white' : 'hover:bg-slate-100'}`}>
+                <div key={idx} className={`rounded-xl p-2 text-sm cursor-pointer transition-colors ${activeTab === idx ? 'bg-primary text-accent' : 'hover:bg-slate-100'}`}>
                   <div className="flex items-center justify-between" onClick={() => { setActiveTab(idx); setActiveSymptom(null); }}>
                     <span className="font-medium truncate">{group.category}</span>
                     <span className="text-xs opacity-60">{group.symptoms.length}</span>

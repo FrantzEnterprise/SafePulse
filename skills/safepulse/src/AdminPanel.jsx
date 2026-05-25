@@ -111,7 +111,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-4 py-2 text-sm font-medium rounded-xl transition-colors ${
                     activeTab === tab.id
-                      ? 'bg-primary text-white'
+                      ? 'bg-primary text-accent'
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
