@@ -158,7 +158,7 @@ function CustomerIntake({ form, setForm }) {
     <>
       <input className="w-full rounded-xl border p-3" placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
       <input className="w-full rounded-xl border p-3" placeholder="(916) 555-1234" value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
-      <input className="w-full rounded-xl border p-3" placeholder="Your email (optional - get results emailed)" type="email" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+      <input className="w-full rounded-xl border p-3" placeholder="(optional) Enter your email for a copy of results" type="email" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
       <input className="w-full rounded-xl border p-3" placeholder="Safe brand/model if known" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
       <div className="space-y-1">
         <label className="text-sm font-medium">Type of lock</label>
