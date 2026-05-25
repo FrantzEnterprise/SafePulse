@@ -386,7 +386,7 @@ function InstructionsModal({ onClose }) {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
           <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
-          <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-[#d4a843] px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">&larr; Back</button>
+          <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-accent px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">&larr; Back</button>
         </div>
 
         <div className="space-y-5">
@@ -426,7 +426,7 @@ function InstructionsModal({ onClose }) {
         </div>
 
         <div className="mt-6 flex justify-center">
-          <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-[#d4a843] py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">&larr; Return to Triage</button>
+          <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-accent py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">&larr; Return to Triage</button>
         </div>
         </div>
       </div>
@@ -442,7 +442,7 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
       <div className="pb-3 mb-3 border-b border-slate-200">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-slate-900 leading-tight">{symptomLabel}</h2>
-          <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-[#d4a843] px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">
+          <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-accent px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">
             ← Back</button>
         </div>
       </div>
@@ -466,7 +466,7 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
       </div>
       {/* Bottom return button */}
       <div className="mt-6 flex justify-center">
-        <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-[#d4a843] py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">
+        <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-accent py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">
           ← Return to Symptom Selection
         </button>
       </div>
