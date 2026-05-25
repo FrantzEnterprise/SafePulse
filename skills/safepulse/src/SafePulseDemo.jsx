@@ -385,49 +385,54 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
 
 function InstructionsModal({ onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex overflow-hidden" onClick={onClose}>
-      <div className="w-full h-full overflow-y-auto bg-black/50 p-4" onClick={(e) => e.stopPropagation()}>
-        <div className="flex min-h-full items-center justify-center">
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
-            {/* Header */}
-            <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
-              <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
-              <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">&larr; Back</button>
-            </div>
-            <div className="space-y-5">
-              <section>
-                <h3 className="font-semibold text-base text-slate-900 mb-2">1. Customer Intake</h3>
-                <p className="text-sm text-slate-600">Fill in the customer's name, phone, safe brand, lock type, and whether the safe is currently open. Enter how many years since the last service. This helps the triage engine calculate an accurate risk score.</p>
-              </section>
-              <section>
-                <h3 className="font-semibold text-base text-slate-900 mb-2">2. Select Symptoms</h3>
-                <p className="text-sm text-slate-600">Tap <strong>"Show Symptoms"</strong> to browse symptom categories. Only categories relevant to your lock type will appear. Tap a symptom to see a popup with possible causes and the suggested remedy. Each symptom adds points to your risk score. You can select multiple symptoms.</p>
-              </section>
-              <section>
-                <h3 className="font-semibold text-base text-slate-900 mb-2">3. Upload Photos (Optional)</h3>
-                <p className="text-sm text-slate-600">Take photos of the safe, lock/keypad, door edge, or any visible damage. Photos help the technician prepare before arriving on site.</p>
-              </section>
-              <section>
-                <h3 className="font-semibold text-base text-slate-900 mb-2">4. Review Results</h3>
-                <p className="text-sm text-slate-600">The results panel on the right shows your risk score, risk level, and recommended actions. Use the map calculator to estimate distance and trip fees. A technician report is generated automatically at the bottom of the page.</p>
-              </section>
-              <section>
-                <h3 className="font-semibold text-base text-slate-900 mb-2">Risk Levels</h3>
-                <ul className="list-disc ml-5 text-sm space-y-1 text-slate-600">
-                  <li><strong>Low (0&ndash;24):</strong> Simple troubleshooting or preventive service.</li>
-                  <li><strong>Medium (25&ndash;49):</strong> Non-invasive checks recommended, monitor symptoms.</li>
-                  <li><strong>High (50&ndash;74):</strong> Schedule service soon, continued use may increase risk.</li>
-                  <li><strong>Urgent (75&ndash;100):</strong> Stop all attempts, contact a technician immediately.</li>
-                </ul>
-              </section>
-              <section className="rounded-xl border-l-4 border-l-blue-500 bg-blue-50 p-4">
-                <p className="text-sm font-medium text-blue-900">SafePulse is a triage tool to help identify safe issues and guide next steps. Always consult a qualified safe technician for any repair work.</p>
-              </section>
-            </div>
-            <div className="mt-6 flex justify-center">
-              <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-white py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">&larr; Return to Triage</button>
-            </div>
-          </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50" onClick={onClose}>
+      <div className="flex min-h-full items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
+        {/* Header */}
+        <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
+          <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
+          <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">&larr; Back</button>
+        </div>
+
+        <div className="space-y-5">
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">1. Customer Intake</h3>
+            <p className="text-sm text-slate-600">Fill in the customer's name, phone, safe brand, lock type, and whether the safe is currently open. Enter how many years since the last service. This helps the triage engine calculate an accurate risk score.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">2. Select Symptoms</h3>
+            <p className="text-sm text-slate-600">Tap <strong>"Show Symptoms"</strong> to browse symptom categories. Only categories relevant to your lock type will appear. Tap a symptom to see a popup with possible causes and the suggested remedy. Each symptom adds points to your risk score. You can select multiple symptoms.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">3. Upload Photos (Optional)</h3>
+            <p className="text-sm text-slate-600">Take photos of the safe, lock/keypad, door edge, or any visible damage. Photos help the technician prepare before arriving on site.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">4. Review Results</h3>
+            <p className="text-sm text-slate-600">The results panel on the right shows your risk score, risk level, and recommended actions. Use the map calculator to estimate distance and trip fees. A technician report is generated automatically at the bottom of the page.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">Risk Levels</h3>
+            <ul className="list-disc ml-5 text-sm space-y-1 text-slate-600">
+              <li><strong>Low (0&ndash;24):</strong> Simple troubleshooting or preventive service.</li>
+              <li><strong>Medium (25&ndash;49):</strong> Non-invasive checks recommended, monitor symptoms.</li>
+              <li><strong>High (50&ndash;74):</strong> Schedule service soon, continued use may increase risk.</li>
+              <li><strong>Urgent (75&ndash;100):</strong> Stop all attempts, contact a technician immediately.</li>
+            </ul>
+          </section>
+
+          <section className="rounded-xl border-l-4 border-l-blue-500 bg-blue-50 p-4">
+            <p className="text-sm font-medium text-blue-900">SafePulse is a triage tool to help identify safe issues and guide next steps. Always consult a qualified safe technician for any repair work.</p>
+          </section>
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-white py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">&larr; Return to Triage</button>
+        </div>
         </div>
       </div>
     </div>
@@ -437,7 +442,7 @@ function InstructionsModal({ onClose }) {
 function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
   if (!symptomData) return null;
   const modalContent = (
-    <div className="rounded-2xl bg-white p-5 shadow-xl">
+    <div className="rounded-2xl bg-white p-5 shadow-xl max-h-full overflow-y-auto">
       {/* Top bar with title + close */}
       <div className="pb-3 mb-3 border-b border-slate-200">
         <div className="flex items-center justify-between gap-3">
@@ -475,12 +480,10 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex overflow-hidden" onClick={onClose}>
-      <div className="w-full h-full overflow-y-auto bg-black/50 p-4" onClick={(e) => e.stopPropagation()}>
-        <div className="flex min-h-full items-center justify-center">
-          <div className="w-full max-w-2xl">
-            {modalContent}
-          </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50" onClick={onClose}>
+      <div className="flex min-h-full items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full max-w-2xl">
+          {modalContent}
         </div>
       </div>
     </div>
@@ -489,18 +492,16 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
 
 function ServiceLockoutModal() {
   return (
-    <div className="fixed inset-0 z-50 flex overflow-hidden">
-      <div className="w-full h-full overflow-y-auto bg-red-950/80 p-4">
-        <div className="flex min-h-full items-center justify-center">
-          <div className="w-full max-w-xl rounded-2xl border-4 border-red-400 bg-white p-6 text-center shadow-2xl">
-            <div className="text-5xl">⛔</div>
-            <h2 className="mt-3 text-3xl font-bold text-red-700">Contact for Safe Service</h2>
-            <p className="mt-3 text-lg font-semibold text-slate-900">This triage has reached the maximum risk threshold.</p>
-            <p className="mt-3 text-slate-700">Further customer input has been stopped to avoid confusing the service report. Based on the symptoms selected, this safe should be evaluated by a qualified safe technician.</p>
-            <div className="mt-5 rounded-xl bg-red-50 p-4 text-left text-sm text-red-900">
-              <p className="font-semibold">Recommended next step:</p>
-              <p>Stop repeated attempts and schedule safe service.</p>
-            </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-red-950/80">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="w-full max-w-xl rounded-2xl border-4 border-red-400 bg-white p-6 text-center shadow-2xl">
+          <div className="text-5xl">⛔</div>
+          <h2 className="mt-3 text-3xl font-bold text-red-700">Contact for Safe Service</h2>
+          <p className="mt-3 text-lg font-semibold text-slate-900">This triage has reached the maximum risk threshold.</p>
+          <p className="mt-3 text-slate-700">Further customer input has been stopped to avoid confusing the service report. Based on the symptoms selected, this safe should be evaluated by a qualified safe technician.</p>
+          <div className="mt-5 rounded-xl bg-red-50 p-4 text-left text-sm text-red-900">
+            <p className="font-semibold">Recommended next step:</p>
+            <p>Stop repeated attempts and schedule safe service.</p>
           </div>
         </div>
       </div>
@@ -510,29 +511,27 @@ function ServiceLockoutModal() {
 
 function BatteryPopup({ setShowBatteryPopup, setBatteryAttempted }) {
   return (
-    <div className="fixed inset-0 z-50 flex overflow-hidden">
-      <div className="w-full h-full overflow-y-auto bg-black/50 p-4">
-        <div className="flex min-h-full items-center justify-center">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
-            <h2 className="text-2xl font-bold text-slate-900">Recommended Battery Replacement</h2>
-            <p className="mt-2 text-slate-600">Many electronic safe lock problems are caused by weak or poor-quality batteries.</p>
-            <div className="mt-4 rounded-2xl border border-yellow-300 bg-yellow-50 p-4 text-yellow-900">
-              <p className="font-semibold">Recommended Batteries</p>
-              <ul className="mt-2 ml-5 list-disc text-sm space-y-1">
-                <li>Duracell Quantum</li>
-                <li>Energizer</li>
-              </ul>
-              <p className="mt-4 font-semibold">Do NOT Use:</p>
-              <ul className="mt-2 ml-5 list-disc text-sm space-y-1">
-                <li>Cheap batteries</li>
-                <li>Rechargeable batteries</li>
-              </ul>
-            </div>
-            <div className="mt-4 rounded-xl border bg-slate-50 p-3 text-sm text-slate-700">Install fresh premium batteries first, then retry the safe. If the keypad is beeping every 10–15 seconds, remove the batteries, press every keypad button for about one second, then install fresh Duracell Quantum or Energizer batteries before retrying the correct combination after the timeout period.</div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button onClick={() => { setBatteryAttempted(true); setShowBatteryPopup(false); }}>I Will Try Recommended Batteries</Button>
-              <Button variant="outline" onClick={() => setShowBatteryPopup(false)}>Continue Triage</Button>
-            </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900">Recommended Battery Replacement</h2>
+          <p className="mt-2 text-slate-600">Many electronic safe lock problems are caused by weak or poor-quality batteries.</p>
+          <div className="mt-4 rounded-2xl border border-yellow-300 bg-yellow-50 p-4 text-yellow-900">
+            <p className="font-semibold">Recommended Batteries</p>
+            <ul className="mt-2 ml-5 list-disc text-sm space-y-1">
+              <li>Duracell Quantum</li>
+              <li>Energizer</li>
+            </ul>
+            <p className="mt-4 font-semibold">Do NOT Use:</p>
+            <ul className="mt-2 ml-5 list-disc text-sm space-y-1">
+              <li>Cheap batteries</li>
+              <li>Rechargeable batteries</li>
+            </ul>
+          </div>
+          <div className="mt-4 rounded-xl border bg-slate-50 p-3 text-sm text-slate-700">Install fresh premium batteries first, then retry the safe. If the keypad is beeping every 10–15 seconds, remove the batteries, press every keypad button for about one second, then install fresh Duracell Quantum or Energizer batteries before retrying the correct combination after the timeout period.</div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Button onClick={() => { setBatteryAttempted(true); setShowBatteryPopup(false); }}>I Will Try Recommended Batteries</Button>
+            <Button variant="outline" onClick={() => setShowBatteryPopup(false)}>Continue Triage</Button>
           </div>
         </div>
       </div>
@@ -550,7 +549,44 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
     const extraMiles = Math.ceil(miles) - 17;
     setCalculatedTripFee(75 + extraMiles * 2.5);
   };
-  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"><div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl"><div className="mb-4 flex items-start justify-between gap-4"><div><h2 className="text-xl font-semibold">Service Area Map Calculator</h2><p className="text-sm text-slate-600">Demo framework: enter calculated driving miles from your shop. Later this can connect to Google Maps or another distance API.</p></div><Button variant="outline" onClick={() => setShowMapCalculator(false)}>Close</Button></div><div className="mb-4 h-64 rounded-2xl border bg-slate-100 p-4"><div className="flex h-full items-center justify-center rounded-xl border-2 border-dashed border-slate-300 text-center text-slate-600"><div><p className="font-semibold">Map Placeholder</p><p className="text-sm">Future version: customer address, shop address, route distance, and live map preview.</p></div></div></div><div className="grid gap-4 md:grid-cols-2"><div className="space-y-1"><label className="text-sm font-medium">Distance from shop in miles</label><input className="w-full rounded-xl border p-3" type="number" min="0" placeholder="Example: 24" value={distanceMiles} onChange={(e) => setDistanceMiles(e.target.value)} /></div><div className="rounded-xl border p-3"><p className="text-sm text-slate-500">Calculated Service / Trip Fee</p><p className="text-2xl font-bold">${calculatedTripFee.toFixed(2)}</p><p className="text-xs text-slate-500">$75 minimum includes 17 miles. Mile 18 and above is $2.50 per mile.</p></div></div><div className="mt-4 flex flex-wrap gap-2"><Button onClick={calculateTripFee}>Calculate Fee</Button><Button variant="outline" onClick={() => { setDistanceMiles(""); setCalculatedTripFee(75); }}>Reset to Minimum</Button></div></div></div>;
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold">Service Area Map Calculator</h2>
+              <p className="text-sm text-slate-600">Demo framework: enter calculated driving miles from your shop. Later this can connect to Google Maps or another distance API.</p>
+            </div>
+            <Button variant="outline" onClick={() => setShowMapCalculator(false)}>Close</Button>
+          </div>
+          <div className="mb-4 h-64 rounded-2xl border bg-slate-100 p-4">
+            <div className="flex h-full items-center justify-center rounded-xl border-2 border-dashed border-slate-300 text-center text-slate-600">
+              <div>
+                <p className="font-semibold">Map Placeholder</p>
+                <p className="text-sm">Future version: customer address, shop address, route distance, and live map preview.</p>
+              </div>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Distance from shop in miles</label>
+              <input className="w-full rounded-xl border p-3" type="number" min="0" placeholder="Example: 24" value={distanceMiles} onChange={(e) => setDistanceMiles(e.target.value)} />
+            </div>
+            <div className="rounded-xl border p-3">
+              <p className="text-sm text-slate-500">Calculated Service / Trip Fee</p>
+              <p className="text-2xl font-bold">{calculatedTripFee.toFixed(2)}</p>
+              <p className="text-xs text-slate-500">$75 minimum includes 17 miles. Mile 18 and above is $2.50 per mile.</p>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button onClick={calculateTripFee}>Calculate Fee</Button>
+            <Button variant="outline" onClick={() => { setDistanceMiles(""); setCalculatedTripFee(75); }}>Reset to Minimum</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function SafePulseDemo() {
