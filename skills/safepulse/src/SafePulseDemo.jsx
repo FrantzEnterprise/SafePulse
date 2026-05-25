@@ -292,7 +292,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
         <div className={`rounded-2xl border p-4 ${riskBannerStyles[risk.level]}`}>
           <div className="flex items-center justify-between gap-4">
             <div><p className="text-sm font-medium uppercase tracking-wide">Safe Status</p><p className="mt-1 text-2xl font-bold">{risk.level === "Low" && "✓ LOW RISK"}{risk.level === "Medium" && "⚠ MODERATE RISK"}{risk.level === "High" && "⚠ HIGH RISK"}{risk.level === "Urgent" && "⛔ URGENT CONDITION"}</p></div>
-            <div className="text-right"><p className="text-sm font-medium">Risk Score</p><p className="text-4xl font-bold">{score}/100</p><p className="mt-1 text-lg font-semibold">{risk.level}</p></div>
+            <div className="text-right"><p className="text-sm font-medium">Risk Score</p><p className="text-4xl font-bold" style={{color: score >= 75 ? '#dc2626' : score >= 50 ? '#ea580c' : score >= 25 ? '#ca8a04' : '#16a34a'}}>{score}/100</p><p className="mt-1 text-lg font-semibold">{risk.level}</p></div>
           </div>
           <p className="mt-3 text-sm font-medium">{risk.advice}</p>
         </div>
