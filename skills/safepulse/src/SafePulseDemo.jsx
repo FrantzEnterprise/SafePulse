@@ -457,6 +457,33 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           </div>
           <p className="mt-2 text-sm font-medium">{risk.advice}</p>
         </div>
+        <div className="flex gap-2 no-print mb-4"><Button onClick={() => { setForm({ ...form, helped: "Yes" }); }}>Advice Helped</Button><Button onClick={() => {
+          setForm({ ...form, helped: "No" });
+          // Build SMS notification
+          const companyPhone = config?.company?.phone || '';
+          const safePhone = companyPhone.replace(/[\s\(\)\-]/g, '');
+          const photoSummarySMS = Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None';
+          const msg = encodeURIComponent(
+`SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Currently Open: ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nCurrent Symptoms: ${form.symptoms.map(getSymptomLabel).join(', ') || 'None'}\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\nPhotos:\n${photoSummarySMS}\n\nEstimated Fee: \$${calculatedTripFee.toFixed(2)}\nDistance: ${distanceMiles || 'Not calculated'} miles`
+          );
+          // SMS to tech - use location.href for reliable mobile sms: protocol
+          if (safePhone) {
+            window.location.href = `sms:${safePhone}?body=${msg}`;
+          }
+          // Auto-reply to customer via email - delayed to allow SMS to process first
+          if (form.phone && form.phone.replace(/\D/g,'').length >= 10) {
+            const autoReply = encodeURIComponent(
+`Hi ${form.name || 'Valued Customer'},\n\nThank you for using Frantz Locksmith Service's SafeTriage tool.\n\nRobert has received your safe service request and will contact you ASAP at ${form.phone}.\n\n=== SAFE-TRIAGE REPORT ===\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Status: Currently ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nSymptoms Reported:\n${triageHistory.map(getSymptomLabel).join(', ') || 'None selected'}\n\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nPhotos Uploaded:\n${Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None'}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\n---\nIf you have additional details, call (916) 534-4900.\n\nBest,\nRobert Frantz\nFrantz Locksmith Service\n(916) 534-4900\nfrantzlocksmith@hotmail.com\nCA LCO 4160`
+            );
+            const recipient = config?.company?.email || '';
+            const customerEmail = form.email || '';
+            const toField = customerEmail || recipient;
+            const bccField = customerEmail ? recipient : '';
+            if (recipient) {
+              document.location.href = `mailto:${toField}?bcc=${bccField}&subject=SafeTriage%20Request%20-%20${encodeURIComponent(form.name || 'Customer')}&body=${autoReply}`;
+            }
+          }
+        }}>Still Needs Tech</Button></div>
         <div className="rounded-2xl bg-white p-4 space-y-3">
           <div><p className="font-semibold">General Recommendation</p><p>{risk.advice}</p></div>
           {symptomRecommendations.length > 0 && <div><p className="font-semibold">Symptom Analysis</p><ul className="ml-5 list-disc text-sm space-y-2">{symptomRecommendations.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
