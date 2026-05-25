@@ -2,9 +2,9 @@ import React, { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// SAFEPOINT BASELINE v3
-// Stable checkpoint before building outward into separate files.
-// Current safe-service triage feature set.
+// SAFEPOINT v0.5.1 — popup modal for symptom answers
+// Each symptom selection shows its result in a clean modal overlay
+// instead of scrolling to the bottom mixed with other info.
 
 // ─── SYMPTOM GROUPS ──────────────────────────────────────────────────────────
 // Categories: Dial Locks, Electronic Locks, Mechanical Issues, Environmental Issues
@@ -383,6 +383,51 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
   );
 }
 
+function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
+  if (!symptomData) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">{symptomLabel}</h2>
+            <p className="text-sm text-slate-500 mt-1">Symptom analysis and recommended action</p>
+          </div>
+          <button onClick={onClose} className="rounded-full bg-slate-200 px-3 py-1 text-sm hover:bg-slate-300">Close ×</button>
+        </div>
+        {symptomData.note && (
+          <div className="rounded-xl border bg-slate-50 p-4 mb-4">
+            <p className="text-sm text-slate-700">{symptomData.note}</p>
+          </div>
+        )}
+        <div className="space-y-4">
+          <div className="rounded-xl border bg-white p-4">
+            <p className="font-semibold text-lg mb-2">Possible Causes</p>
+            <ul className="ml-5 list-disc text-sm space-y-1">
+              {symptomData.causes.map((cause, i) => <li key={i}>{cause}</li>)}
+            </ul>
+          </div>
+          <div className="rounded-xl border bg-green-50 p-4">
+            <p className="font-semibold text-lg mb-2">Suggested Remedy</p>
+            <p className="text-sm">{symptomData.remedy}</p>
+          </div>
+          {symptomData.parts && symptomData.parts.length > 0 && (
+            <div className="rounded-xl border bg-white p-4">
+              <p className="font-semibold text-lg mb-2">Parts / Tools to Bring</p>
+              <ul className="ml-5 list-disc text-sm space-y-1">
+                {symptomData.parts.map((part, i) => <li key={i}>{part}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div className="mt-6 flex justify-end">
+          <Button onClick={onClose}>Close</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ServiceLockoutModal() {
   return <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-950/80 p-4"><div className="w-full max-w-xl rounded-2xl border-4 border-red-400 bg-white p-6 text-center shadow-2xl"><div className="text-5xl">⛔</div><h2 className="mt-3 text-3xl font-bold text-red-700">Contact for Safe Service</h2><p className="mt-3 text-lg font-semibold text-slate-900">This triage has reached the maximum risk threshold.</p><p className="mt-3 text-slate-700">Further customer input has been stopped to avoid confusing the service report. Based on the symptoms selected, this safe should be evaluated by a qualified safe technician.</p><div className="mt-5 rounded-xl bg-red-50 p-4 text-left text-sm text-red-900"><p className="font-semibold">Recommended next step:</p><p>Stop repeated attempts and schedule safe service.</p></div></div></div>;
 }
@@ -415,6 +460,8 @@ export default function SafePulseDemo() {
   const [distanceMiles, setDistanceMiles] = useState("");
   const [calculatedTripFee, setCalculatedTripFee] = useState(75);
   const [uploadedPhotos, setUploadedPhotos] = useState({});
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [lastSelectedSymptom, setLastSelectedSymptom] = useState(null);
   const [form, setForm] = useState({ name: "", phone: "", brand: "", lockType: "Electronic keypad", safeOpen: "Yes", serviceAge: "", symptoms: [], tried: "", helped: "Not answered yet" });
 
   const score = useMemo(() => {
@@ -457,7 +504,9 @@ export default function SafePulseDemo() {
     });
     setForm((prev) => ({ ...prev, symptoms: prev.symptoms.includes(id) ? prev.symptoms.filter((s) => s !== id) : [...prev.symptoms, id] }));
     setShowSymptoms(false);
-    setTimeout(() => document.getElementById("triage-results")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+    // Show popup modal with the symptom result
+    setLastSelectedSymptom(id);
+    setShowResultModal(true);
   };
 
   const photoSummary = Object.entries(uploadedPhotos).filter(([, file]) => file).map(([slotId, file]) => {
@@ -505,6 +554,15 @@ Advice Helpful?: ${form.helped}`;
       {lockedForService && <ServiceLockoutModal />}
       {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
       {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} />}
+      {showResultModal && lastSelectedSymptom && (
+        <SymptomResultModal
+          symptomId={lastSelectedSymptom}
+          symptomData={possibleCauseLibrary[lastSelectedSymptom]}
+          symptomLabel={getSymptomLabel(lastSelectedSymptom)}
+          onClose={() => { setShowResultModal(false); setLastSelectedSymptom(null); }}
+        />
+      )}
     </div>
   );
 }
+
