@@ -352,7 +352,7 @@ function PhotoUpload({ uploadedPhotos, setUploadedPhotos, showPhotoUpload, setSh
   );
 }
 
-function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, setShowMapCalculator, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel }) {
+function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, setShowMapCalculator, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel, uploadedPhotos, photoSummary }) {
   const riskBannerStyles = {
     Low: "bg-green-100 border-green-300 text-green-800",
     Medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
@@ -418,13 +418,29 @@ Thank you for using Frantz Locksmith Service's SafeTriage tool.
 
 Robert has received your safe service request and will contact you ASAP at ${form.phone}.
 
-Here is what you submitted:
+=== SAFE-TRIAGE REPORT ===
 
-Safe: ${form.brand || 'Unknown'} (${form.lockType})
-Risk: ${score}/100 — ${risk.level}
-Symptoms: ${triageHistory.map(getSymptomLabel).join(', ')}
+Customer: ${form.name || 'Not provided'}
+Phone: ${form.phone || 'Not provided'}
+Safe Brand: ${form.brand || 'Unknown'}
+Lock Type: ${form.lockType}
+Safe Status: Currently ${form.safeOpen}
+Years Since Service: ${form.serviceAge || 'Unknown'}
 
-If you have additional details, reply to this email or call (916) 534-4900.
+Symptoms Reported:
+${triageHistory.map(getSymptomLabel).join(', ') || 'None selected'}
+
+Risk Score: ${score}/100 — ${risk.level}
+Recommendation: ${risk.advice}
+
+Photos Uploaded:
+${Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None'}
+
+What Customer Tried:
+${form.tried || 'Not provided'}
+
+---
+If you have additional details, call (916) 534-4900.
 
 Best,
 Robert Frantz
@@ -785,7 +801,7 @@ Advice Helpful?: ${form.helped}`;
               <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
             </CardContent>
           </Card>
-          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} setShowMapCalculator={setShowMapCalculator} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} />
+          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} setShowMapCalculator={setShowMapCalculator} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} />
         </div>
         <Card className="rounded-2xl shadow-sm"><CardContent className="space-y-3 p-5"><h2 className="text-xl font-semibold">Technician Text Report</h2><textarea className="h-72 w-full rounded-xl border p-3 font-mono text-sm" value={report} readOnly /></CardContent></Card>
       </div>
