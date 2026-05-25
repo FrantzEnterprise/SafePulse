@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -385,8 +385,8 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
 
 function InstructionsModal({ onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 pt-8 pb-8" onClick={onClose}>
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl max-h-full overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex bg-black/50 overflow-hidden" onClick={onClose}>
+      <div className="w-full max-w-2xl m-auto rounded-2xl bg-white p-5 shadow-xl max-h-[90%] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
           <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
@@ -440,7 +440,7 @@ function InstructionsModal({ onClose }) {
 function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
   if (!symptomData) return null;
   const modalContent = (
-    <div className="rounded-2xl bg-white p-5 shadow-xl max-h-[85vh] overflow-y-auto">
+    <div className="rounded-2xl bg-white p-5 shadow-xl max-h-full overflow-y-auto">
       {/* Top bar with title + close */}
       <div className="pb-3 mb-3 border-b border-slate-200">
         <div className="flex items-center justify-between gap-3">
@@ -478,8 +478,8 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 pt-8 pb-8" onClick={onClose}>
-      <div className="w-full max-w-2xl" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex bg-black/50 overflow-hidden" onClick={onClose}>
+      <div className="w-full max-w-2xl m-auto max-h-[90%]" onClick={(e) => e.stopPropagation()}>
         {modalContent}
       </div>
     </div>
@@ -521,6 +521,18 @@ export default function SafePulseDemo() {
   const [showResultModal, setShowResultModal] = useState(false);
   const [lastSelectedSymptom, setLastSelectedSymptom] = useState(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  
+  // Lock body scroll when any modal is open
+  const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService;
+  useEffect(() => {
+    if (anyModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [anyModalOpen]);
+
   const [form, setForm] = useState({ name: "", phone: "", brand: "", lockType: "Electronic keypad", safeOpen: "Yes", serviceAge: "", symptoms: [], tried: "", helped: "Not answered yet" });
 
   const score = useMemo(() => {
