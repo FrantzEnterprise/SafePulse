@@ -385,8 +385,8 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
 
 function InstructionsModal({ onClose }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 pt-8 pb-8" onClick={onClose}>
+      <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl max-h-full overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
           <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
@@ -441,8 +441,8 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
   if (!symptomData) return null;
   const modalContent = (
     <div className="rounded-2xl bg-white p-5 shadow-xl max-h-[85vh] overflow-y-auto">
-      {/* Fixed top bar with title + close */}
-      <div className="sticky top-0 z-10 bg-white pb-3 mb-3 border-b border-slate-200">
+      {/* Top bar with title + close */}
+      <div className="pb-3 mb-3 border-b border-slate-200">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-slate-900 leading-tight">{symptomLabel}</h2>
           <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">
@@ -477,9 +477,8 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
     </div>
   );
 
-  // If the symptom content fits without scroll, use items-center. Otherwise items-start.
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 pt-12" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 px-4 pt-8 pb-8" onClick={onClose}>
       <div className="w-full max-w-2xl" onClick={(e) => e.stopPropagation()}>
         {modalContent}
       </div>
