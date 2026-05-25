@@ -84,6 +84,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
     { id: 'company', label: 'Company Info' },
     { id: 'service', label: 'Service Area' },
     { id: 'features', label: 'Features' },
+    { id: 'qa', label: 'Q&A' },
     { id: 'symptoms', label: 'Symptoms' },
     { id: 'integrations', label: 'Integrations' },
     { id: 'export', label: 'Export' },
@@ -283,6 +284,38 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                       </label>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Q&A */}
+              {activeTab === 'qa' && (
+                <div className="space-y-4">
+                  <p className="text-sm text-slate-600">
+                    Enable a Q&A link in SafeTriage that points to your website's knowledge base.
+                    Configure the link URL and toggle visibility below.
+                  </p>
+                  <div className="admin-section flex items-center justify-between">
+                    <div>
+                      <label className="font-medium text-sm text-slate-700">Show Q&A Link in App</label>
+                      <p className="text-xs text-slate-500">When enabled, a "Knowledge Base" button appears in the app header.</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" checked={localConfig.features.showQaSection || false}
+                        onChange={(e) => {
+                          const updated = { ...localConfig };
+                          updated.features = { ...updated.features, showQaSection: e.target.checked };
+                          setLocalConfig(updated);
+                          setSaved(false);
+                        }} />
+                      <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                  </div>
+                  <div className="admin-section">
+                    <label className="admin-label">Knowledge Base URL</label>
+                    <p className="text-xs text-slate-500 mb-2">Link to the Q&A page on your website.</p>
+                    <input className="admin-input" placeholder="https://frantzlocksmithservice.com/knowledge-base" value={localConfig.qaUrl || ''}
+                      onChange={(e) => handleChange('root', 'qaUrl', e.target.value)} />
+                  </div>
                 </div>
               )}
 

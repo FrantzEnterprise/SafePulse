@@ -37,6 +37,7 @@
     "showBatteryPopup": true,
     "showTechnicianReport": true,
     "showInstructions": true,
+    "showQaSection": false,
     "maxScoreBeforeLockout": 100
   },
   "tagline": "Sacramento's Safe Specialist — Mobile Service Since 1985",

@@ -716,6 +716,11 @@ Advice Helpful?: ${form.helped}`;
             <button onClick={() => setShowAdmin(true)} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Admin Settings">
               &#9881; Admin
             </button>
+            {config?.features?.showQaSection && config?.qaUrl && (
+              <a href={config.qaUrl} target="_blank" rel="noopener noreferrer" className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
+                Knowledge Base
+              </a>
+            )}
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
