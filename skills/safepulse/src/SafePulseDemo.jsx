@@ -1,6 +1,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useConfig } from "./useConfig";
+import AdminPanel from "./AdminPanel";
 
 // SAFEPOINT v0.5.1 — popup modal for symptom answers
 // Each symptom selection shows its result in a clean modal overlay
@@ -386,8 +388,8 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
 function InstructionsModal({ onClose }) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50" onClick={onClose}>
-      <div className="flex min-h-full items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
-        <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
+      <div className="py-8 px-4" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full max-w-2xl mx-auto rounded-2xl bg-white p-5 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
           <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
@@ -539,15 +541,16 @@ function BatteryPopup({ setShowBatteryPopup, setBatteryAttempted }) {
   );
 }
 
-function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, setShowMapCalculator }) {
+function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, setShowMapCalculator, config }) {
   const calculateTripFee = () => {
+    const cfg = config?.serviceArea || { baseFee: 75, baseMilesIncluded: 17, perExtraMileRate: 2.5 };
     const miles = Number(distanceMiles);
-    if (!miles || miles <= 17) {
-      setCalculatedTripFee(75);
+    if (!miles || miles <= cfg.baseMilesIncluded) {
+      setCalculatedTripFee(cfg.baseFee);
       return;
     }
-    const extraMiles = Math.ceil(miles) - 17;
-    setCalculatedTripFee(75 + extraMiles * 2.5);
+    const extraMiles = Math.ceil(miles) - cfg.baseMilesIncluded;
+    setCalculatedTripFee(cfg.baseFee + extraMiles * cfg.perExtraMileRate);
   };
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
@@ -590,12 +593,14 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
 }
 
 export default function SafePulseDemo() {
-  const [showMapCalculator, setShowMapCalculator] = useState(false);
+  const { config, loaded, updateConfig, cssVars } = useConfig();
+  const [showAdmin, setShowAdmin] = useState(() => new URLSearchParams(window.location.search).get('admin') === 'true');
   const [showBatteryPopup, setShowBatteryPopup] = useState(false);
   const [batteryAttempted, setBatteryAttempted] = useState(false);
   const [showSymptoms, setShowSymptoms] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [lockedForService, setLockedForService] = useState(false);
+  const [showMapCalculator, setShowMapCalculator] = useState(false);
   const [triageHistory, setTriageHistory] = useState([]);
   const [distanceMiles, setDistanceMiles] = useState("");
   const [calculatedTripFee, setCalculatedTripFee] = useState(75);
@@ -606,6 +611,14 @@ export default function SafePulseDemo() {
   
   // Lock body scroll when any modal is open
   const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService;
+
+  // Apply CSS vars from config
+  useEffect(() => {
+    const root = document.documentElement;
+    Object.entries(cssVars).forEach(([key, val]) => {
+      root.style.setProperty(key, val);
+    });
+  }, [cssVars]);
   useEffect(() => {
     if (anyModalOpen) {
       document.body.style.overflow = "hidden";
@@ -692,12 +705,17 @@ Advice Helpful?: ${form.helped}`;
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">SafePulse Demo</h1>
-            <p className="text-slate-600">Simple safe-service triage for customers and technicians.</p>
+            <h1 className="text-3xl font-bold">{config.company.name}</h1>
+            <p className="text-slate-600"><span className="text-primary font-semibold">SafePulse</span> &mdash; Safe-service triage for customers and technicians.</p>
           </div>
-          <button onClick={() => setShowInstructions(true)} className="shrink-0 rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
-            ? Instructions
-          </button>
+          <div className="flex gap-2 shrink-0">
+            <button onClick={() => setShowInstructions(true)} className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
+              ? Instructions
+            </button>
+            <button onClick={() => setShowAdmin(true)} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Admin Settings">
+              &#9881; Admin
+            </button>
+          </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="rounded-2xl shadow-sm">
@@ -714,7 +732,7 @@ Advice Helpful?: ${form.helped}`;
       </div>
       {lockedForService && <ServiceLockoutModal />}
       {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
-      {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} />}
+      {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
       {showResultModal && lastSelectedSymptom && (
         <SymptomResultModal
           symptomId={lastSelectedSymptom}
@@ -723,6 +741,7 @@ Advice Helpful?: ${form.helped}`;
           onClose={() => { setShowResultModal(false); setLastSelectedSymptom(null); }}
         />
       )}
+      {showAdmin && <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />}
       {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
     </div>
   );

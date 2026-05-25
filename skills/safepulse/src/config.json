@@ -1,0 +1,36 @@
+{
+  "company": {
+    "name": "Frantz Safe & Lock",
+    "phone": "(555) 555-5555",
+    "email": "service@frantzsafes.com",
+    "website": "https://frantzenterprise.github.io/SafePulse/",
+    "logoUrl": "",
+    "address": "123 Main St, Anytown, USA"
+  },
+  "branding": {
+    "primaryColor": "#1e40af",
+    "primaryHover": "#1e3a8a",
+    "accentColor": "#f59e0b",
+    "backgroundColor": "#ffffff",
+    "headerBg": "#0f172a",
+    "headerText": "#ffffff",
+    "fontFamily": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+  },
+  "serviceArea": {
+    "shopAddress": "123 Main St, Anytown, USA",
+    "baseMilesIncluded": 17,
+    "baseFee": 75,
+    "perExtraMileRate": 2.50,
+    "maxRadiusMiles": 100
+  },
+  "googleMapsApiKey": "",
+  "features": {
+    "showPhotoUpload": true,
+    "showMapCalculator": true,
+    "showBatteryPopup": true,
+    "showTechnicianReport": true,
+    "showInstructions": true,
+    "maxScoreBeforeLockout": 100
+  },
+  "version": "1.0.0"
+}
