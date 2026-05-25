@@ -439,7 +439,7 @@ function PhotoUpload({ uploadedPhotos, setUploadedPhotos, showPhotoUpload, setSh
   );
 }
 
-function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, setShowMapCalculator, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel, uploadedPhotos, photoSummary, distanceMiles }) {
+function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel, uploadedPhotos, photoSummary, distanceMiles }) {
   const riskBannerStyles = {
     Low: "bg-green-100 border-green-300 text-green-800",
     Medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
@@ -497,7 +497,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           <div className="rounded-xl border bg-slate-50 p-4"><p className="text-sm text-slate-500">Recommended Service Type</p><p className="mt-1 text-xl font-bold">{dispatchType.type}</p><p className="mt-2 text-sm text-slate-600">Typical estimated onsite time: {dispatchType.time}</p></div>
           <div><p className="font-semibold text-lg">Possible Service & Cost Framework</p><p className="text-sm text-slate-600">Ballpark estimates only. Final pricing depends on safe type, lock condition, accessibility, parts required, and service complexity.</p></div>
           <div className="grid gap-3 md:grid-cols-2"><div className="rounded-xl border p-3"><p className="text-sm text-slate-500">Estimated Service / Trip Fee</p><p className="font-semibold">${calculatedTripFee.toFixed(2)} minimum</p><p className="mt-1 text-xs text-slate-500">Base rate includes first 17 miles. Add $2.50 per mile from mile 18 and up.</p></div><div className="rounded-xl border p-3"><p className="text-sm text-slate-500">Estimated Labor — Standard Safes</p><p className="font-semibold text-lg">{serviceEstimate?.standard} <span className="text-sm font-normal text-slate-400">starting at $275</span></p><p className="mt-2 text-sm text-slate-500">Estimated Labor — High Security Safes</p><p className="font-semibold text-lg">{serviceEstimate?.highSecurity} <span className="text-sm font-normal text-slate-400">starting at $800</span></p></div></div>
-          <div className="rounded-xl border p-3"><div className="mb-3 flex flex-wrap items-center justify-between gap-2"><div><p className="font-semibold">Service Area Calculator</p><p className="text-sm text-slate-600">Calculate the trip fee based on distance from your shop.</p></div><Button onClick={() => setShowMapCalculator(true)}>Open Map Calculator</Button></div><p className="text-sm">Current calculated fee: <strong>${calculatedTripFee.toFixed(2)}</strong></p></div>
+
           <div className="rounded-xl border p-3"><p className="font-semibold">Service Notes</p><p className="text-sm">{serviceEstimate?.notes}</p></div>
           {possibleCauses.length > 0 && <div className="space-y-3"><p className="font-semibold">Possible Causes & Remedies</p>{possibleCauses.map((item, index) => <div key={index} className="rounded-xl border bg-slate-50 p-3"><p className="font-medium">Possible Causes</p><ul className="ml-5 list-disc text-sm">{item.causes.map((cause, causeIndex) => <li key={causeIndex}>{cause}</li>)}</ul><p className="mt-3 font-medium">Suggested Remedy</p><p className="text-sm">{item.remedy}</p><p className="mt-3 font-medium">Possible Parts Needed</p><ul className="ml-5 list-disc text-sm">{item.parts.map((part, partIndex) => <li key={partIndex}>{part}</li>)}</ul></div>)}</div>}
         </div>
@@ -725,57 +725,6 @@ function BatteryPopup({ setShowBatteryPopup, setBatteryAttempted }) {
   );
 }
 
-function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, setShowMapCalculator, config }) {
-  const calculateTripFee = () => {
-    const cfg = config?.serviceArea || { baseFee: 75, baseMilesIncluded: 17, perExtraMileRate: 2.5 };
-    const miles = Number(distanceMiles);
-    if (!miles || miles <= cfg.baseMilesIncluded) {
-      setCalculatedTripFee(cfg.baseFee);
-      return;
-    }
-    const extraMiles = Math.ceil(miles) - cfg.baseMilesIncluded;
-    setCalculatedTripFee(cfg.baseFee + extraMiles * cfg.perExtraMileRate);
-  };
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
-      <div className="flex min-h-full items-center justify-center p-4">
-        <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
-          <div className="mb-4 flex items-start justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-semibold">Service Area Map Calculator</h2>
-              <p className="text-sm text-slate-600">Demo framework: enter calculated driving miles from your shop. Later this can connect to Google Maps or another distance API.</p>
-            </div>
-            <Button variant="outline" onClick={() => setShowMapCalculator(false)}>Close</Button>
-          </div>
-          <div className="mb-4 h-64 rounded-2xl border bg-slate-100 p-4">
-            <div className="flex h-full items-center justify-center rounded-xl border-2 border-dashed border-slate-300 text-center text-slate-600">
-              <div>
-                <p className="font-semibold">Map Placeholder</p>
-                <p className="text-sm">Future version: customer address, shop address, route distance, and live map preview.</p>
-              </div>
-            </div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1">
-              <label className="text-sm font-medium">Distance from shop in miles</label>
-              <input className="w-full rounded-xl border p-3" type="number" min="0" placeholder="Example: 24" value={distanceMiles} onChange={(e) => setDistanceMiles(e.target.value)} />
-            </div>
-            <div className="rounded-xl border p-3">
-              <p className="text-sm text-slate-500">Calculated Service / Trip Fee</p>
-              <p className="text-2xl font-bold">{calculatedTripFee.toFixed(2)}</p>
-              <p className="text-xs text-slate-500">$75 minimum includes 17 miles. Mile 18 and above is $2.50 per mile.</p>
-            </div>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button onClick={calculateTripFee}>Calculate Fee</Button>
-            <Button variant="outline" onClick={() => { setDistanceMiles(""); setCalculatedTripFee(75); }}>Reset to Minimum</Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function SafePulseDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
   const [showAdmin, setShowAdmin] = useState(() => new URLSearchParams(window.location.search).get('admin') === 'true');
@@ -784,7 +733,6 @@ export default function SafePulseDemo() {
   const [showSymptoms, setShowSymptoms] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [lockedForService, setLockedForService] = useState(false);
-  const [showMapCalculator, setShowMapCalculator] = useState(false);
   const [triageHistory, setTriageHistory] = useState([]);
   const [distanceMiles, setDistanceMiles] = useState("");
   const [calculatedTripFee, setCalculatedTripFee] = useState(75);
@@ -794,7 +742,7 @@ export default function SafePulseDemo() {
   const [showInstructions, setShowInstructions] = useState(false);
   
   // Lock body scroll when any modal is open
-  const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService;
+  const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || lockedForService;
 
   // Apply CSS vars from config
   useEffect(() => {
@@ -925,13 +873,12 @@ Advice Helpful?: ${form.helped}`;
               />
             </CardContent>
           </Card>
-          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} setShowMapCalculator={setShowMapCalculator} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} />
+          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} />
         </div>
         <Card className="rounded-2xl shadow-sm"><CardContent className="space-y-3 p-5"><h2 className="text-xl font-semibold">Technician Text Report</h2><textarea className="h-72 w-full rounded-xl border p-3 font-mono text-sm" value={report} readOnly /></CardContent></Card>
       </div>
       {lockedForService && <ServiceLockoutModal />}
       {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
-      {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
       {showResultModal && lastSelectedSymptom && (
         <SymptomResultModal
           symptomId={lastSelectedSymptom}
