@@ -383,6 +383,60 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
   );
 }
 
+function InstructionsModal({ onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
+          <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
+          <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">&larr; Back</button>
+        </div>
+
+        <div className="space-y-5">
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">1. Customer Intake</h3>
+            <p className="text-sm text-slate-600">Fill in the customer's name, phone, safe brand, lock type, and whether the safe is currently open. Enter how many years since the last service. This helps the triage engine calculate an accurate risk score.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">2. Select Symptoms</h3>
+            <p className="text-sm text-slate-600">Tap <strong>"Show Symptoms"</strong> to browse symptom categories. Only categories relevant to your lock type will appear. Tap a symptom to see a popup with possible causes and the suggested remedy. Each symptom adds points to your risk score. You can select multiple symptoms.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">3. Upload Photos (Optional)</h3>
+            <p className="text-sm text-slate-600">Take photos of the safe, lock/keypad, door edge, or any visible damage. Photos help the technician prepare before arriving on site.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">4. Review Results</h3>
+            <p className="text-sm text-slate-600">The results panel on the right shows your risk score, risk level, and recommended actions. Use the map calculator to estimate distance and trip fees. A technician report is generated automatically at the bottom of the page.</p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base text-slate-900 mb-2">Risk Levels</h3>
+            <ul className="list-disc ml-5 text-sm space-y-1 text-slate-600">
+              <li><strong>Low (0&ndash;24):</strong> Simple troubleshooting or preventive service.</li>
+              <li><strong>Medium (25&ndash;49):</strong> Non-invasive checks recommended, monitor symptoms.</li>
+              <li><strong>High (50&ndash;74):</strong> Schedule service soon, continued use may increase risk.</li>
+              <li><strong>Urgent (75&ndash;100):</strong> Stop all attempts, contact a technician immediately.</li>
+            </ul>
+          </section>
+
+          <section className="rounded-xl border-l-4 border-l-blue-500 bg-blue-50 p-4">
+            <p className="text-sm font-medium text-blue-900">SafePulse is a triage tool to help identify safe issues and guide next steps. Always consult a qualified safe technician for any repair work.</p>
+          </section>
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-white py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">&larr; Return to Triage</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
   if (!symptomData) return null;
   const modalContent = (
@@ -467,6 +521,7 @@ export default function SafePulseDemo() {
   const [uploadedPhotos, setUploadedPhotos] = useState({});
   const [showResultModal, setShowResultModal] = useState(false);
   const [lastSelectedSymptom, setLastSelectedSymptom] = useState(null);
+  const [showInstructions, setShowInstructions] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", brand: "", lockType: "Electronic keypad", safeOpen: "Yes", serviceAge: "", symptoms: [], tried: "", helped: "Not answered yet" });
 
   const score = useMemo(() => {
@@ -542,7 +597,15 @@ Advice Helpful?: ${form.helped}`;
   return (
     <div className="min-h-screen bg-slate-100 p-6 text-slate-900">
       <div className="mx-auto max-w-5xl space-y-6">
-        <div><h1 className="text-3xl font-bold">SafePulse Demo</h1><p className="text-slate-600">Simple safe-service triage for customers and technicians.</p></div>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">SafePulse Demo</h1>
+            <p className="text-slate-600">Simple safe-service triage for customers and technicians.</p>
+          </div>
+          <button onClick={() => setShowInstructions(true)} className="shrink-0 rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
+            ? Instructions
+          </button>
+        </div>
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="rounded-2xl shadow-sm">
             <CardContent className="space-y-4 p-5">
@@ -567,6 +630,7 @@ Advice Helpful?: ${form.helped}`;
           onClose={() => { setShowResultModal(false); setLastSelectedSymptom(null); }}
         />
       )}
+      {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
     </div>
   );
 }
