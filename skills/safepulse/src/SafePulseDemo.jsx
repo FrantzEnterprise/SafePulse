@@ -275,6 +275,10 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <h3 className="font-semibold text-lg">Service Area & Quote</h3>
           <p className="text-sm text-slate-600">Enter the driving distance from your shop to estimate the trip fee.</p>
           <div className="rounded-2xl border bg-white p-4 space-y-4">
+            <button onClick={() => setShowMapCalculator(true)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+              Open Map Calculator
+            </button>
+            <hr className="border-slate-200" />
             <div className="space-y-1">
               <label className="text-sm font-medium">Distance from shop (miles)</label>
               <input className="w-full rounded-xl border p-3" type="number" min="0" placeholder="Example: 24" value={distanceMiles} onChange={(e) => setDistanceMiles(e.target.value)} />
@@ -725,9 +729,61 @@ function BatteryPopup({ setShowBatteryPopup, setBatteryAttempted }) {
   );
 }
 
+function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, setShowMapCalculator, config }) {
+  const calculateTripFee = () => {
+    const cfg = config?.serviceArea || { baseFee: 75, baseMilesIncluded: 17, perExtraMileRate: 2.5 };
+    const miles = Number(distanceMiles);
+    if (!miles || miles <= cfg.baseMilesIncluded) {
+      setCalculatedTripFee(cfg.baseFee);
+      return;
+    }
+    const extraMiles = Math.ceil(miles) - cfg.baseMilesIncluded;
+    setCalculatedTripFee(cfg.baseFee + extraMiles * cfg.perExtraMileRate);
+  };
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+      <div className="flex min-h-full items-center justify-center p-4">
+        <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold">Service Area Map Calculator</h2>
+              <p className="text-sm text-slate-600">Demo framework: enter calculated driving miles from your shop. Later this can connect to Google Maps or another distance API.</p>
+            </div>
+            <Button variant="outline" onClick={() => setShowMapCalculator(false)}>Close</Button>
+          </div>
+          <div className="mb-4 h-64 rounded-2xl border bg-slate-100 p-4">
+            <div className="flex h-full items-center justify-center rounded-xl border-2 border-dashed border-slate-300 text-center text-slate-600">
+              <div>
+                <p className="font-semibold">Map Placeholder</p>
+                <p className="text-sm">Future version: customer address, shop address, route distance, and live map preview.</p>
+              </div>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Distance from shop in miles</label>
+              <input className="w-full rounded-xl border p-3" type="number" min="0" placeholder="Example: 24" value={distanceMiles} onChange={(e) => setDistanceMiles(e.target.value)} />
+            </div>
+            <div className="rounded-xl border p-3">
+              <p className="text-sm text-slate-500">Calculated Service / Trip Fee</p>
+              <p className="text-2xl font-bold">{calculatedTripFee.toFixed(2)}</p>
+              <p className="text-xs text-slate-500">$75 minimum includes 17 miles. Mile 18 and above is $2.50 per mile.</p>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button onClick={calculateTripFee}>Calculate Fee</Button>
+            <Button variant="outline" onClick={() => { setDistanceMiles(""); setCalculatedTripFee(75); }}>Reset to Minimum</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SafePulseDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
   const [showAdmin, setShowAdmin] = useState(() => new URLSearchParams(window.location.search).get('admin') === 'true');
+  const [showMapCalculator, setShowMapCalculator] = useState(false);
   const [showBatteryPopup, setShowBatteryPopup] = useState(false);
   const [batteryAttempted, setBatteryAttempted] = useState(false);
   const [showSymptoms, setShowSymptoms] = useState(false);
@@ -742,7 +798,7 @@ export default function SafePulseDemo() {
   const [showInstructions, setShowInstructions] = useState(false);
   
   // Lock body scroll when any modal is open
-  const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || lockedForService;
+  const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService;
 
   // Apply CSS vars from config
   useEffect(() => {
@@ -878,6 +934,7 @@ Advice Helpful?: ${form.helped}`;
         <Card className="rounded-2xl shadow-sm"><CardContent className="space-y-3 p-5"><h2 className="text-xl font-semibold">Technician Text Report</h2><textarea className="h-72 w-full rounded-xl border p-3 font-mono text-sm" value={report} readOnly /></CardContent></Card>
       </div>
       {lockedForService && <ServiceLockoutModal />}
+      {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
       {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
       {showResultModal && lastSelectedSymptom && (
         <SymptomResultModal
