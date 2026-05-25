@@ -42,12 +42,19 @@ export function useConfig() {
   // Generate CSS variables from branding
   const cssVars = {
     '--color-primary': config.branding.primaryColor,
-    '--color-primary-hover': config.branding.primaryHover,
+    '--color-primary-hover': config.branding.primaryHover || config.branding.primaryColor,
     '--color-accent': config.branding.accentColor,
+    '--color-accent-hover': config.branding.accentHover || config.branding.accentColor,
     '--color-bg': config.branding.backgroundColor,
     '--color-header-bg': config.branding.headerBg,
     '--color-header-text': config.branding.headerText,
+    '--color-header-bg-hover': config.branding.headerBgHover || config.branding.headerBg,
+    '--color-body-text': config.branding.bodyTextColor || '#4a4f55',
+    '--color-card-bg': config.branding.cardBg || '#f8f9fa',
+    '--color-card-border': config.branding.cardBorder || '#e0e3e8',
     '--font-family': config.branding.fontFamily,
+    '--radius-sm': config.branding.borderRadiusSm || '8px',
+    '--radius-lg': config.branding.borderRadiusLg || '12px',
   };
 
   return { config, loaded, updateConfig, cssVars };

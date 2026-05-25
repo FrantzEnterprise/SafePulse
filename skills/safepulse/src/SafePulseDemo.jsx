@@ -728,7 +728,7 @@ Advice Helpful?: ${form.helped}`;
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">{config.company.name}</h1>
-            <p className="text-slate-600"><span className="text-primary font-semibold">SafePulse</span> &mdash; Safe-service triage for customers and technicians.</p>
+            <p className="text-slate-600"><span className="text-primary font-semibold">SafePulse</span> &mdash; {config.tagline || 'Safe-service triage for customers and technicians.'}</p>
           </div>
           <div className="flex gap-2 shrink-0">
             <button onClick={() => setShowInstructions(true)} className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">

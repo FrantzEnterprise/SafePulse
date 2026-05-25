@@ -1,23 +1,30 @@
 {
   "company": {
-    "name": "Frantz Safe & Lock",
-    "phone": "(555) 555-5555",
-    "email": "service@frantzsafes.com",
-    "website": "https://frantzenterprise.github.io/SafePulse/",
+    "name": "Frantz Locksmith Service",
+    "phone": "(916) 534-4900",
+    "email": "frantzlocksmith@hotmail.com",
+    "website": "https://frantzlocksmithservice.com",
     "logoUrl": "",
-    "address": "123 Main St, Anytown, USA"
+    "address": "West Sacramento, CA 95691"
   },
   "branding": {
-    "primaryColor": "#1e40af",
-    "primaryHover": "#1e3a8a",
-    "accentColor": "#f59e0b",
+    "primaryColor": "#1a3a5c",
+    "primaryHover": "#0f2440",
+    "accentColor": "#d4a843",
+    "accentHover": "#b8922e",
     "backgroundColor": "#ffffff",
-    "headerBg": "#0f172a",
+    "headerBg": "#1a3a5c",
     "headerText": "#ffffff",
-    "fontFamily": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    "headerBgHover": "#0f2440",
+    "bodyTextColor": "#4a4f55",
+    "cardBg": "#f8f9fa",
+    "cardBorder": "#e0e3e8",
+    "fontFamily": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    "borderRadiusSm": "8px",
+    "borderRadiusLg": "12px"
   },
   "serviceArea": {
-    "shopAddress": "123 Main St, Anytown, USA",
+    "shopAddress": "West Sacramento, CA 95691",
     "baseMilesIncluded": 17,
     "baseFee": 75,
     "perExtraMileRate": 2.50,
@@ -32,5 +39,6 @@
     "showInstructions": true,
     "maxScoreBeforeLockout": 100
   },
+  "tagline": "Sacramento's Safe Specialist — Mobile Service Since 1985",
   "version": "1.0.0"
 }

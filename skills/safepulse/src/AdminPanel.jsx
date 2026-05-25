@@ -127,6 +127,24 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                   </div>
                 </div>
                 <div className="admin-section">
+                  <label className="admin-label">Accent Hover Color</label>
+                  <div className="flex gap-3 items-center">
+                    <input type="color" className="h-10 w-16 rounded-xl border cursor-pointer" value={localConfig.branding.accentHover || localConfig.branding.accentColor}
+                      onChange={(e) => handleChange('branding', 'accentHover', e.target.value)} />
+                    <input className="admin-input flex-1" value={localConfig.branding.accentHover || localConfig.branding.accentColor}
+                      onChange={(e) => handleChange('branding', 'accentHover', e.target.value)} />
+                  </div>
+                </div>
+                <div className="admin-section">
+                  <label className="admin-label">Body Text Color</label>
+                  <div className="flex gap-3 items-center">
+                    <input type="color" className="h-10 w-16 rounded-xl border cursor-pointer" value={localConfig.branding.bodyTextColor || '#4a4f55'}
+                      onChange={(e) => handleChange('branding', 'bodyTextColor', e.target.value)} />
+                    <input className="admin-input flex-1" value={localConfig.branding.bodyTextColor || '#4a4f55'}
+                      onChange={(e) => handleChange('branding', 'bodyTextColor', e.target.value)} />
+                  </div>
+                </div>
+                <div className="admin-section">
                   <label className="admin-label">Font Family</label>
                   <input className="admin-input" value={localConfig.branding.fontFamily}
                     onChange={(e) => handleChange('branding', 'fontFamily', e.target.value)} />
@@ -151,6 +169,11 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                   <label className="admin-label">Company Name</label>
                   <input className="admin-input" value={localConfig.company.name}
                     onChange={(e) => handleChange('company', 'name', e.target.value)} />
+                </div>
+                <div className="admin-section">
+                  <label className="admin-label">Tagline</label>
+                  <input className="admin-input" placeholder="Sacramento's Safe Specialist — Mobile Service Since 1985" value={localConfig.tagline || ''}
+                    onChange={(e) => handleChange('root', 'tagline', e.target.value)} />
                 </div>
                 <div className="admin-section">
                   <label className="admin-label">Phone</label>
