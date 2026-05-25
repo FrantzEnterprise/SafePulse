@@ -1,0 +1,44 @@
+{
+  "advice": {
+    "battery": [
+      "Replace batteries with fresh premium alkaline batteries (not cheap brands).",
+      "Check battery contacts for corrosion — clean with contact cleaner if needed.",
+      "Test voltage under load — electronic locks need ~4.8V+ for 6V systems to fire the solenoid.",
+      "Advise customer: replace batteries annually regardless of performance.",
+      "If keypad beeps every 10-15 seconds, remove batteries, press each keypad button for 1 second, install fresh Duracell Quantum or Energizer, retry after timeout."
+    ],
+    "mechanical": [
+      "Check dial torque with inch-pound gauge — 2+ in-lbs indicates wear.",
+      "Reduce handle pressure before entering code to avoid bolt binding.",
+      "Listen for grinding when turning dial — indicates bearing wear.",
+      "Apply graphite (never oil) to mechanical lock cases.",
+      "If handle spins freely without engaging bolts — do not force it, spindle or clutch is broken.",
+      "If handle spins freely even before entering code — check setscrew at base of handle, may just be loose.",
+      "For combination drift — try combination +1 on each number, then -1. If works, service the dial before closing safe.",
+      "Key won't turn — try graphite in keyway. If key is worn, have a duplicate made from original."
+    ],
+    "environment": [
+      "Check for signs of rust on bolt slides and hinge area.",
+      "Inspect door gap for even spacing — settling can misalign the door.",
+      "If in garage/outbuilding, temperature changes can cause expansion issues.",
+      "High humidity accelerates corrosion — consider a dehumidifier rod inside the safe.",
+      "Ensure safe is on level surface — foundation settling causes door misalignment."
+    ],
+    "electronic": [
+      "Lockout mode: wait for timeout period to expire (usually 1-5 minutes), then carefully re-enter code.",
+      "Deactivated codes: try any backup codes. If none work, safe may need reprogramming per manufacturer instructions.",
+      "Compromised wiring: check keypad cable connection at lock body. Loose connectors can be reseated.",
+      "Electronic lock error codes: refer to manufacturer manual for specific blink/beep patterns."
+    ],
+    "general": [
+      "Inspect for visible obstructions blocking bolt retraction.",
+      "Avoid repeated force attempts — can damage the lock mechanism.",
+      "If safe is locked closed and symptoms are progressing, schedule service before a lockout.",
+      "Check relock device hasn't accidentally triggered — if triggered, technician required.",
+      "Contact a technician if symptoms worsen or you're unsure.",
+      "Safe that was dropped or struck may have thrown a relocker — internal inspection required.",
+      "Broken linkage (handle turns, bolts don't move) — internal door repair needed, call technician.",
+      "If overstuffed, remove items and try opening. Push inward on door while operating handle to relieve bolt pressure."
+    ]
+  }
+}

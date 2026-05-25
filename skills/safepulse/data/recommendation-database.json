@@ -1,0 +1,49 @@
+{
+  "version": "0.4.0",
+  "batteryRecommendations": {
+    "recommended": [
+      "Duracell Quantum",
+      "Energizer"
+    ],
+    "doNotUse": [
+      "Rechargeable batteries",
+      "Discount batteries",
+      "Lithium based batteries"
+    ],
+    "timeoutProcedure": [
+      "Do not unplug the battery during the beeping",
+      "Wait until the beeping stops",
+      "Unplug the battery",
+      "Push all the keys on the keypad",
+      "Plug the battery back in",
+      "Make sure you have the correct combination",
+      "Enter the combination"
+    ]
+  },
+  "serviceArea": {
+    "baseFee": 75,
+    "includedMiles": 17,
+    "rateAfterIncludedMiles": 2.5
+  },
+  "symptoms": [
+    { "id": "dial_stuck", "label": "Dial is stuck and will not move!", "points": 35, "recommendation": "Stuck dial — do not force. Try dialing +/- 1-3 numbers off your combination. Call technician if no success." },
+    { "id": "dial_sticky_tight", "label": "Dial is very sticky and/or tight to turn", "points": 20, "recommendation": "Sticky dial — try compressed air around dial. If misaligned, tap lightly into place. Wheel pack issue needs new lock." },
+    { "id": "dial_loose_spin", "label": "Dial is loose, seems to spin too easy and will not engage to open", "points": 30, "recommendation": "Dial loose from wear — try pulling dial toward you while dialing. If it opens, leave it open and call technician." },
+    { "id": "dial_drag", "label": "Dialing the combination, it does not unlock easily and have to dial it multiple times", "points": 20, "recommendation": "Dial not unlocking easily — try dialing slightly over/under target number. Wear will worsen over time." },
+    { "id": "dial_lost_combo", "label": "Lost or forgotten combination, probate, damaged in a burglary, or simply a broken dial lock", "points": 40, "recommendation": "Lost combination or broken dial lock — technician required to open and repair." },
+    { "id": "keypad_no_response", "label": "My keypad does not respond when I touch a key", "points": 20, "recommendation": "Keypad unresponsive — check battery connections, cable to lock, and battery cartridge terminals." },
+    { "id": "repeating_beep_timeout", "label": "I put my combination in 3 times or more and now it beeps every 10 or 15 seconds", "points": 25, "recommendation": "Lockout beeping — let stop, unplug battery, press all keys, plug back in, re-enter correct combination." },
+    { "id": "keys_not_register", "label": "Some of my keys do not register when I push them", "points": 25, "recommendation": "Keys not registering — unplug battery, press all keys, replug and retry. Keypad may need replacement." },
+    { "id": "click_no_release", "label": "I put in my combination, hear the solenoid click or motor turn, but the handle will not turn", "points": 35, "recommendation": "Solenoid clicks but handle won't turn — move handle to neutral, try pushing toward lock and enter combo. Re-locker may have fired." },
+    { "id": "elec_lost_combo", "label": "I lost or forgot my combination", "points": 30, "recommendation": "Lost electronic combination — technician needed. May be reset, shorted, or drilled depending on lock make." },
+    { "id": "handle_stuck_no_play", "label": "Handle is stuck and does not have any play", "points": 30, "recommendation": "Stuck handle — push handle toward closed position, hold it, enter combo and try to open. Do not force." },
+    { "id": "handle_spins_no_release", "label": "My handle moves or spins but it does not release the bolts to open the door", "points": 40, "recommendation": "Handle spins but bolts don't release — check setscrew on handle hub. If tight, internal issue needs technician." },
+    { "id": "handle_resistance", "label": "My handle moves a little bit and I feel resistance when trying to open it", "points": 25, "recommendation": "Handle has resistance — push on door while slowly moving handle to open. Stop if no progress." },
+    { "id": "door_stops_partial", "label": "When opening the safe the door only comes open a little bit and stops", "points": 35, "recommendation": "Door only opens partway — likely severed bolt connection. Call technician immediately. Do not force." },
+    { "id": "cannot_lock_safe", "label": "I cannot lock my safe! I close it and throw the bolts but they will not lock in place", "points": 20, "recommendation": "Cannot lock — check for obstruction blocking bolts. Open door 90°, release bolt detent, extend bolts fully." },
+    { "id": "no_heater_desiccant", "label": "I don't have a heater or desiccant in my safe", "points": 10, "recommendation": "Install reusable desiccant can or electric safe dryer to protect contents from moisture." },
+    { "id": "garage_location", "label": "I keep my safe in the garage, is that bad?", "points": 10, "recommendation": "Garage safe — temperature extremes affect locks. Warm with hair dryer in winter, cool with fan in summer." },
+    { "id": "keypad_wet", "label": "I washed my keypad and it does not work right now", "points": 15, "recommendation": "Keypad wet — let dry fully, use hair dryer on low from distance. If still fails, call technician." },
+    { "id": "bottom_rust", "label": "My safe is rusting at the bottom where it is anchored to the ground. Is that OK?", "points": 15, "recommendation": "Bottom rust — create water barrier. Excessive rust compromises security. Replace and re-anchor ASAP." }
+  ]
+}

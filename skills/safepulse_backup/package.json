@@ -1,0 +1,10 @@
+{
+  "name": "safepulse",
+  "version": "0.1.0",
+  "description": "Safe service triage and diagnostics skill",
+  "main": "tools/triage.js",
+  "type": "module",
+  "scripts": {
+    "start": "node tools/triage.js"
+  }
+}

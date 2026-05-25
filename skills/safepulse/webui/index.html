@@ -289,33 +289,39 @@
 
 <script>
 const symptomGroups = [
-  { category:"Mechanical Lock Issues", symptoms:[
-    { id:"dial_drag", label:"Dial feels rough or drags", points:20, recommendation:"Possible contamination, worn dial ring, spindle friction, or internal mechanical wear." },
-    { id:"stiff_dial", label:"Dial became stiff recently", points:20, recommendation:"Possible lubrication breakdown, contamination, or spindle alignment issue." },
-    { id:"combo_changed", label:"Combination suddenly stopped working", points:35, recommendation:"Possible user error, slipping component, or internal lock failure. Stop repeated attempts." }
+  { category:"Dial Locks", symptoms:[
+    { id:"dial_stuck", label:"Dial is stuck and will not move!", points:35, recommendation:"Stuck dial — do not force. Try dialing +/- 1-3 numbers off your combination. Call technician if no success." },
+    { id:"dial_sticky_tight", label:"Dial is very sticky and/or tight to turn", points:20, recommendation:"Sticky dial — try compressed air around dial. If misaligned, tap lightly into place. Wheel pack issue needs new lock." },
+    { id:"dial_loose_spin", label:"Dial is loose, seems to spin too easy and will not engage to open", points:30, recommendation:"Dial loose from wear — try pulling dial toward you while dialing. If it opens, leave it open and call technician." },
+    { id:"dial_drag", label:"Dialing combination does not unlock easily, have to dial multiple times", points:20, recommendation:"Dial not unlocking easily — try dialing slightly over/under target. Wear worsens over time." },
+    { id:"dial_lost_combo", label:"Lost/forgotten combination, probate, burglary damage, or broken dial lock", points:40, recommendation:"Lost combination or broken dial lock — technician required to open and repair." }
   ]},
-  { category:"Electronic Lock Issues", symptoms:[
-    { id:"intermittent_keypad", label:"Keypad works sometimes", points:20, recommendation:"Possible weak batteries, keypad cable issue, contact corrosion, or lock body failure." },
-    { id:"battery_issue", label:"Battery/keypad issue", points:10, recommendation:"Replace with fresh premium batteries and inspect battery contacts for corrosion." },
-    { id:"beeping_no_open", label:"Keypad beeps but safe will not open", points:30, recommendation:"Possible low battery timeout mode, lock body failure, solenoid issue, bolt pressure, or keypad failure." },
-    { id:"repeating_beep_timeout", label:"Keypad beeps every 10-15 seconds", points:25, recommendation:"Low battery timeout mode, repeated incorrect attempts, temporary lockout, or failing keypad." },
-    { id:"click_no_release", label:"Click is heard but handle will not release", points:35, recommendation:"Possible bolt pressure or disconnected internal linkage preventing unlock." },
-    { id:"handle_slipping", label:"Handle spins freely, won't open", points:50, recommendation:"CRITICAL: Stripped spindle or disengaged clutch. Safe is inoperable - technician required." }
+  { category:"Electronic Locks", symptoms:[
+    { id:"keypad_no_response", label:"Keypad does not respond when I touch a key", points:20, recommendation:"Keypad unresponsive — check battery connections, cable to lock, and battery cartridge terminals." },
+    { id:"repeating_beep_timeout", label:"Entered combo 3+ times, now beeps every 10-15 seconds", points:25, recommendation:"Lockout beeping — let stop, unplug battery, press all keys, plug back in, re-enter correct combo." },
+    { id:"keys_not_register", label:"Some keys do not register when I push them", points:25, recommendation:"Keys not registering — unplug battery, press all keys, replug and retry. Keypad may need replacement." },
+    { id:"click_no_release", label:"Hear solenoid click or motor turn but handle will not turn", points:35, recommendation:"Solenoid clicks but handle won't turn — move handle to neutral, try pushing toward lock. Re-locker may have fired." },
+    { id:"elec_lost_combo", label:"Lost or forgot combination", points:30, recommendation:"Lost electronic combination — technician needed. May be reset, shorted, or drilled depending on lock make." }
   ]},
-  { category:"Door / Boltwork Issues", symptoms:[
-    { id:"handle_pressure", label:"Handle is hard to turn", points:25, recommendation:"Possible bolt pressure, door alignment issue, or boltwork friction. Avoid forcing." },
-    { id:"door_drag", label:"Door drags or rubs", points:15, recommendation:"Possible hinge sag, foundation movement, or boltwork misalignment." }
+  { category:"Mechanical Issues", symptoms:[
+    { id:"handle_stuck_no_play", label:"Handle is stuck and does not have any play", points:30, recommendation:"Stuck handle — push toward closed position, hold it, enter combo and try to open. Do not force." },
+    { id:"handle_spins_no_release", label:"Handle moves/spins but does not release bolts to open door", points:40, recommendation:"Handle spins but bolts don't release — check setscrew on hub. If tight, internal issue needs technician." },
+    { id:"handle_resistance", label:"Handle moves a little, feel resistance when trying to open", points:25, recommendation:"Handle has resistance — push on door while slowly moving handle. Stop if no progress." },
+    { id:"door_stops_partial", label:"Door only comes open a little bit and stops", points:35, recommendation:"Door opens partway — likely severed bolt connection. Call technician immediately. Do not force." },
+    { id:"cannot_lock_safe", label:"Cannot lock safe! Close it, throw bolts but they won't lock in place", points:20, recommendation:"Cannot lock — check obstruction blocking bolts. Open door 90°, release bolt detent, extend bolts fully." }
   ]},
-  { category:"Environment / Age Related", symptoms:[
-    { id:"corrosion", label:"Visible corrosion or moisture", points:15, recommendation:"High humidity or corrosion may affect electronics and moving internal components." },
-    { id:"no_service_history", label:"Never been serviced (10+ yrs)", points:10, recommendation:"Safe has no maintenance history. Baseline inspection recommended." }
+  { category:"Environmental Issues", symptoms:[
+    { id:"no_heater_desiccant", label:"No heater or desiccant in my safe", points:10, recommendation:"Install reusable desiccant can or electric safe dryer ASAP." },
+    { id:"garage_location", label:"Safe is in the garage, is that bad?", points:10, recommendation:"Temperature extremes — warm with hair dryer in winter, cool with fan in summer." },
+    { id:"keypad_wet", label:"Washed my keypad and it does not work now", points:15, recommendation:"Keypad wet — let dry fully, hair dryer on low from distance. If fails, call technician." },
+    { id:"bottom_rust", label:"Safe is rusting at bottom where anchored to ground", points:15, recommendation:"Bottom rust — create water barrier. Excessive rust compromises security. Replace/re-anchor ASAP." }
   ]}
 ];
 const symptomOptions = symptomGroups.flatMap(g=>g.symptoms);
 const lockTypeVisibility = {
-  "Electronic keypad":["Electronic Lock Issues","Door / Boltwork Issues","Environment / Age Related"],
-  "Mechanical dial":["Mechanical Lock Issues","Door / Boltwork Issues","Environment / Age Related"],
-  "Key lock":["Door / Boltwork Issues","Environment / Age Related"],
+  "Electronic keypad":["Electronic Locks","Mechanical Issues","Environmental Issues"],
+  "Mechanical dial":["Dial Locks","Mechanical Issues","Environmental Issues"],
+  "Key lock":["Mechanical Issues","Environmental Issues"],
   "Unknown":symptomGroups.map(g=>g.category)
 };
 const serviceFramework = {
@@ -324,8 +330,8 @@ const serviceFramework = {
   high:{laborRange:"$350 - $950+",notes:"Likely requires onsite safe technician evaluation and possible repair work."},
   urgent:{laborRange:"$500 - $2500+",notes:"Urgent condition with increased risk of lockout, major repair, or specialized service."}
 };
-const damageRiskTriggers = ["handle_pressure","combo_changed","click_no_release","beeping_no_open","repeating_beep_timeout","handle_slipping"];
-const batteryTriggers = ["battery_issue","intermittent_keypad","beeping_no_open","repeating_beep_timeout"];
+const damageRiskTriggers = ["handle_stuck_no_play","handle_spins_no_release","handle_resistance","door_stops_partial","dial_stuck","click_no_release"];
+const batteryTriggers = ["keypad_no_response","repeating_beep_timeout","keys_not_register"];
 const dispatchRecs = {
   Low:{type:"Phone Assistance Recommended",time:"15-30 minutes"},
   Medium:{type:"Standard Service Call Recommended",time:"30-90 minutes"},
@@ -339,19 +345,25 @@ const photoSlots = [
   {id:"damage_or_corrosion_photo",label:"Damage, rust, or moisture photo",helper:"Show visible corrosion, impact damage, or moisture."}
 ];
 const causeLib = {
-  dial_drag:{causes:["Internal contamination","Dial ring wear","Spindle friction","Mechanical lock wear"],remedy:"Inspect lock operation and service internal moving components.",parts:["Dial ring","Spindle components","Lubrication/service materials"]},
-  stiff_dial:{causes:["Lubrication breakdown","Contamination","Spindle alignment"],remedy:"Clean and lubricate lock case. Check spindle alignment.",parts:["Graphite powder","Cleaning solvent","Spindle components"]},
-  combo_changed:{causes:["User error","Slipping wheel pack","Drive cam wear","Internal lock failure"],remedy:"Verify combination. Inspect wheel pack and drive cam.",parts:["Lock case tools","Combo card","Replacement wheel pack"]},
-  intermittent_keypad:{causes:["Weak batteries","Battery contact corrosion","Keypad cable issue","Electronic lock failure"],remedy:"Test batteries, keypad operation, inspect electronic lock components.",parts:["9V batteries","Keypad","Lock body","Battery contacts"]},
-  battery_issue:{causes:["Old batteries","Corroded contacts","Poor connection"],remedy:"Replace with fresh Duracell Quantum or Energizer. Clean contacts.",parts:["Duracell Quantum batteries","Contact cleaner"]},
-  beeping_no_open:{causes:["Low battery timeout","Lock body failure","Solenoid issue","Bolt pressure","Keypad failure"],remedy:"Replace batteries. If still fails, check solenoid and bolt pressure.",parts:["Fresh premium batteries","Multimeter","Solenoid","Keypad"]},
-  repeating_beep_timeout:{causes:["Low battery timeout mode","Repeated incorrect attempts","Temporary keypad lockout","Failing keypad"],remedy:"Remove batteries, press each keypad button 1 sec, install fresh Duracell Quantum or Energizer, retry after timeout.",parts:["Duracell Quantum batteries","Energizer batteries","Replacement keypad"]},
-  click_no_release:{causes:["Bolt pressure","Disconnected linkage","Solenoid not retracting"],remedy:"Check linkage connections. Test solenoid. Relieve bolt pressure if possible.",parts:["Linkage hardware","Solenoid","Lock body tools"]},
-  handle_pressure:{causes:["Bolt pressure","Door misalignment","Boltwork friction","Warped frame"],remedy:"Inspect boltwork alignment. Reduce repeated force attempts.",parts:["Boltwork components","Adjustment hardware","Lubrication materials"]},
-  door_drag:{causes:["Hinge sag","Foundation movement","Boltwork misalignment"],remedy:"Check door gap, hinge pins, floor level. Shim if needed.",parts:["Shim stock","Socket set","Feeler gauge","Level"]},
-  corrosion:{causes:["High humidity","Water exposure","Poor ventilation"],remedy:"Clean affected areas. Consider dehumidifier rod. Address moisture source.",parts:["Contact cleaner","Wire brush","Dehumidifier rod","Corrosion spray"]},
-  no_service_history:{causes:["No maintenance baseline","Unknown internal condition","Preventable wear"],remedy:"Full inspection: lock case, bolt work, door alignment, relock device.",parts:["Full service kit","Lubricants","Cleaning supplies"]},
-  handle_slipping:{causes:["Stripped spindle","Disengaged clutch","Broken handle hub"],remedy:"Inspect handle mechanism. Replace spindle, clutch, or handle assembly. Technician required.",parts:["Replacement handle assembly","Clutch rebuild kit","Spline grease","Snap-ring pliers"]}
+  dial_stuck:{causes:["Dial key locked","Dial knocked off center","Spindle seized from moisture","Contents blocking bolt extension"],remedy:"Check if dial has a keyhole and is locked. Try dialing +/- 1-3 numbers off combo. If seized from moisture, do not spray chemicals. Check inside for objects blocking bolts.",parts:["Replacement dial","Spindle components","Lock case service"]},
+  dial_sticky_tight:{causes:["Bushing wear in index ring","Dial misalignment from bump","Wheel pack contamination","Dried lubrication"],remedy:"Try compressed air around dial to clear debris. If bumped, tap lightly into place. If wheel pack issue, new lock needed. Do not oil bushing — temporary, then worse.",parts:["Dial ring/bushing","Compressed air can","Replacement lock case"]},
+  dial_loose_spin:{causes:["Hard usage wear","Long-term wear","Drive cam worn","Engagement teeth stripped"],remedy:"Try pulling dial toward you while dialing. You may feel it pick up wheels and open. If it opens, leave it open and call technician.",parts:["Replacement dial","Drive cam assembly","Lock case rebuild kit"]},
+  dial_drag:{causes:["Lock wear from age","Wheel pack friction","Dried lubrication","Spindle misalignment"],remedy:"Check dialing sequence. Try slightly over/under target number or wiggle dial if it skips. Condition worsens over time.",parts:["Lock case service kit","Lubrication/graphite","Wheel pack bushings"]},
+  dial_lost_combo:{causes:["Lost/forgotten combination","Probate/estate safe","Burglary damage","Broken dial lock"],remedy:"Call technician to open and repair. A skilled technician can get through this, possibly without damage.",parts:["Dial removal tools","Replacement lock","Safe opening tools"]},
+  keypad_no_response:{causes:["Battery wires unplugged","Keypad cable ruptured","Battery cartridge terminal issues","Missing cartridge spring"],remedy:"Check battery connections. Verify keypad cable to lock is connected and undamaged. Ensure battery cartridge terminals contact and spring is present.",parts:["Battery cartridge","Keypad cable","9V batteries"]},
+  repeating_beep_timeout:{causes:["Lockout after 3 incorrect attempts","Low battery timeout mode","Temporary keypad lockout"],remedy:"Wait until beeping stops. Unplug battery, push all keys on keypad, plug back in, enter correct combination.",parts:["Duracell Quantum batteries","Energizer batteries"]},
+  keys_not_register:{causes:["Failed keypad","Keypad membrane worn","Internal keypad circuit damage","Battery voltage too low"],remedy:"Unplug battery, push all keys, plug back in, try again. If no remedy, keypad has likely failed.",parts:["Replacement keypad","Keypad cable","9V batteries"]},
+  click_no_release:{causes:["Handle off neutral position","Bolt pressure on lock","Fired re-locker mechanism","Internal disconnected linkage"],remedy:"Move handle to neutral. If no play, push handle toward lock direction, hold, enter combo. If handle travels past normal, re-locker may have fired.",parts:["Replacement lock body","Re-locker reset/servicing","Lock solenoid"]},
+  elec_lost_combo:{causes:["Lost/forgotten combination","Lock memory erased","Deactivated codes"],remedy:"Lost combo cannot be found. Some locks can be reset, some shorted, some drilled. Depends on lock make, not safe brand.",parts:["Lock-specific programming tools","Replacement lock","Drill bit (if needed)"]},
+  handle_stuck_no_play:{causes:["Lock bolt pressure","Handle clutch engaged","Internal mechanical bind"],remedy:"Push handle toward closed position and hold it, enter combo and try to open. Do not force to clutch break point.",parts:["Handle assembly","Clutch rebuild kit"]},
+  handle_spins_no_release:{causes:["Loose setscrew on handle hub","Broken spindle","Disconnected handle linkage","Stripped clutch gear"],remedy:"Check handle setscrew on outer hub. If tight and no movement, issue is inside door — technician needed.",parts:["Setscrew/hex key","Handle assembly","Spindle"]},
+  handle_resistance:{causes:["Boltwork friction","Door pressure","Internal mechanical issue","Warped frame"],remedy:"Push on door while slowly moving handle to open. Listen for movement. If nothing changes, stop and contact technician.",parts:["Boltwork components","Adjustment hardware","Lubrication materials"]},
+  door_stops_partial:{causes:["Severed bolt connection","Broken linkage bar","Disconnected bolt arm","Spot weld failure"],remedy:"Call technician right away. More manipulation = harder to open/repair and more costly.",parts:["Linkage bar","Bolt arm assembly","Door panel removal tools"]},
+  cannot_lock_safe:{causes:["Obstruction blocking bolts","Bolt detent engaged","Bad bolt detent","Electronic lock not resetting"],remedy:"Check for blocking objects. Open door 90°, find bolt detent release button (hinge/bottom side), push to release and extend bolts fully.",parts:["Boltwork adjustment tools","Detent spring replacement"]},
+  no_heater_desiccant:{causes:["No moisture protection","High humidity","Condensation inside safe"],remedy:"Get large reusable desiccant can or electric safe dryer if safe has outlet.",parts:["Reusable desiccant can","Electric safe dryer/rod","Hygrometer"]},
+  garage_location:{causes:["Temperature extremes","Winter freeze","Summer heat","Humidity fluctuations"],remedy:"Winter: warm lock with hair dryer from distance. Summer: put fan on safe to cool down. In extreme climates, use quality lock.",parts:["Quality lock upgrade","Safe insulation","Dehumidifier"]},
+  keypad_wet:{causes:["Water ingress into keypad","Moisture under membrane","Short circuit from cleaning"],remedy:"Let keypad dry completely. Use hair dryer or heat gun on low from distance. If still fails, keypad may need replacement.",parts:["Replacement keypad","Silicone sealant"]},
+  bottom_rust:{causes:["Daily mopping in work environment","Water pooling at base","Moisture wicking from floor"],remedy:"Create barrier to repel water. If rust is excessive, safe may be pried upward and removed. Replace and re-anchor new safe ASAP.",parts:["Water barrier/sealant","Anchor bolts","Replacement safe"]}
 };
 function getLabel(id){const s=symptomOptions.find(x=>x.id===id);return s?s.label:id;}
 function getRisk(score){

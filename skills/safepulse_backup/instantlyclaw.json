@@ -1,0 +1,23 @@
+{
+  "name": "SafePulse",
+  "type": "agent_skill",
+  "entry": "tools/triage.js",
+  "channels": [
+    "web",
+    "sms",
+    "email",
+    "chat"
+  ],
+  "features": {
+    "customer_intake": true,
+    "technician_report": true,
+    "feedback_tracking": true,
+    "knowledge_search": true
+  },
+  "safety": {
+    "block_bypass_content": true,
+    "block_drill_points": true,
+    "block_manipulation": true,
+    "technician_only_notes": true
+  }
+}

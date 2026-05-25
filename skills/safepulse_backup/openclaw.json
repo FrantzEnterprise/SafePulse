@@ -1,0 +1,14 @@
+{
+  "skills": {
+    "safepulse": {
+      "path": "./safepulse",
+      "enabled": true,
+      "entry": "tools/triage.js",
+      "permissions": {
+        "network": true,
+        "filesystem": "limited",
+        "messaging": true
+      }
+    }
+  }
+}

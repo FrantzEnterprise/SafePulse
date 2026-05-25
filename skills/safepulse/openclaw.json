@@ -1,0 +1,21 @@
+{
+  "name": "safepulse-v3",
+  "version": "0.3.0",
+  "description": "Safe-service triage and technician report skill.",
+  "entry": "tools/safepulse-agent.js",
+  "ui": {
+    "type": "react",
+    "entry": "src/SafePulseDemo.jsx"
+  },
+  "permissions": {
+    "network": false,
+    "filesystem": "limited",
+    "messaging": false
+  },
+  "safety": {
+    "block_drill_points": true,
+    "block_manipulation": true,
+    "block_bypass_methods": true,
+    "block_forced_entry": true
+  }
+}
