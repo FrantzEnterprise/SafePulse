@@ -343,7 +343,7 @@ function PhotoUpload({ uploadedPhotos, setUploadedPhotos, showPhotoUpload, setSh
   );
 }
 
-function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, setShowMapCalculator, batteryAttempted, form, setForm }) {
+function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, setShowMapCalculator, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel }) {
   const riskBannerStyles = {
     Low: "bg-green-100 border-green-300 text-green-800",
     Medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
@@ -360,6 +360,9 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
             <div className="text-right"><p className="text-sm font-medium">Risk Score</p><p className="text-4xl font-bold">{score}/100</p><p className="mt-1 text-lg font-semibold">{risk.level}</p></div>
           </div>
           <p className="mt-3 text-sm font-medium">{risk.advice}</p>
+        </div>
+        <div className="flex gap-2 no-print">
+          <Button onClick={() => window.print()}>📄 Print / Save PDF</Button>
         </div>
         <div className="rounded-2xl bg-white p-4 space-y-3">
           <div><p className="font-semibold">General Recommendation</p><p>{risk.advice}</p></div>
@@ -379,7 +382,26 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           {possibleCauses.length > 0 && <div className="space-y-3"><p className="font-semibold">Possible Causes & Remedies</p>{possibleCauses.map((item, index) => <div key={index} className="rounded-xl border bg-slate-50 p-3"><p className="font-medium">Possible Causes</p><ul className="ml-5 list-disc text-sm">{item.causes.map((cause, causeIndex) => <li key={causeIndex}>{cause}</li>)}</ul><p className="mt-3 font-medium">Suggested Remedy</p><p className="text-sm">{item.remedy}</p><p className="mt-3 font-medium">Possible Parts Needed</p><ul className="ml-5 list-disc text-sm">{item.parts.map((part, partIndex) => <li key={partIndex}>{part}</li>)}</ul></div>)}</div>}
         </div>
         {batteryAttempted && <div className="rounded-2xl border border-blue-300 bg-blue-50 p-4 text-blue-900"><p className="font-semibold">Customer attempted recommended premium batteries.</p><p className="mt-1 text-sm">If the issue continues after installing fresh Duracell Quantum or Energizer batteries, further diagnosis or technician service may be required.</p></div>}
-        <div className="flex gap-2"><Button onClick={() => setForm({ ...form, helped: "Yes" })}>Advice Helped</Button><Button variant="outline" onClick={() => setForm({ ...form, helped: "No" })}>Still Needs Tech</Button></div>
+        <div className="flex gap-2 no-print"><Button onClick={() => { setForm({ ...form, helped: "Yes" }); }}>Advice Helped</Button><Button variant="outline" onClick={() => {
+          setForm({ ...form, helped: "No" });
+          // Build notification message
+          const companyPhone = config?.company?.phone || '';
+          const safePhone = companyPhone.replace(/[\s\(\)\-]/g, '');
+          const msg = encodeURIComponent(
+`SAFEPULSE NEEDS TECH
+Customer: ${form.name || 'Unknown'}
+Phone: ${form.phone || 'Not provided'}
+Safe: ${form.brand || 'Unknown'} (${form.lockType})
+Risk: ${score}/100 - ${risk.level}
+Symptoms: ${triageHistory.map(getSymptomLabel).join(', ')}
+
+app.frantzlocksmithservice.com`
+          );
+          // SMS via tel link
+          if (safePhone) {
+            window.open(`sms:${safePhone}?body=${msg}`, '_blank');
+          }
+        }}>Still Needs Tech</Button></div>
       </CardContent>
     </Card>
   );
@@ -726,7 +748,7 @@ Advice Helpful?: ${form.helped}`;
               <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
             </CardContent>
           </Card>
-          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} setShowMapCalculator={setShowMapCalculator} batteryAttempted={batteryAttempted} form={form} setForm={setForm} />
+          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} setShowMapCalculator={setShowMapCalculator} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} />
         </div>
         <Card className="rounded-2xl shadow-sm"><CardContent className="space-y-3 p-5"><h2 className="text-xl font-semibold">Technician Text Report</h2><textarea className="h-72 w-full rounded-xl border p-3 font-mono text-sm" value={report} readOnly /></CardContent></Card>
       </div>

@@ -188,5 +188,15 @@ button { cursor: pointer; font-family: inherit; }
   .no-print { display: none !important; }
   .print-only { display: block !important; }
   .print-report { position: static !important; overflow: visible !important; }
+  .min-h-screen { min-height: auto !important; }
+  .fixed { position: static !important; }
+  .overflow-y-auto { overflow: visible !important; }
+  .bg-black\/50, .bg-red-950\/80 { background: none !important; }
+  .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+  .grid { display: block !important; }
+  .grid > * { margin-top: 0.5rem; }
+  #triage-results { break-inside: avoid; page-break-after: always; }
+  h1, h2, h3 { page-break-after: avoid; }
+  textarea { border: none !important; padding: 0 !important; height: auto !important; }
 }
 .print-only { display: none; }
