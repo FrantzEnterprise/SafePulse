@@ -388,7 +388,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           const companyPhone = config?.company?.phone || '';
           const safePhone = companyPhone.replace(/[\s\(\)\-]/g, '');
           const msg = encodeURIComponent(
-`SAFEPULSE NEEDS TECH
+`SAFE-TRIAGE NEEDS TECH
 Customer: ${form.name || 'Unknown'}
 Phone: ${form.phone || 'Not provided'}
 Safe: ${form.brand || 'Unknown'} (${form.lockType})
@@ -702,7 +702,7 @@ export default function SafePulseDemo() {
     return `${slot?.label || slotId}: ${file.name}`;
   }).join("\n") || "No photos uploaded";
 
-  const report = `SAFEPULSE TECHNICIAN REPORT
+  const report = `SAFE-TRIAGE TECHNICIAN REPORT
 
 Customer: ${form.name || "Not provided"}
 Phone/Text: ${form.phone || "Not provided"}
@@ -728,7 +728,7 @@ Advice Helpful?: ${form.helped}`;
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">{config.company.name}</h1>
-            <p className="text-slate-600"><span className="text-primary font-semibold">SafePulse</span> &mdash; {config.tagline || 'Safe-service triage for customers and technicians.'}</p>
+            <p className="text-slate-600"><span className="text-primary font-semibold">SafeTriage</span> by {config.tagline || 'Sacramento\'s Safe Specialist'}</p>
           </div>
           <div className="flex gap-2 shrink-0">
             <button onClick={() => setShowInstructions(true)} className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
