@@ -153,47 +153,108 @@ function formatPhone(value) {
   return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6,10)}`;
 }
 
-function CustomerIntake({ form, setForm }) {
+function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleGroups, triageHistory, toggleSymptom, uploadedPhotos, setUploadedPhotos, showPhotoUpload, setShowPhotoUpload }) {
+  const [step, setStep] = useState(1);
+  const totalSteps = 3;
+
+  const StepIndicator = () => (
+    <div className="flex items-center justify-center gap-2 mb-6">
+      {[1, 2, 3].map((s) => (
+        <button
+          key={s}
+          onClick={() => { if (s < step) setStep(s); }}
+          className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
+            s === step
+              ? 'bg-primary text-accent scale-110 shadow-md'
+              : s < step
+              ? 'bg-green-500 text-white'
+              : 'bg-slate-200 text-slate-400'
+          }`}
+        >
+          {s < step ? '✓' : s}
+        </button>
+      ))}
+      <span className="ml-2 text-xs text-slate-400">Step {step} of {totalSteps}</span>
+    </div>
+  );
+
   return (
     <>
-      <input className="w-full rounded-xl border p-3" placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-      <input className="w-full rounded-xl border p-3" placeholder="(916) 555-1234" value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
-      <input className="w-full rounded-xl border p-3" placeholder="Enter email for a copy of results - Optional" type="email" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-      <input className="w-full rounded-xl border p-3" placeholder="Safe brand/model if known" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Type of lock</label>
-        <select className="w-full rounded-xl border p-3" value={form.lockType} onChange={(e) => setForm({ ...form, lockType: e.target.value })}>
-          <option>Electronic keypad</option>
-          <option>Mechanical dial</option>
-          <option>Key lock</option>
-          <option>Unknown</option>
-        </select>
-      </div>
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Is the safe currently open?</label>
-        <select className="w-full rounded-xl border p-3" value={form.safeOpen} onChange={(e) => setForm({ ...form, safeOpen: e.target.value })}>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-      </div>
-      <div className="space-y-1">
-        <label className="text-sm font-medium">Years since last service</label>
-        <select className="w-full rounded-xl border p-3" value={form.serviceAge} onChange={(e) => setForm({ ...form, serviceAge: e.target.value })}>
-          <option value="">Select service history</option>
-          <option value="1">Less than 1 year</option>
-          <option value="3">Less than 3 years</option>
-          <option value="7">Less than 7 years</option>
-          <option value="8">8 years or more</option>
-          <option value="50">Antique, 50 years and older</option>
-        </select>
-      </div>
-      <div className="rounded-2xl border bg-white p-4">
-        <div className="mb-3">
-          <p className="font-medium text-lg">Before We Begin, What have you already tried?</p>
-          <p className="text-sm text-slate-500">This helps avoid repeated troubleshooting steps and improves technician recommendations.</p>
+      <StepIndicator />
+
+      {step === 1 && (
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Contact Information</h3>
+          <input className="w-full rounded-xl border p-3" placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input className="w-full rounded-xl border p-3" placeholder="(916) 555-1234" value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
+          <input className="w-full rounded-xl border p-3" placeholder="Enter email for a copy of results - Optional" type="email" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <button onClick={() => setStep(2)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+            Next — Safe Details
+          </button>
         </div>
-        <textarea className="w-full rounded-xl border p-3" placeholder="Describe any steps, battery changes, combinations attempted, or observations." value={form.tried} onChange={(e) => setForm({ ...form, tried: e.target.value })} />
-      </div>
+      )}
+
+      {step === 2 && (
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Safe Details</h3>
+          <input className="w-full rounded-xl border p-3" placeholder="Safe brand/model if known" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Type of lock</label>
+            <select className="w-full rounded-xl border p-3" value={form.lockType} onChange={(e) => setForm({ ...form, lockType: e.target.value })}>
+              <option>Electronic keypad</option>
+              <option>Mechanical dial</option>
+              <option>Key lock</option>
+              <option>Unknown</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Is the safe currently open?</label>
+            <select className="w-full rounded-xl border p-3" value={form.safeOpen} onChange={(e) => setForm({ ...form, safeOpen: e.target.value })}>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium">Years since last service</label>
+            <select className="w-full rounded-xl border p-3" value={form.serviceAge} onChange={(e) => setForm({ ...form, serviceAge: e.target.value })}>
+              <option value="">Select service history</option>
+              <option value="1">Less than 1 year</option>
+              <option value="3">Less than 3 years</option>
+              <option value="7">Less than 7 years</option>
+              <option value="8">8 years or more</option>
+              <option value="50">Antique, 50 years and older</option>
+            </select>
+          </div>
+          <div className="rounded-2xl border bg-white p-4">
+            <div className="mb-3">
+              <p className="font-medium text-lg">What have you already tried?</p>
+              <p className="text-sm text-slate-500">Helps avoid repeated troubleshooting.</p>
+            </div>
+            <textarea className="w-full rounded-xl border p-3" placeholder="Battery changes, combinations attempted, observations..." value={form.tried} onChange={(e) => setForm({ ...form, tried: e.target.value })} />
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setStep(1)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+              ← Back
+            </button>
+            <button onClick={() => setStep(3)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+              Next — Symptoms
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Symptoms & Photos</h3>
+          <SymptomsSelector form={form} showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms} visibleGroups={visibleGroups} triageHistory={triageHistory} toggleSymptom={toggleSymptom} />
+          <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
+          <div className="flex gap-2">
+            <button onClick={() => setStep(2)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+              ← Back
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
@@ -722,10 +783,14 @@ Advice Helpful?: ${form.helped}`;
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="rounded-2xl shadow-sm">
             <CardContent className="space-y-4 p-5">
-              <h2 className="text-xl font-semibold">Customer Intake</h2>
-              <CustomerIntake form={form} setForm={setForm} />
-              <SymptomsSelector form={form} showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms} visibleGroups={visibleGroups} triageHistory={triageHistory} toggleSymptom={toggleSymptom} />
-              <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
+              <CustomerIntake 
+                form={form} setForm={setForm}
+                showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms}
+                visibleGroups={visibleGroups}
+                triageHistory={triageHistory} toggleSymptom={toggleSymptom}
+                uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos}
+                showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload}
+              />
             </CardContent>
           </Card>
           <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} setShowMapCalculator={setShowMapCalculator} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} />
