@@ -89,10 +89,10 @@ function buildLockTypeVisibility(groups) {
 const lockTypeVisibility = buildLockTypeVisibility(symptomGroups);
 
 const serviceFramework = {
-  low: { laborRange: "$0 - $125", notes: "Issue may be resolved with simple troubleshooting or preventive service." },
-  medium: { laborRange: "$150 - $450", notes: "Moderate service may be required depending on lock condition and accessibility." },
-  high: { laborRange: "$350 - $950+", notes: "Likely requires onsite safe technician evaluation and possible repair work." },
-  urgent: { laborRange: "$500 - $2500+", notes: "Urgent condition with increased risk of lockout, major repair, or specialized service." },
+  low: { standard: "$275 - $350", highSecurity: "$800 - $1,000", notes: "Issue may be resolved with simple troubleshooting or preventive service." },
+  medium: { standard: "$275 - $500", highSecurity: "$800 - $1,200", notes: "Moderate service may be required depending on lock condition and accessibility." },
+  high: { standard: "$275 - $750", highSecurity: "$800 - $1,800", notes: "Likely requires onsite safe technician evaluation and possible repair work." },
+  urgent: { standard: "$275 - $1,500", highSecurity: "$800 - $2,500+", notes: "Urgent condition with increased risk of lockout, major repair, or specialized service." },
 };
 
 const damageRiskTriggers = [
@@ -418,7 +418,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
         <div className="rounded-2xl bg-white p-4 space-y-3">
           <div className="rounded-xl border bg-slate-50 p-4"><p className="text-sm text-slate-500">Recommended Service Type</p><p className="mt-1 text-xl font-bold">{dispatchType.type}</p><p className="mt-2 text-sm text-slate-600">Typical estimated onsite time: {dispatchType.time}</p></div>
           <div><p className="font-semibold text-lg">Possible Service & Cost Framework</p><p className="text-sm text-slate-600">Ballpark estimates only. Final pricing depends on safe type, lock condition, accessibility, parts required, and service complexity.</p></div>
-          <div className="grid gap-3 md:grid-cols-2"><div className="rounded-xl border p-3"><p className="text-sm text-slate-500">Estimated Service / Trip Fee</p><p className="font-semibold">${calculatedTripFee.toFixed(2)} minimum</p><p className="mt-1 text-xs text-slate-500">Base rate includes first 17 miles. Add $2.50 per mile from mile 18 and up.</p></div><div className="rounded-xl border p-3"><p className="text-sm text-slate-500">Estimated Labor Range</p><p className="font-semibold">{serviceEstimate?.laborRange}</p></div></div>
+          <div className="grid gap-3 md:grid-cols-2"><div className="rounded-xl border p-3"><p className="text-sm text-slate-500">Estimated Service / Trip Fee</p><p className="font-semibold">${calculatedTripFee.toFixed(2)} minimum</p><p className="mt-1 text-xs text-slate-500">Base rate includes first 17 miles. Add $2.50 per mile from mile 18 and up.</p></div><div className="rounded-xl border p-3"><p className="text-sm text-slate-500">Estimated Labor — Standard Safes</p><p className="font-semibold text-lg">{serviceEstimate?.standard} <span className="text-sm font-normal text-slate-400">starting at $275</span></p><p className="mt-2 text-sm text-slate-500">Estimated Labor — High Security Safes</p><p className="font-semibold text-lg">{serviceEstimate?.highSecurity} <span className="text-sm font-normal text-slate-400">starting at $800</span></p></div></div>
           <div className="rounded-xl border p-3"><div className="mb-3 flex flex-wrap items-center justify-between gap-2"><div><p className="font-semibold">Service Area Calculator</p><p className="text-sm text-slate-600">Calculate the trip fee based on distance from your shop.</p></div><Button onClick={() => setShowMapCalculator(true)}>Open Map Calculator</Button></div><p className="text-sm">Current calculated fee: <strong>${calculatedTripFee.toFixed(2)}</strong></p></div>
           <div className="rounded-xl border p-3"><p className="font-semibold">Service Notes</p><p className="text-sm">{serviceEstimate?.notes}</p></div>
           {possibleCauses.length > 0 && <div className="space-y-3"><p className="font-semibold">Possible Causes & Remedies</p>{possibleCauses.map((item, index) => <div key={index} className="rounded-xl border bg-slate-50 p-3"><p className="font-medium">Possible Causes</p><ul className="ml-5 list-disc text-sm">{item.causes.map((cause, causeIndex) => <li key={causeIndex}>{cause}</li>)}</ul><p className="mt-3 font-medium">Suggested Remedy</p><p className="text-sm">{item.remedy}</p><p className="mt-3 font-medium">Possible Parts Needed</p><ul className="ml-5 list-disc text-sm">{item.parts.map((part, partIndex) => <li key={partIndex}>{part}</li>)}</ul></div>)}</div>}
