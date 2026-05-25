@@ -158,6 +158,7 @@ function CustomerIntake({ form, setForm }) {
     <>
       <input className="w-full rounded-xl border p-3" placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
       <input className="w-full rounded-xl border p-3" placeholder="(916) 555-1234" value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
+      <input className="w-full rounded-xl border p-3" placeholder="email@example.com (optional - get results emailed to you)" type="email" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
       <input className="w-full rounded-xl border p-3" placeholder="Safe brand/model if known" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
       <div className="space-y-1">
         <label className="text-sm font-medium">Type of lock</label>
@@ -368,8 +369,12 @@ frantzlocksmith@hotmail.com
 CA LCO 4160`
             );
             const recipient = config?.company?.email || '';
+            // BCC using the company email, send TO the customer if they provided an email
+            const customerEmail = form.email || '';
+            const toField = customerEmail || recipient;
+            const bccField = customerEmail ? recipient : '';
             if (recipient) {
-                            document.location.href = `mailto:${recipient}?bcc=&subject=SafeTriage%20Request%20-%20${encodeURIComponent(form.name || 'Customer')}&body=${autoReply}`;
+              document.location.href = `mailto:${toField}?bcc=${bccField}&subject=SafeTriage%20Request%20-%20${encodeURIComponent(form.name || 'Customer')}&body=${autoReply}`;
             }
           }
         }}>Still Needs Tech</Button></div>
@@ -620,7 +625,7 @@ export default function SafePulseDemo() {
     return () => { document.body.style.overflow = ""; };
   }, [anyModalOpen]);
 
-  const [form, setForm] = useState({ name: "", phone: "", brand: "", lockType: "Electronic keypad", safeOpen: "Yes", serviceAge: "", symptoms: [], tried: "", helped: "Not answered yet" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", brand: "", lockType: "Electronic keypad", safeOpen: "Yes", serviceAge: "", symptoms: [], tried: "", helped: "Not answered yet" });
 
   const score = useMemo(() => {
     let total = 0;
