@@ -12,6 +12,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
     else if (section === 'branding') updated.branding = { ...updated.branding, [key]: value };
     else if (section === 'serviceArea') updated.serviceArea = { ...updated.serviceArea, [key]: value };
     else if (section === 'features') updated.features = { ...updated.features, [key]: value };
+    else if (section === 'root') updated[key] = value;
     setLocalConfig(updated);
     setSaved(false);
   };
@@ -50,6 +51,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
     { id: 'company', label: 'Company Info' },
     { id: 'service', label: 'Service Area' },
     { id: 'features', label: 'Features' },
+    { id: 'integrations', label: 'Integrations' },
     { id: 'export', label: 'Export' },
   ];
 
@@ -224,6 +226,42 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                     </label>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Integrations */}
+            {activeTab === 'integrations' && (
+              <div className="space-y-4">
+                <p className="text-sm text-slate-600 mb-3">
+                  Add API keys for third-party services. Keys are stored in config and never shared.
+                </p>
+                <div className="admin-section">
+                  <label className="admin-label">Google Maps API Key</label>
+                  <p className="text-xs text-slate-500 mb-2">Required for address autocomplete and distance calculation. Get one at console.cloud.google.com — enable Maps JavaScript API + Places API.</p>
+                  <input
+                    className="admin-input font-mono text-xs"
+                    type="password"
+                    placeholder="AIzaSy..."
+                    value={localConfig.googleMapsApiKey || ''}
+                    onChange={(e) => handleChange('root', 'googleMapsApiKey', e.target.value)}
+                  />
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      className="text-xs text-slate-500 hover:text-slate-700 underline"
+                      onClick={(e) => {
+                        const input = e.target.closest('.admin-section').querySelector('input');
+                        input.type = input.type === 'password' ? 'text' : 'password';
+                        e.target.textContent = input.type === 'password' ? 'Show' : 'Hide';
+                      }}
+                    >Show</button>
+                    <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">Get a key →</a>
+                  </div>
+                </div>
+                <div className="admin-section">
+                  <label className="admin-label">SMS / Email Provider (coming soon)</label>
+                  <p className="text-xs text-slate-500">Future integration for automated notifications. SMS currently uses your phone's native messaging app via sms: links.</p>
+                  <input className="admin-input mt-2 text-slate-400" disabled placeholder="API key placeholder for future use" />
+                </div>
               </div>
             )}
 
