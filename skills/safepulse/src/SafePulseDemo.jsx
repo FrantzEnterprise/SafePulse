@@ -323,11 +323,11 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           const msg = encodeURIComponent(
 `SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Currently Open: ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nCurrent Symptoms: ${form.symptoms.map(getSymptomLabel).join(', ') || 'None'}\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\nPhotos:\n${photoSummarySMS}\n\nEstimated Fee: $${calculatedTripFee.toFixed(2)}\nDistance: ${distanceMiles || 'Not calculated'} miles`
           );
-          // SMS to tech
+          // SMS to tech - use location.href for reliable mobile sms: protocol
           if (safePhone) {
-            window.open(`sms:${safePhone}?body=${msg}`, '_blank');
+            window.location.href = `sms:${safePhone}?body=${msg}`;
           }
-          // Auto-reply to customer via email
+          // Auto-reply to customer via email - delayed to allow SMS to process first
           if (form.phone && form.phone.replace(/\D/g,'').length >= 10) {
             const autoReply = encodeURIComponent(
 `Hi ${form.name || 'Valued Customer'},
