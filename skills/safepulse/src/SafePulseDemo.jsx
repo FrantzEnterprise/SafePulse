@@ -218,11 +218,20 @@ function getSymptomLabel(id) {
   return symptomOptions.find((symptom) => symptom.id === id)?.label || id;
 }
 
+function formatPhone(value) {
+  // Strip non-digits
+  const digits = value.replace(/\D/g, '');
+  // Format as (xxx) xxx-xxxx
+  if (digits.length < 4) return digits;
+  if (digits.length < 7) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6,10)}`;
+}
+
 function CustomerIntake({ form, setForm }) {
   return (
     <>
       <input className="w-full rounded-xl border p-3" placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-      <input className="w-full rounded-xl border p-3" placeholder="Phone or text number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+      <input className="w-full rounded-xl border p-3" placeholder="(916) 555-1234" value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
       <input className="w-full rounded-xl border p-3" placeholder="Safe brand/model if known" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
       <div className="space-y-1">
         <label className="text-sm font-medium">Type of lock</label>
@@ -384,7 +393,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
         {batteryAttempted && <div className="rounded-2xl border border-blue-300 bg-blue-50 p-4 text-blue-900"><p className="font-semibold">Customer attempted recommended premium batteries.</p><p className="mt-1 text-sm">If the issue continues after installing fresh Duracell Quantum or Energizer batteries, further diagnosis or technician service may be required.</p></div>}
         <div className="flex gap-2 no-print"><Button onClick={() => { setForm({ ...form, helped: "Yes" }); }}>Advice Helped</Button><Button variant="outline" onClick={() => {
           setForm({ ...form, helped: "No" });
-          // Build notification message
+          // Build SMS notification
           const companyPhone = config?.company?.phone || '';
           const safePhone = companyPhone.replace(/[\s\(\)\-]/g, '');
           const msg = encodeURIComponent(
@@ -394,12 +403,40 @@ Phone: ${form.phone || 'Not provided'}
 Safe: ${form.brand || 'Unknown'} (${form.lockType})
 Risk: ${score}/100 - ${risk.level}
 Symptoms: ${triageHistory.map(getSymptomLabel).join(', ')}
-
-app.frantzlocksmithservice.com`
+`
           );
-          // SMS via tel link
+          // SMS to tech
           if (safePhone) {
             window.open(`sms:${safePhone}?body=${msg}`, '_blank');
+          }
+          // Auto-reply to customer via email
+          if (form.phone && form.phone.replace(/\D/g,'').length >= 10) {
+            const autoReply = encodeURIComponent(
+`Hi ${form.name || 'Valued Customer'},
+
+Thank you for using Frantz Locksmith Service's SafeTriage tool.
+
+Robert has received your safe service request and will contact you ASAP at ${form.phone}.
+
+Here is what you submitted:
+
+Safe: ${form.brand || 'Unknown'} (${form.lockType})
+Risk: ${score}/100 — ${risk.level}
+Symptoms: ${triageHistory.map(getSymptomLabel).join(', ')}
+
+If you have additional details, reply to this email or call (916) 534-4900.
+
+Best,
+Robert Frantz
+Frantz Locksmith Service
+(916) 534-4900
+frantzlocksmith@hotmail.com
+CA LCO 4160`
+            );
+            const recipient = config?.company?.email || '';
+            if (recipient) {
+              window.open(`mailto:${recipient}?bcc=&subject=SafeTriage%20Request%20-%20${encodeURIComponent(form.name || 'Customer')}&body=${autoReply}`, '_blank');
+            }
           }
         }}>Still Needs Tech</Button></div>
       </CardContent>
