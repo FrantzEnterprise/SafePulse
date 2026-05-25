@@ -155,6 +155,7 @@ function formatPhone(value) {
 
 function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleGroups, triageHistory, toggleSymptom, uploadedPhotos, setUploadedPhotos, showPhotoUpload, setShowPhotoUpload, distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, config, serviceEstimate, dispatchType, score, risk }) {
   const [step, setStep] = useState(1);
+  const goToStep = (s) => { setStep(s); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const totalSteps = 5;
 
   const calculateStep4Fee = () => {
@@ -173,7 +174,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
       {[1, 2, 3, 4, 5].map((s) => (
         <button
           key={s}
-          onClick={() => { if (s < step) setStep(s); }}
+          onClick={() => { if (s < step) goToStep(s); }}
           className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
             s === step
               ? 'bg-primary text-accent scale-110 shadow-md'
@@ -199,7 +200,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <input className="w-full rounded-xl border p-3" placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input className="w-full rounded-xl border p-3" placeholder="(916) 555-1234" value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
           <input className="w-full rounded-xl border p-3" placeholder="Enter email for a copy of results - Optional" type="email" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-          <button onClick={() => setStep(2)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+          <button onClick={() => goToStep(2)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
             Next — Safe Details
           </button>
         </div>
@@ -244,10 +245,10 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
             <textarea className="w-full rounded-xl border p-3" placeholder="Battery changes, combinations attempted, observations..." value={form.tried} onChange={(e) => setForm({ ...form, tried: e.target.value })} />
           </div>
           <div className="flex gap-2">
-            <button onClick={() => setStep(1)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+            <button onClick={() => goToStep(1)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
-            <button onClick={() => setStep(3)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+            <button onClick={() => goToStep(3)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
               Next — Symptoms
             </button>
           </div>
@@ -260,10 +261,10 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <SymptomsSelector form={form} showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms} visibleGroups={visibleGroups} triageHistory={triageHistory} toggleSymptom={toggleSymptom} />
           <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
           <div className="flex gap-2">
-            <button onClick={() => setStep(2)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+            <button onClick={() => goToStep(2)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
-            <button onClick={() => setStep(4)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+            <button onClick={() => goToStep(4)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
               Next — Service Quote
             </button>
           </div>
@@ -301,10 +302,10 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
             )}
           </div>
           <div className="flex gap-2">
-            <button onClick={() => setStep(3)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+            <button onClick={() => goToStep(3)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
-            <button onClick={() => setStep(5)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+            <button onClick={() => goToStep(5)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
               Next — Review & Cost
             </button>
           </div>
@@ -352,7 +353,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
             <p className="text-sm text-slate-600">Typical estimated onsite time: {dispatchType?.time || '30-90 minutes'}</p>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => setStep(4)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+            <button onClick={() => goToStep(4)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
           </div>
@@ -749,7 +750,7 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
               <h2 className="text-xl font-semibold">Service Area Map Calculator</h2>
               <p className="text-sm text-slate-600">Demo framework: enter calculated driving miles from your shop. Later this can connect to Google Maps or another distance API.</p>
             </div>
-            <Button variant="outline" onClick={() => setShowMapCalculator(false)}>Close</Button>
+            <Button variant="outline" onClick={() => { setShowMapCalculator(false); }}>Close</Button>
           </div>
           <div className="mb-4 h-64 rounded-2xl border bg-slate-100 p-4">
             <div className="flex h-full items-center justify-center rounded-xl border-2 border-dashed border-slate-300 text-center text-slate-600">
