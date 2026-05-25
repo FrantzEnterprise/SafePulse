@@ -385,44 +385,49 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
 
 function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
   if (!symptomData) return null;
+  const modalContent = (
+    <div className="rounded-2xl bg-white p-5 shadow-xl max-h-[85vh] overflow-y-auto">
+      {/* Fixed top bar with title + close */}
+      <div className="sticky top-0 z-10 bg-white pb-3 mb-3 border-b border-slate-200">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-xl font-bold text-slate-900 leading-tight">{symptomLabel}</h2>
+          <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-white px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">
+            ← Back
+          </button>
+        </div>
+      </div>
+      {/* Note */}
+      {symptomData.note && (
+        <div className="rounded-xl border-l-4 border-l-blue-500 bg-blue-50 p-4 mb-4">
+          <p className="text-sm font-medium text-blue-900">{symptomData.note}</p>
+        </div>
+      )}
+      {/* Causes */}
+      <div className="rounded-xl border bg-white p-4 mb-4">
+        <p className="font-semibold text-base mb-2">Possible Causes</p>
+        <ul className="ml-5 list-disc text-sm space-y-1">
+          {symptomData.causes.map((cause, i) => <li key={i}>{cause}</li>)}
+        </ul>
+      </div>
+      {/* Remedy */}
+      <div className="rounded-xl border border-green-200 bg-green-50 p-4 mb-4">
+        <p className="font-semibold text-base mb-2">Suggested Remedy</p>
+        <p className="text-sm text-green-900">{symptomData.remedy}</p>
+      </div>
+      {/* Bottom return button */}
+      <div className="mt-6 flex justify-center">
+        <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-white py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">
+          ← Return to Symptom Selection
+        </button>
+      </div>
+    </div>
+  );
+
+  // If the symptom content fits without scroll, use items-center. Otherwise items-start.
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">{symptomLabel}</h2>
-            <p className="text-sm text-slate-500 mt-1">Symptom analysis and recommended action</p>
-          </div>
-          <button onClick={onClose} className="rounded-full bg-blue-600 text-white px-4 py-2 text-sm font-semibold hover:bg-blue-700">&larr; Back</button>
-        </div>
-        {symptomData.note && (
-          <div className="rounded-xl border-l-4 border-l-blue-500 bg-blue-50 p-4 mb-4">
-            <p className="text-sm font-medium text-blue-900">{symptomData.note}</p>
-          </div>
-        )}
-        <div className="space-y-4">
-          <div className="rounded-xl border bg-white p-4">
-            <p className="font-semibold text-lg mb-2 flex items-center gap-2">&#x1F4A1; Possible Causes</p>
-            <ul className="ml-5 list-disc text-sm space-y-1">
-              {symptomData.causes.map((cause, i) => <li key={i}>{cause}</li>)}
-            </ul>
-          </div>
-          <div className="rounded-xl border border-green-200 bg-green-50 p-4">
-            <p className="font-semibold text-lg mb-2 flex items-center gap-2">&#x1F527; Suggested Remedy</p>
-            <p className="text-sm text-green-900">{symptomData.remedy}</p>
-          </div>
-          {symptomData.parts && symptomData.parts.length > 0 && (
-            <div className="rounded-xl border bg-white p-4">
-              <p className="font-semibold text-lg mb-2 flex items-center gap-2">&#x1F4E6; Parts / Tools to Bring</p>
-              <ul className="ml-5 list-disc text-sm space-y-1">
-                {symptomData.parts.map((part, i) => <li key={i}>{part}</li>)}
-              </ul>
-            </div>
-          )}
-        </div>
-        <div className="mt-6 flex justify-center">
-          <Button onClick={onClose} className="!text-lg !px-8 !py-3 !rounded-xl">Return to Triage</Button>
-        </div>
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 pt-12" onClick={onClose}>
+      <div className="w-full max-w-2xl" onClick={(e) => e.stopPropagation()}>
+        {modalContent}
       </div>
     </div>
   );
