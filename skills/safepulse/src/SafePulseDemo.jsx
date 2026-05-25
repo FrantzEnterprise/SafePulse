@@ -153,9 +153,9 @@ function formatPhone(value) {
   return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6,10)}`;
 }
 
-function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleGroups, triageHistory, toggleSymptom, uploadedPhotos, setUploadedPhotos, showPhotoUpload, setShowPhotoUpload, distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, config }) {
+function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleGroups, triageHistory, toggleSymptom, uploadedPhotos, setUploadedPhotos, showPhotoUpload, setShowPhotoUpload, distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, config, serviceEstimate, dispatchType, score, risk }) {
   const [step, setStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const calculateStep4Fee = () => {
     const cfg = config?.serviceArea || { baseFee: 75, baseMilesIncluded: 17, perExtraMileRate: 2.5 };
@@ -170,7 +170,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
 
   const StepIndicator = () => (
     <div className="flex items-center justify-center gap-2 mb-6">
-      {[1, 2, 3, 4].map((s) => (
+      {[1, 2, 3, 4, 5].map((s) => (
         <button
           key={s}
           onClick={() => { if (s < step) setStep(s); }}
@@ -298,6 +298,57 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           </div>
           <div className="flex gap-2">
             <button onClick={() => setStep(3)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+              ← Back
+            </button>
+            <button onClick={() => setStep(5)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+              Next — Review & Cost
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === 5 && (
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Service & Cost Framework</h3>
+          <p className="text-sm text-slate-600">Ballpark estimates based on your selections. Final pricing depends on safe type, lock condition, and complexity.</p>
+          <div className="rounded-2xl border bg-white p-4 space-y-4">
+            <div className="rounded-xl border bg-slate-50 p-4">
+              <p className="font-semibold">Service Trip Fee</p>
+              <p className="text-3xl font-bold text-accent">${calculatedTripFee.toFixed(2)}</p>
+              <p className="text-xs text-slate-500 mt-1">$75 minimum includes 17 miles. $2.50/mile beyond.</p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-xl border p-3">
+                <p className="text-sm text-slate-500">Standard Safes</p>
+                <p className="text-xl font-bold">{serviceEstimate?.standard || '$275 - $350'}</p>
+                <p className="text-sm text-slate-500 mt-1">Starting at $275</p>
+              </div>
+              <div className="rounded-xl border p-3">
+                <p className="text-sm text-slate-500">High Security Safes</p>
+                <p className="text-xl font-bold">{serviceEstimate?.highSecurity || '$800 - $1,000'}</p>
+                <p className="text-sm text-slate-500 mt-1">Starting at $800</p>
+              </div>
+            </div>
+            <div className="rounded-xl border p-3">
+              <p className="font-semibold text-sm">Service Notes</p>
+              <p className="text-sm text-slate-600">{serviceEstimate?.notes || 'Issue may be resolved with simple troubleshooting or preventive service.'}</p>
+            </div>
+            {distanceMiles && Number(distanceMiles) > 0 && (
+              <div className="rounded-xl border p-3 text-sm">
+                <p className="font-medium">Trip Breakdown</p>
+                <p>Base fee: $75.00 (first 17 miles)</p>
+                {Number(distanceMiles) > 17 && <p>Extra miles: {Math.ceil(Number(distanceMiles)) - 17} × $2.50</p>}
+                <p className="mt-1 font-semibold">Total: ${calculatedTripFee.toFixed(2)}</p>
+              </div>
+            )}
+          </div>
+          <div className="rounded-2xl border bg-yellow-50 p-4">
+            <p className="font-semibold">Recommended Service Type</p>
+            <p className="text-lg font-bold">{dispatchType?.type || 'Standard Service Call Recommended'}</p>
+            <p className="text-sm text-slate-600">Typical estimated onsite time: {dispatchType?.time || '30-90 minutes'}</p>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setStep(4)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
           </div>
@@ -841,6 +892,9 @@ Advice Helpful?: ${form.helped}`;
                 distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles}
                 calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee}
                 config={config}
+                serviceEstimate={serviceEstimate}
+                dispatchType={dispatchType}
+                score={score} risk={risk}
               />
             </CardContent>
           </Card>
