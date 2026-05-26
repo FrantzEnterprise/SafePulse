@@ -161,13 +161,13 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
 
             {/* ─── Body: Tab Buttons with Popup Content ─── */}
             <div className="p-3 space-y-3 w-full min-w-0">
-              {/* Wrapping tab buttons — swipable via overflow, wraps naturally */}
-              <div className="flex flex-wrap gap-2">
+              {/* Tab buttons — swipe to scroll, no arrows, no wrapping */}
+              <div className="flex overflow-x-auto gap-1.5 pb-1 -mx-1 px-1" style={{WebkitOverflowScrolling:'touch', scrollbarWidth:'thin'}}>
                 {tabs.map(tab => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                    className={`shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
                       activeTab === tab.id
                         ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md'
                         : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
