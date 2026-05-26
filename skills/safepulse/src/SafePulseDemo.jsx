@@ -897,6 +897,10 @@ Risk Level: ${risk.level}
 Recommendation: ${risk.advice}
 Advice Helpful?: ${form.helped}`;
 
+  if (showAdmin) {
+    return <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 p-6 text-slate-900">
       <div className="mx-auto max-w-5xl space-y-6">
@@ -956,7 +960,6 @@ Advice Helpful?: ${form.helped}`;
           onClose={() => { setShowResultModal(false); setLastSelectedSymptom(null); }}
         />
       )}
-      {showAdmin && <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />}
       {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
     </div>
   );
