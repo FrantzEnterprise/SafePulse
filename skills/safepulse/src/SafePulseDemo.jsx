@@ -156,9 +156,9 @@ function formatPhone(value) {
 function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleGroups, triageHistory, toggleSymptom, uploadedPhotos, setUploadedPhotos, showPhotoUpload, setShowPhotoUpload, distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, config, serviceEstimate, dispatchType, score, risk }) {
   const [step, setStep] = useState(1);
   const goToStep = (s) => { setStep(s); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-  const totalSteps = 5;
+  const totalSteps = 6;
 
-  const calculateStep4Fee = () => {
+  const calculateStep5Fee = () => {
     const cfg = config?.serviceArea || { baseFee: 75, baseMilesIncluded: 17, perExtraMileRate: 2.5 };
     const miles = Number(distanceMiles);
     if (!miles || miles <= cfg.baseMilesIncluded) {
@@ -171,7 +171,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
 
   const StepIndicator = () => (
     <div className="flex items-center justify-center gap-2 mb-6">
-      {[1, 2, 3, 4, 5].map((s) => (
+      {[1, 2, 3, 4, 5, 6].map((s) => (
         <button
           key={s}
           onClick={() => { if (s < step) goToStep(s); }}
@@ -257,21 +257,34 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
 
       {step === 3 && (
         <div className="space-y-4">
-          <h3 className="font-semibold text-lg">Symptoms & Photos</h3>
+          <h3 className="font-semibold text-lg">Symptoms</h3>
           <SymptomsSelector form={form} showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms} visibleGroups={visibleGroups} triageHistory={triageHistory} toggleSymptom={toggleSymptom} />
-          <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
           <div className="flex gap-2">
             <button onClick={() => goToStep(2)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
             <button onClick={() => goToStep(4)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+              Next — Photos
+            </button>
+          </div>
+        </div>
+      )}
+      {step === 4 && (
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Photo Upload</h3>
+          <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
+          <div className="flex gap-2">
+            <button onClick={() => goToStep(3)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+              ← Back
+            </button>
+            <button onClick={() => goToStep(5)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
               Next — Service Quote
             </button>
           </div>
         </div>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Service Area & Quote</h3>
           <p className="text-sm text-slate-600">Enter the driving distance from your shop to estimate the trip fee.</p>
@@ -284,7 +297,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
               <label className="text-sm font-medium">Distance from shop (miles)</label>
               <input className="w-full rounded-xl border p-3" type="number" min="0" placeholder="Example: 24" value={distanceMiles} onChange={(e) => setDistanceMiles(e.target.value)} />
             </div>
-            <button onClick={calculateStep4Fee} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+            <button onClick={calculateStep5Fee} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
               Calculate Fee
             </button>
             <div className="rounded-xl border bg-slate-50 p-4">
@@ -302,17 +315,17 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
             )}
           </div>
           <div className="flex gap-2">
-            <button onClick={() => goToStep(3)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+            <button onClick={() => goToStep(4)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
-            <button onClick={() => goToStep(5)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+            <button onClick={() => goToStep(6)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
               Next — Review & Cost
             </button>
           </div>
         </div>
       )}
 
-      {step === 5 && (
+      {step === 6 && (
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Service & Cost Framework</h3>
           <p className="text-sm text-slate-600">Ballpark estimates based on your selections. Final pricing depends on safe type, lock condition, and complexity.</p>
@@ -353,7 +366,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
             <p className="text-sm text-slate-600">Typical estimated onsite time: {dispatchType?.time || '30-90 minutes'}</p>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => goToStep(4)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
+            <button onClick={() => goToStep(5)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
             </button>
           </div>
