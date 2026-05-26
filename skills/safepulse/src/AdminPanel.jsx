@@ -162,7 +162,8 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             {/* ─── Body: Tab Buttons with Popup Content ─── */}
             <div className="p-4 space-y-4">
               {/* Big Tappable Tabs — horizontal scroll row */}
-              <div className="flex overflow-x-auto gap-2 pb-2">
+              <p className="text-xs text-slate-400 text-center -mb-2">← Scroll for more →</p>
+              <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin" style={{WebkitOverflowScrolling:'touch', scrollbarWidth:'thin'}}>
                 {tabs.map(tab => (
                   <button
                     key={tab.id}
