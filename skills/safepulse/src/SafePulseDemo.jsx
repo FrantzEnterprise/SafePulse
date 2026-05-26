@@ -817,6 +817,11 @@ export default function SafePulseDemo() {
     });
   }, [cssVars]);
   useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/SafePulse/sw.js').catch(() => {});
+    }
+  }, []);
+  useEffect(() => {
     if (anyModalOpen) {
       document.body.style.overflow = "hidden";
     } else {

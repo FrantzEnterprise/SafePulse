@@ -1,0 +1,23 @@
+{
+  "name": "SafeTriage",
+  "short_name": "SafeTriage",
+  "description": "Safe failure prediction tool for locksmith technicians",
+  "start_url": "/SafePulse/",
+  "scope": "/SafePulse/",
+  "display": "standalone",
+  "background_color": "#1a3a5c",
+  "theme_color": "#1a3a5c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
