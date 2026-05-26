@@ -1,452 +1,321 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import SymptomEditor from './SymptomEditor';
 
-const tabIcons = {
-  branding: '🎨',
-  company: '🏢',
-  service: '📍',
-  features: '⚙️',
-  qa: '💡',
-  symptoms: '🩺',
-  integrations: '🔌',
-  export: '📦',
-};
+const tabMeta = [
+  { id:'branding', label:'Branding', icon:'🎨' },
+  { id:'company', label:'Company', icon:'🏢' },
+  { id:'service', label:'Service', icon:'📍' },
+  { id:'features', label:'Features', icon:'⚙️' },
+  { id:'qa', label:'Q&A', icon:'💡' },
+  { id:'symptoms', label:'Symptoms', icon:'🩺' },
+  { id:'integrations', label:'Integrations', icon:'🔌' },
+  { id:'export', label:'Export', icon:'📦' },
+];
 
-const tabDescriptions = {
-  branding: 'Customize colors, fonts, and visual identity',
-  company: 'Business name, contact details, and tagline',
-  service: 'Pricing, mileage zones, and service radius',
-  features: 'Toggle app features on or off',
-  qa: 'Link to your website\'s knowledge base',
-  symptoms: 'Manage triage symptoms and categories',
-  integrations: 'API keys for external services',
-  export: 'Download configuration and data files',
-};
+const inputCls = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400';
 
 export default function AdminPanel({ config, updateConfig, onClose }) {
-  const [activeTab, setActiveTab] = useState('branding');
-  const [localConfig, setLocalConfig] = useState(JSON.parse(JSON.stringify(config)));
+  const [tab, setTab] = useState('branding');
+  const [cfg, setCfg] = useState(JSON.parse(JSON.stringify(config)));
   const [saved, setSaved] = useState(false);
-  const [showSymptomEditor, setShowSymptomEditor] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(true);
+  const [showEditor, setShowEditor] = useState(false);
 
-  const handleChange = (section, key, value) => {
-    const updated = { ...localConfig };
-    if (section === 'company') updated.company = { ...updated.company, [key]: value };
-    else if (section === 'branding') updated.branding = { ...updated.branding, [key]: value };
-    else if (section === 'serviceArea') updated.serviceArea = { ...updated.serviceArea, [key]: value };
-    else if (section === 'features') updated.features = { ...updated.features, [key]: value };
-    else if (section === 'root') updated[key] = value;
-    setLocalConfig(updated);
+  const set = (section, key, val) => {
+    const next = { ...cfg };
+    if (section === 'root') next[key] = val;
+    else next[section] = { ...next[section], [key]: val };
+    setCfg(next);
     setSaved(false);
   };
 
-  const saveConfig = () => {
-    updateConfig(localConfig);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  const save = () => { updateConfig(cfg); setSaved(true); setTimeout(() => setSaved(false), 2000); };
 
-  const downloadConfig = () => {
-    const blob = new Blob([JSON.stringify(localConfig, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+  const dl = (name, data) => {
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'safetriage-config.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const exportSymptomsToRepo = () => {
-    const data = window.__safepulseSymptomGroups || [];
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'safetriage-symptoms.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)], {type:'application/json'}));
+    a.download = name; a.click(); URL.revokeObjectURL(a.href);
   };
 
   const importSymptoms = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
+    const inp = document.createElement('input');
+    inp.type='file'; inp.accept='.json';
+    inp.onchange = e => {
+      const f = e.target.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = ev => {
         try {
-          const data = JSON.parse(ev.target.result);
-          if (Array.isArray(data) && data.length > 0 && data[0].category && data[0].symptoms) {
-            localStorage.setItem('safepulse_symptoms', JSON.stringify(data));
-            window.__safepulseSymptomGroups = data;
+          const d = JSON.parse(ev.target.result);
+          if(Array.isArray(d) && d[0]?.category && d[0]?.symptoms) {
+            localStorage.setItem('safepulse_symptoms', JSON.stringify(d));
+            window.__safepulseSymptomGroups = d;
             window.location.reload();
-          } else {
-            alert('Invalid symptom data format. Expected array of { category, symptoms } objects.');
-          }
-        } catch (err) {
-          alert('Failed to parse JSON: ' + err.message);
-        }
+          } else alert('Invalid format');
+        } catch(err) { alert('Parse error: '+err.message); }
       };
-      reader.readAsText(file);
+      r.readAsText(f);
     };
-    input.click();
+    inp.click();
   };
 
-  const resetSymptomsToDefault = () => {
-    if (!confirm('This will reset all symptoms to the original default set. Are you sure?')) return;
-    localStorage.removeItem('safepulse_symptoms');
-    window.location.reload();
+  const resetSymptoms = () => {
+    if(confirm('Reset all symptoms to defaults?')) {
+      localStorage.removeItem('safepulse_symptoms');
+      window.location.reload();
+    }
   };
 
-  const tabs = [
-    { id: 'branding', label: 'Branding' },
-    { id: 'company', label: 'Company Info' },
-    { id: 'service', label: 'Service Area' },
-    { id: 'features', label: 'Features' },
-    { id: 'qa', label: 'Q&A' },
-    { id: 'symptoms', label: 'Symptoms' },
-    { id: 'integrations', label: 'Integrations' },
-    { id: 'export', label: 'Export' },
+  const stats = [
+    { label:'Symptoms', value:(window.__safepulseSymptomGroups||[]).flatMap(g=>g.symptoms).length, icon:'🩺' },
+    { label:'Categories', value:(window.__safepulseSymptomGroups||[]).length, icon:'📂' },
+    { label:'Radius', value:(cfg.serviceArea?.maxRadiusMiles||0)+'mi', icon:'📍' },
   ];
-
-  const handleInputStyle = {
-    base: 'w-full rounded-lg border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 backdrop-blur-sm transition-all duration-200 focus:border-[#d4a843] focus:outline-none focus:ring-2 focus:ring-[#d4a843]/20 hover:border-slate-300',
-  };
-
-  useEffect(() => {
-    document.body.style.overflowX = 'hidden';
-    return () => { document.body.style.overflowX = ''; };
-  }, []);
 
   return (
     <>
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-sm">
-        <div className="min-h-screen px-4 py-6 flex items-start justify-center">
-          <div className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-200/50">
-            
-            {/* ─── Dashboard Header ─── */}
-            <div className="bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] px-4 py-3 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="h-8 w-8 rounded-lg bg-[#d4a843]/20 flex items-center justify-center text-sm shadow-inner shrink-0">⚙️</div>
-                <div className="min-w-0">
-                  <h2 className="text-base font-bold text-white tracking-tight truncate">SafeTriage Dashboard</h2>
-                  <p className="text-[10px] text-[#d4a843]/80 font-medium">Control Center</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className={`text-[10px] font-medium px-2 py-1 rounded-full transition-all duration-300 ${saved ? 'bg-green-500/20 text-green-300' : 'bg-white/10 text-white/60'}`}>
-                  {saved ? '✓' : ''}
-                </span>
-                <button onClick={onClose} className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/20 transition-all duration-200 border border-white/10">
-                  ✕
-                </button>
+      <div className="fixed z-50 inset-0 flex flex-col bg-slate-900/95" style={{overscrollBehavior:'contain'}}>
+        
+        {/* Header */}
+        <div className="flex items-center justify-between bg-[#1a3a5c] px-3 py-2 shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-lg shrink-0">⚙️</span>
+            <div className="min-w-0">
+              <div className="text-sm font-bold text-white truncate">SafeTriage</div>
+              <div className="text-[10px] text-[#d4a843]">Dashboard</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {saved && <span className="text-[10px] text-green-300 font-medium">✓ Saved</span>}
+            <button onClick={onClose} className="rounded-md bg-white/10 px-2.5 py-1 text-xs text-white">✕</button>
+          </div>
+        </div>
+
+        {/* Stats row */}
+        <div className="flex gap-px bg-slate-700 overflow-x-auto shrink-0">
+          {stats.map((s,i) => (
+            <div key={i} className="flex items-center gap-2 bg-slate-800 px-3 py-2 shrink-0 min-w-0 flex-1">
+              <div className="h-7 w-7 rounded-md bg-[#d4a843]/20 flex items-center justify-center text-sm shrink-0">{s.icon}</div>
+              <div className="min-w-0">
+                <div className="text-base font-bold text-white leading-none">{s.value}</div>
+                <div className="text-[9px] text-slate-400 truncate">{s.label}</div>
               </div>
             </div>
+          ))}
+        </div>
 
-            {/* ─── Quick Stats Bar — Single Horizontal Row ─── */}
-            <div className="flex overflow-x-auto gap-px bg-slate-100">
-              {[
-                { label: 'Symptoms', value: (window.__safepulseSymptomGroups || []).flatMap(g => g.symptoms).length, icon: '🩺', color: 'from-blue-500 to-blue-600' },
-                { label: 'Categories', value: (window.__safepulseSymptomGroups || []).length, icon: '📂', color: 'from-purple-500 to-purple-600' },
-                { label: 'Brand Colors', value: '7', icon: '🎨', color: 'from-amber-500 to-amber-600' },
-                { label: 'Service Radius', value: (localConfig.serviceArea?.maxRadiusMiles || 0) + ' mi', icon: '📍', color: 'from-emerald-500 to-emerald-600' },
-              ].map((stat, i) => (
-                <div key={i} className="bg-white px-3 py-2 flex items-center gap-2 shrink-0 min-w-0">
-                  <div className={`h-8 w-8 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center text-sm shadow-sm shrink-0`}>{stat.icon}</div>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold text-slate-800 leading-none">{stat.value}</p>
-                    <p className="text-[10px] text-slate-500 leading-tight truncate max-w-20">{stat.label}</p>
+        {/* Tabs */}
+        <div className="flex gap-1 px-2 pt-2 overflow-x-auto shrink-0 bg-slate-900" style={{WebkitOverflowScrolling:'touch'}}>
+          {tabMeta.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                tab===t.id ? 'bg-[#1a3a5c] text-[#d4a843]' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}>
+              <span className="text-sm">{t.icon}</span>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-2 pb-2 pt-2" style={{overscrollBehavior:'contain'}}>
+          <div className="max-w-3xl mx-auto space-y-3">
+
+            {tab==='branding' && (
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  {label:'Primary', key:'primaryColor'},
+                  {label:'Header BG', key:'headerBg'},
+                  {label:'Header Text', key:'headerText'},
+                  {label:'Accent', key:'accentColor'},
+                  {label:'Accent Hover', key:'accentHover'},
+                  {label:'Body Text', key:'bodyTextColor'},
+                ].map(item => (
+                  <div key={item.key} className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase">{item.label}</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <input type="color" className="h-8 w-10 rounded border-0 cursor-pointer shrink-0"
+                        value={cfg.branding[item.key]||'#000000'}
+                        onChange={e => set('branding', item.key, e.target.value)} />
+                      <input className={inputCls+' text-[11px]'} value={cfg.branding[item.key]||''}
+                        onChange={e => set('branding', item.key, e.target.value)} />
+                    </div>
                   </div>
+                ))}
+                <div className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+                  <label className="text-[10px] font-medium text-slate-400 uppercase">Font</label>
+                  <input className={inputCls+' mt-1 text-xs'} value={cfg.branding.fontFamily}
+                    onChange={e => set('branding','fontFamily',e.target.value)} />
                 </div>
-              ))}
-            </div>
-
-            {/* ─── Body: Tab Buttons with Content Below ─── */}
-            <div className="w-full min-w-0">
-              {/* Tab buttons — scrollable row */}
-              <div className="px-3 pt-3 overflow-x-auto" style={{WebkitOverflowScrolling:'touch'}}>
-                <div className="flex gap-2" style={{minWidth:'fit-content'}}>
-                  {tabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`shrink-0 flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                        activeTab === tab.id
-                          ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
-                      }`}
-                    >
-                      <span className="text-base">{tabIcons[tab.id]}</span>
-                      <span className="whitespace-nowrap">{tab.label}</span>
-                    </button>
+                <div className="rounded-lg border border-slate-700 bg-slate-800 p-3 flex items-end gap-2">
+                  {['primaryColor','accentColor','headerBg'].map(k => (
+                    <div key={k} className="h-8 w-10 rounded border border-slate-600" style={{background:cfg.branding[k]}} />
                   ))}
                 </div>
               </div>
+            )}
 
-              {/* Content Panel */}
-              <div className="p-3 max-h-[60vh] overflow-y-auto">
-
-                {/* Branding */}
-                {activeTab === 'branding' && (
-                  <div className="space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                        <p className="text-sm font-semibold text-slate-800 mb-4">🖌️ Core Colors</p>
-                        <div className="space-y-3">
-                          {[
-                            { label: 'Primary', key: 'primaryColor' },
-                            { label: 'Header Background', key: 'headerBg' },
-                            { label: 'Header Text', key: 'headerText' },
-                            { label: 'Accent', key: 'accentColor' },
-                            { label: 'Accent Hover', key: 'accentHover' },
-                            { label: 'Body Text', key: 'bodyTextColor' },
-                          ].map(item => (
-                            <div key={item.key} className="flex items-center gap-3">
-                              <input type="color" className="h-9 w-12 rounded-lg border border-slate-200 cursor-pointer shrink-0"
-                                value={localConfig.branding[item.key] || '#000000'}
-                                onChange={(e) => handleChange('branding', item.key, e.target.value)} />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs font-medium text-slate-600">{item.label}</p>
-                                <input className={handleInputStyle.base + ' text-xs mt-0.5'} value={localConfig.branding[item.key] || ''}
-                                  onChange={(e) => handleChange('branding', item.key, e.target.value)} />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                        <p className="text-sm font-semibold text-slate-800 mb-4">🔤 Typography</p>
-                        <div className="space-y-4">
-                          <div>
-                            <label className="admin-label text-xs">Font Family</label>
-                            <input className={handleInputStyle.base} value={localConfig.branding.fontFamily}
-                              onChange={(e) => handleChange('branding', 'fontFamily', e.target.value)} />
-                          </div>
-                        </div>
-                        <div className="mt-5">
-                          <p className="text-sm font-semibold text-slate-800 mb-3">🎨 Color Preview</p>
-                          <div className="flex gap-2 flex-wrap">
-                            <div className="h-10 w-16 rounded-lg flex items-center justify-center text-[10px] text-white font-medium shadow-sm" style={{ background: localConfig.branding.primaryColor }}>PRI</div>
-                            <div className="h-10 w-16 rounded-lg flex items-center justify-center text-[10px] text-white font-medium shadow-sm" style={{ background: localConfig.branding.accentColor }}>ACC</div>
-                            <div className="h-10 w-16 rounded-lg flex items-center justify-center text-[10px] text-white font-medium shadow-sm" style={{ background: localConfig.branding.headerBg }}>HDR</div>
-                            <div className="h-10 w-16 rounded-lg flex items-center justify-center text-[10px] text-slate-600 font-medium shadow-sm border" style={{ background: localConfig.branding.backgroundColor }}>BG</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+            {tab==='company' && (
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  {label:'Company Name', key:'name', section:'company'},
+                  {label:'Tagline', key:'tagline', section:'root'},
+                  {label:'Phone', key:'phone', section:'company'},
+                  {label:'Email', key:'email', section:'company'},
+                  {label:'Address', key:'address', section:'company'},
+                  {label:'Logo URL', key:'logoUrl', section:'company'},
+                ].map(item => (
+                  <div key={item.key} className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase">{item.label}</label>
+                    <input className={inputCls+' mt-1 text-xs'}
+                      placeholder={'Enter '+item.label.toLowerCase()}
+                      value={item.section==='root' ? (cfg[item.key]||'') : (cfg.company?.[item.key]||'')}
+                      onChange={e => set(item.section==='root'?'root':'company', item.key, e.target.value)} />
                   </div>
-                )}
+                ))}
+              </div>
+            )}
 
-                {/* Company Info */}
-                {activeTab === 'company' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {[
-                      { label: 'Company Name', key: 'name', section: 'company' },
-                      { label: 'Tagline', key: 'tagline', section: 'root', field: 'tagline' },
-                      { label: 'Phone', key: 'phone', section: 'company' },
-                      { label: 'Email', key: 'email', section: 'company' },
-                      { label: 'Address', key: 'address', section: 'company' },
-                      { label: 'Logo URL', key: 'logoUrl', section: 'company' },
-                    ].map(item => (
-                      <div key={item.key} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                        <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">{item.label}</label>
-                        <input className={handleInputStyle.base + ' mt-2'} placeholder={`Enter ${item.label.toLowerCase()}`}
-                          value={item.section === 'root' ? (localConfig[item.field || item.key] || '') : (localConfig.company?.[item.key] || '')}
-                          onChange={(e) => {
-                            if (item.section === 'root') handleChange('root', item.field || item.key, e.target.value);
-                            else handleChange('company', item.key, e.target.value);
-                          }} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Service Area */}
-                {activeTab === 'service' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                      <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Shop Address</label>
-                      <input className={handleInputStyle.base + ' mt-2'} value={localConfig.serviceArea.shopAddress}
-                        onChange={(e) => handleChange('serviceArea', 'shopAddress', e.target.value)} />
-                    </div>
-                    {[
-                      { label: 'Base Fee ($)', key: 'baseFee', type: 'number', step: '0.01' },
-                      { label: 'Miles Included', key: 'baseMilesIncluded', type: 'number', step: '1' },
-                      { label: 'Per Extra Mile ($)', key: 'perExtraMileRate', type: 'number', step: '0.01' },
-                      { label: 'Max Radius (mi)', key: 'maxRadiusMiles', type: 'number', step: '1' },
-                    ].map(item => (
-                      <div key={item.key} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                        <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">{item.label}</label>
-                        <input className={handleInputStyle.base + ' mt-2'} type={item.type} step={item.step}
-                          value={localConfig.serviceArea[item.key]}
-                          onChange={(e) => handleChange('serviceArea', item.key, item.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value)} />
-                      </div>
-                    ))}
-                    <div className="md:col-span-2 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 p-4 shadow-sm">
-                      <p className="text-sm font-semibold text-blue-800">📐 Mileage Fee Preview</p>
-                      <p className="text-xs text-blue-600 mt-1">${localConfig.serviceArea.baseFee} base fee covers {localConfig.serviceArea.baseMilesIncluded} miles. Beyond that: ${localConfig.serviceArea.perExtraMileRate}/mi. Max radius: {localConfig.serviceArea.maxRadiusMiles} mi.</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Features */}
-                {activeTab === 'features' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {Object.entries(localConfig.features).filter(([k]) => k !== 'maxScoreBeforeLockout').map(([key, val]) => (
-                      <div key={key} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-semibold text-slate-800 capitalize">
-                            {key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).replace('Qa', 'Q&A')}
-                          </p>
-                          <p className="text-xs text-slate-500 mt-0.5">{val ? 'Enabled' : 'Disabled'}</p>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input type="checkbox" className="sr-only peer" checked={val}
-                            onChange={(e) => {
-                              const updated = { ...localConfig };
-                              updated.features = { ...updated.features, [key]: e.target.checked };
-                              setLocalConfig(updated);
-                              setSaved(false);
-                            }} />
-                          <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1a3a5c]"></div>
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Q&A */}
-                {activeTab === 'qa' && (
-                  <div className="max-w-xl space-y-4">
-                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-800">🔗 Show Knowledge Base Link</p>
-                        <p className="text-xs text-slate-500 mt-0.5">Displays a "Knowledge Base" button in the app header</p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" className="sr-only peer" checked={localConfig.features.showQaSection || false}
-                          onChange={(e) => {
-                            const updated = { ...localConfig };
-                            updated.features = { ...updated.features, showQaSection: e.target.checked };
-                            setLocalConfig(updated);
-                            setSaved(false);
-                          }} />
-                        <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1a3a5c]"></div>
-                      </label>
-                    </div>
-                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Knowledge Base URL</label>
-                      <input className={handleInputStyle.base + ' mt-2'} placeholder="https://frantzlocksmithservice.com/knowledge-base"
-                        value={localConfig.qaUrl || ''} onChange={(e) => handleChange('root', 'qaUrl', e.target.value)} />
-                    </div>
-                  </div>
-                )}
-
-                {/* Symptoms */}
-                {activeTab === 'symptoms' && (
-                  <div className="space-y-4">
-                    <div className="rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-4 shadow-sm">
-                      <p className="text-sm font-semibold text-amber-800">🩺 Symptom Manager</p>
-                      <p className="text-xs text-amber-700 mt-1">Edit categories, symptoms, risk points, causes, remedies, and parts. All changes save to browser storage.</p>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <button onClick={() => setShowSymptomEditor(true)}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#1a3a5c] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#0f2440] shadow-sm transition-all duration-200">
-                        🖊️ Open Symptom Editor
-                      </button>
-                      <button onClick={importSymptoms}
-                        className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-400 shadow-sm transition-all duration-200">
-                        📥 Import JSON
-                      </button>
-                      <button onClick={exportSymptomsToRepo}
-                        className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-400 shadow-sm transition-all duration-200">
-                        📤 Export as JSON
-                      </button>
-                    </div>
-                    <div className="pt-2 border-t border-slate-100">
-                      <button onClick={resetSymptomsToDefault}
-                        className="text-sm text-red-500 hover:text-red-700 underline underline-offset-2">
-                        ↺ Reset to default symptoms
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Integrations */}
-                {activeTab === 'integrations' && (
-                  <div className="space-y-4 max-w-xl">
-                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="text-lg">🗺️</span>
-                        <p className="text-sm font-semibold text-slate-800">Google Maps API Key</p>
-                      </div>
-                      <p className="text-xs text-slate-500 mb-3">Needed for address autocomplete and distance calculation. Enable Maps JavaScript API + Places API in Google Cloud Console.</p>
-                      <input className={handleInputStyle.base + ' font-mono text-xs'} type="password" placeholder="AIzaSy..."
-                        value={localConfig.googleMapsApiKey || ''}
-                        onChange={(e) => handleChange('root', 'googleMapsApiKey', e.target.value)} />
-                      <div className="flex items-center gap-3 mt-3">
-                        <button className="text-xs text-slate-500 hover:text-slate-700 font-medium underline underline-offset-2"
-                          onClick={(e) => {
-                            const input = e.target.closest('.rounded-xl').querySelector('input');
-                            input.type = input.type === 'password' ? 'text' : 'password';
-                            e.target.textContent = input.type === 'password' ? 'Show Key' : 'Hide Key';
-                          }}>Show Key</button>
-                        <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-800 font-medium underline underline-offset-2">Get a key →</a>
-                      </div>
-                    </div>
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 shadow-sm opacity-60">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">📧</span>
-                        <p className="text-sm font-semibold text-slate-800">SMS / Email Provider</p>
-                      </div>
-                      <p className="text-xs text-slate-500">Coming soon — automated notifications. Currently uses native sms: links.</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Export */}
-                {activeTab === 'export' && (
-                  <div className="space-y-4 max-w-lg">
-                    <div className="rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-4 shadow-sm">
-                      <p className="text-sm font-semibold text-emerald-800">📦 Export Data</p>
-                      <p className="text-xs text-emerald-700 mt-1">Download config and symptom files to deploy to your server or GitHub.</p>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <button onClick={downloadConfig}
-                        className="inline-flex items-center gap-2 rounded-xl bg-[#1a3a5c] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#0f2440] shadow-sm transition-all duration-200">
-                        ⚙️ Download Config
-                      </button>
-                      <button onClick={exportSymptomsToRepo}
-                        className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-400 shadow-sm transition-all duration-200">
-                        🩺 Download Symptoms
-                      </button>
-                    </div>
-                  </div>
-                )}
-
+            {tab==='service' && (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2 rounded-lg border border-slate-700 bg-slate-800 p-3">
+                  <label className="text-[10px] font-medium text-slate-400 uppercase">Shop Address</label>
+                  <input className={inputCls+' mt-1 text-xs'} value={cfg.serviceArea.shopAddress||''}
+                    onChange={e => set('serviceArea','shopAddress',e.target.value)} />
                 </div>
-            </div>
+                {[
+                  {label:'Base Fee ($)', key:'baseFee'},
+                  {label:'Miles Included', key:'baseMilesIncluded'},
+                  {label:'Per Extra Mile ($)', key:'perExtraMileRate'},
+                  {label:'Max Radius (mi)', key:'maxRadiusMiles'},
+                ].map(item => (
+                  <div key={item.key} className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+                    <label className="text-[10px] font-medium text-slate-400 uppercase">{item.label}</label>
+                    <input className={inputCls+' mt-1 text-xs'} type="number" step="0.01"
+                      value={cfg.serviceArea[item.key]}
+                      onChange={e => set('serviceArea', item.key, parseFloat(e.target.value)||0)} />
+                  </div>
+                ))}
+              </div>
+            )}
 
-            {/* ─── Footer ─── */}
-            <div className="border-t border-slate-100 px-4 py-2.5 flex items-center justify-between bg-slate-50/80 gap-2">
-              <p className="text-[10px] text-slate-400 truncate">
-                SafeTriage v0.9.x
-              </p>
-              <button onClick={saveConfig}
-                className="shrink-0 rounded-lg bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] text-white px-4 py-2 text-xs font-bold hover:from-[#0f2440] hover:to-[#091a30] shadow-sm transition-all duration-200">
-                💾 Save
-              </button>
+            {tab==='features' && (
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(cfg.features).filter(([k])=>k!=='maxScoreBeforeLockout').map(([k,v]) => (
+                  <div key={k} className="rounded-lg border border-slate-700 bg-slate-800 p-3 flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-white capitalize">
+                        {k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase()).replace('Qa','Q&A')}
+                      </div>
+                      <div className="text-[10px] text-slate-400">{v?'On':'Off'}</div>
+                    </div>
+                    <label className="relative inline-flex cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" checked={v}
+                        onChange={e => {
+                          const next = {...cfg};
+                          next.features = {...next.features, [k]: e.target.checked};
+                          setCfg(next); setSaved(false);
+                        }} />
+                      <div className="w-9 h-5 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#d4a843]"></div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {tab==='qa' && (
+              <div className="space-y-2">
+                <div className="rounded-lg border border-slate-700 bg-slate-800 p-3 flex items-center justify-between">
+                  <div>
+                    <div className="text-sm font-semibold text-white">🔗 Knowledge Base</div>
+                    <div className="text-[10px] text-slate-400">Show KB button in header</div>
+                  </div>
+                  <label className="relative inline-flex cursor-pointer">
+                    <input type="checkbox" className="sr-only peer" checked={cfg.features.showQaSection||false}
+                      onChange={e => {
+                        const next = {...cfg};
+                        next.features = {...next.features, showQaSection: e.target.checked};
+                        setCfg(next); setSaved(false);
+                      }} />
+                    <div className="w-9 h-5 bg-slate-600 rounded-full peer peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#d4a843]"></div>
+                  </label>
+                </div>
+                <div className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+                  <label className="text-[10px] font-medium text-slate-400 uppercase">KB URL</label>
+                  <input className={inputCls+' mt-1 text-xs'} placeholder="https://..."
+                    value={cfg.qaUrl||''} onChange={e => set('root','qaUrl',e.target.value)} />
+                </div>
+              </div>
+            )}
+
+            {tab==='symptoms' && (
+              <div className="space-y-2">
+                <div className="rounded-lg bg-slate-800 border border-slate-700 p-3">
+                  <div className="text-sm font-semibold text-white">🩺 Symptom Manager</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">Edit, import, export, or reset symptom data</div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={()=>setShowEditor(true)}
+                    className="rounded-lg bg-[#1a3a5c] px-4 py-2 text-xs font-bold text-[#d4a843]">✏️ Open Editor</button>
+                  <button onClick={importSymptoms}
+                    className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-medium text-slate-300">📥 Import</button>
+                  <button onClick={()=>dl('safetriage-symptoms.json', window.__safepulseSymptomGroups||[])}
+                    className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-medium text-slate-300">📤 Export</button>
+                  <button onClick={resetSymptoms}
+                    className="rounded-lg border border-red-800/40 px-4 py-2 text-xs font-medium text-red-400">↺ Reset</button>
+                </div>
+              </div>
+            )}
+
+            {tab==='integrations' && (
+              <div className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">🗺️</span>
+                  <div className="text-sm font-semibold text-white">Google Maps API Key</div>
+                </div>
+                <div className="text-[10px] text-slate-400 mb-2">For address autocomplete and distance calculation</div>
+                <input className={inputCls+' text-xs font-mono'} type="password" placeholder="AIzaSy..."
+                  value={cfg.googleMapsApiKey||''}
+                  onChange={e => set('root','googleMapsApiKey',e.target.value)} />
+                <div className="flex items-center gap-2 mt-2">
+                  <button className="text-[10px] text-slate-400 underline"
+                    onClick={e => {
+                      const inp = e.target.closest('div').parentElement.querySelector('input');
+                      inp.type = inp.type==='password'?'text':'password';
+                      e.target.textContent = inp.type==='password'?'Show':'Hide';
+                    }}>Show</button>
+                  <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener"
+                    className="text-[10px] text-blue-400 underline">Get key →</a>
+                </div>
+              </div>
+            )}
+
+            {tab==='export' && (
+              <div className="space-y-2">
+                <div className="rounded-lg bg-slate-800 border border-slate-700 p-3">
+                  <div className="text-sm font-semibold text-white">📦 Export Data</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">Download config and symptom files</div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={()=>dl('safetriage-config.json', cfg)}
+                    className="rounded-lg bg-[#1a3a5c] px-4 py-2 text-xs font-bold text-[#d4a843]">⚙️ Download Config</button>
+                  <button onClick={()=>dl('safetriage-symptoms.json', window.__safepulseSymptomGroups||[])}
+                    className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-medium text-slate-300">🩺 Download Symptoms</button>
+                </div>
+              </div>
+            )}
+
+            {/* Save button */}
+            <div className="flex items-center justify-between pt-1 pb-3">
+              <div className="text-[10px] text-slate-500">v0.9.x</div>
+              <button onClick={save}
+                className="rounded-lg bg-[#d4a843] px-5 py-2 text-sm font-bold text-[#1a3a5c]">💾 Save</button>
             </div>
 
           </div>
         </div>
+
       </div>
-      {showSymptomEditor && (
-        <SymptomEditor onClose={() => setShowSymptomEditor(false)} />
-      )}
+
+      {showEditor && <SymptomEditor onClose={()=>setShowEditor(false)} />}
     </>
   );
 }
