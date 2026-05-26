@@ -440,10 +440,10 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                 💾 Save
               </button>
             </div>
+
           </div>
         </div>
       </div>
-
       {showSymptomEditor && (
         <SymptomEditor onClose={() => setShowSymptomEditor(false)} />
       )}
