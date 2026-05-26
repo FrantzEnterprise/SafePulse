@@ -360,11 +360,6 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
               </div>
             )}
           </div>
-          <div className="rounded-2xl border bg-yellow-50 p-4">
-            <p className="font-semibold">Recommended Service Type</p>
-            <p className="text-lg font-bold">{dispatchType?.type || 'Standard Service Call Recommended'}</p>
-            <p className="text-sm text-slate-600">Typical estimated onsite time: {dispatchType?.time || '30-90 minutes'}</p>
-          </div>
           <div className="flex gap-2">
             <button onClick={() => goToStep(5)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               ← Back
@@ -946,6 +941,9 @@ Advice Helpful?: ${form.helped}`;
           <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} />
         </div>
         <Card className="rounded-2xl shadow-sm"><CardContent className="space-y-3 p-5"><h2 className="text-xl font-semibold">Technician Text Report</h2><textarea className="h-72 w-full rounded-xl border p-3 font-mono text-sm" value={report} readOnly /></CardContent></Card>
+        <button onClick={() => window.location.reload()} className="mt-4 w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+          Start Over — Clear All
+        </button>
       </div>
       {lockedForService && <ServiceLockoutModal />}
       {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
