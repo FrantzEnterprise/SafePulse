@@ -5,7 +5,9 @@
     "email": "frantzlocksmith@hotmail.com",
     "website": "https://frantzlocksmithservice.com",
     "logoUrl": "",
-    "address": "West Sacramento, CA 95691"
+    "address": "West Sacramento, CA 95691",
+    "companyType": "sole",
+    "technicians": []
   },
   "branding": {
     "primaryColor": "#1a3a5c",
@@ -42,6 +44,12 @@
     "user": "",
     "pass": "",
     "fromEmail": ""
+  },
+  "emailjs": {
+    "publicKey": "",
+    "serviceId": "",
+    "templateIdConfirm": "",
+    "templateIdReport": ""
   },
   "features": {
     "showPhotoUpload": true,

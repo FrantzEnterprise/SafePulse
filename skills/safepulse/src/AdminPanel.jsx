@@ -41,6 +41,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
       else if (section === 'features') n.features = {...n.features, [key]: val};
       else if (section === 'twilio') n.twilio = {...(n.twilio||{}), [key]: val};
       else if (section === 'smtp') n.smtp = {...(n.smtp||{}), [key]: val};
+      else if (section === 'emailjs') n.emailjs = {...(n.emailjs||{}), [key]: val};
       else n[key] = val;
       return n;
     });
@@ -186,19 +187,80 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
           )}
 
           {tab==='company' && (
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-              {[
-                {label:'Company Name', key:'name', section:'company'},
-                {label:'Tagline', key:'tagline', section:'root'},
-                {label:'Phone', key:'phone', section:'company'},
-                {label:'Email', key:'email', section:'company'},
-                {label:'Address', key:'address', section:'company'},
-                {label:'Logo URL', key:'logoUrl', section:'company'},
-              ].map(item => (
-                <LabelledInput key={item.key} label={item.label}
-                  value={item.section==='root' ? (cfg[item.key]||'') : (cfg.company?.[item.key]||'')}
-                  onChange={e=>setVal(item.section,item.key,e.target.value)} />
-              ))}
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              {/* Basic Info Grid */}
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                {[
+                  {label:'Company Name', key:'name', section:'company'},
+                  {label:'Tagline', key:'tagline', section:'root'},
+                  {label:'Phone', key:'phone', section:'company'},
+                  {label:'Email', key:'email', section:'company'},
+                  {label:'Address', key:'address', section:'company'},
+                  {label:'Logo URL', key:'logoUrl', section:'company'},
+                ].map(item => (
+                  <LabelledInput key={item.key} label={item.label}
+                    value={item.section==='root' ? (cfg[item.key]||'') : (cfg.company?.[item.key]||'')}
+                    onChange={e=>setVal(item.section,item.key,e.target.value)} />
+                ))}
+              </div>
+
+              {/* Company Type Toggle */}
+              <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:12}}>
+                <div style={{fontWeight:600,fontSize:13,marginBottom:8}}>🏢 Company Type</div>
+                <div style={{display:'flex',gap:6}}>
+                  <button onClick={()=>setVal('company','companyType','sole')}
+                    style={{flex:1,padding:'10px',border:cfg.company?.companyType==='sole'?'2px solid #d4a843':'1px solid #475569',borderRadius:8,background:cfg.company?.companyType==='sole'?'#1a3a5c':'transparent',color:cfg.company?.companyType==='sole'?'#d4a843':'#94a3b8',cursor:'pointer',fontWeight:600,fontSize:12}}>
+                    👤 Sole Proprietor
+                  </button>
+                  <button onClick={()=>setVal('company','companyType','multi')}
+                    style={{flex:1,padding:'10px',border:cfg.company?.companyType==='multi'?'2px solid #d4a843':'1px solid #475569',borderRadius:8,background:cfg.company?.companyType==='multi'?'#1a3a5c':'transparent',color:cfg.company?.companyType==='multi'?'#d4a843':'#94a3b8',cursor:'pointer',fontWeight:600,fontSize:12}}>
+                    👥 Multi-Tech Company
+                  </button>
+                </div>
+              </div>
+
+              {/* Tech List (only shown in Multi-Tech mode) */}
+              {cfg.company?.companyType === 'multi' && (
+                <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:12}}>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+                    <div style={{fontWeight:600,fontSize:13}}>👨‍🔧 Technicians</div>
+                    <button onClick={() => {
+                      const techs = [...(cfg.company?.technicians||[]), {name:'',phone:'',email:''}];
+                      setCfg(p => ({...p, company: {...p.company, technicians: techs}}));
+                      setSaved(false);
+                    }} style={{background:'#d4a843',color:'#1a3a5c',border:'none',padding:'4px 12px',borderRadius:6,cursor:'pointer',fontWeight:700,fontSize:11}}>+ Add Tech</button>
+                  </div>
+                  <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                    {(cfg.company?.technicians||[]).map((tech,i) => (
+                      <div key={i} style={{borderRadius:6,border:'1px solid #475569',padding:8}}>
+                        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:4}}>
+                          <input className={INP} type="text" placeholder="Name" value={tech.name} onChange={e => {
+                            const t = [...(cfg.company?.technicians||[])]; t[i] = {...t[i], name: e.target.value};
+                            setCfg(p => ({...p, company: {...p.company, technicians: t}}));
+                          }} />
+                          <input className={INP} type="text" placeholder="Phone" value={tech.phone} onChange={e => {
+                            const t = [...(cfg.company?.technicians||[])]; t[i] = {...t[i], phone: e.target.value};
+                            setCfg(p => ({...p, company: {...p.company, technicians: t}}));
+                          }} />
+                        </div>
+                        <div style={{display:'grid',gridTemplateColumns:'1fr auto',gap:4,marginTop:4}}>
+                          <input className={INP} type="email" placeholder="Email (optional)" value={tech.email} onChange={e => {
+                            const t = [...(cfg.company?.technicians||[])]; t[i] = {...t[i], email: e.target.value};
+                            setCfg(p => ({...p, company: {...p.company, technicians: t}}));
+                          }} />
+                          <button onClick={() => {
+                            const t = (cfg.company?.technicians||[]).filter((_,j) => j !== i);
+                            setCfg(p => ({...p, company: {...p.company, technicians: t}}));
+                          }} style={{background:'transparent',border:'1px solid #7f1d1d',color:'#f87171',padding:'0 10px',borderRadius:6,cursor:'pointer',fontSize:14}}>✕</button>
+                        </div>
+                      </div>
+                    ))}
+                    {(cfg.company?.technicians||[]).length === 0 && (
+                      <div style={{fontSize:11,color:'#64748b',textAlign:'center',padding:16}}>No technicians added yet. Tap "+ Add Tech" above.</div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -345,6 +407,36 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                     <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>From Email</label>
                     <input className={INP} type="email" placeholder="you@example.com" value={cfg.smtp?.fromEmail||''} onChange={e=>setVal('smtp','fromEmail',e.target.value)} />
                   </div>
+                </div>
+              </div>
+
+              {/* EmailJS */}
+              <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:12}}>
+                <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:6}}>
+                  <span style={{fontSize:18}}>✉️</span>
+                  <div style={{fontWeight:600,fontSize:13}}>EmailJS (Auto-Responder)</div>
+                </div>
+                <div style={{fontSize:9,color:'#94a3b8',marginBottom:8}}>Send confirmation emails &amp; tech reports without a backend server</div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Public Key</label>
+                    <input className={INP} type="text" placeholder="user_..." value={cfg.emailjs?.publicKey||''} onChange={e=>setVal('emailjs','publicKey',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Service ID</label>
+                    <input className={INP} type="text" placeholder="service_..." value={cfg.emailjs?.serviceId||''} onChange={e=>setVal('emailjs','serviceId',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Template ID (Customer Confirmation)</label>
+                    <input className={INP} type="text" placeholder="template_..." value={cfg.emailjs?.templateIdConfirm||''} onChange={e=>setVal('emailjs','templateIdConfirm',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Template ID (Tech Report)</label>
+                    <input className={INP} type="text" placeholder="template_..." value={cfg.emailjs?.templateIdReport||''} onChange={e=>setVal('emailjs','templateIdReport',e.target.value)} />
+                  </div>
+                </div>
+                <div style={{marginTop:6}}>
+                  <a href="https://dashboard.emailjs.com/sign-up" target="_blank" rel="noopener" style={{color:'#60a5fa',fontSize:10,textDecoration:'underline'}}>Sign up for free →</a>
                 </div>
               </div>
             </div>
