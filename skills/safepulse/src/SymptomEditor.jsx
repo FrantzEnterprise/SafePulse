@@ -119,13 +119,13 @@ export default function SymptomEditor({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50">
+    <div className="fixed inset-0 z-50 overflow-y-auto" style={{background:'#1e1e2e'}}>
       <div className="py-8 px-4 min-h-screen">
-        <div className="w-full max-w-4xl mx-auto rounded-2xl bg-white shadow-xl">
+        <div className="w-full max-w-4xl mx-auto rounded-2xl shadow-xl" style={{background:'#282a36'}}>
           {/* Header */}
-          <div className="flex items-center justify-between p-5 border-b border-slate-200">
-            <h2 className="text-xl font-bold text-slate-900">Symptom Editor</h2>
-            <button onClick={onClose} className="rounded-full bg-primary text-white px-5 py-2 text-sm font-bold hover:bg-primary-hover shadow">
+          <div className="flex items-center justify-between p-5" style={{borderBottom:'1px solid #44475a'}}>
+            <h2 className="text-xl font-bold" style={{color:'#f8f8f2'}}>Symptom Editor</h2>
+            <button onClick={onClose} className="rounded-full px-5 py-2 text-sm font-bold shadow" style={{background:'#1a3a5c',color:'#d4a843',border:'none',cursor:'pointer'}}>
               Done
             </button>
           </div>
@@ -133,22 +133,22 @@ export default function SymptomEditor({ onClose }) {
           {/* Main layout */}
           <div className="flex flex-col md:flex-row">
             {/* Category sidebar */}
-            <div className="w-full md:w-64 border-r border-slate-100 p-3 space-y-2">
+            <div className="w-full md:w-64 p-3 space-y-2" style={{borderRight:'1px solid #44475a'}}>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Categories</p>
-                <button onClick={addCategory} className="text-xs bg-primary text-white rounded-full px-3 py-1 hover:bg-primary-hover">+ Add</button>
+                <p className="text-xs font-bold uppercase tracking-wide" style={{color:'#6272a4'}}>Categories</p>
+                <button onClick={addCategory} className="text-xs rounded-full px-3 py-1" style={{background:'#1a3a5c',color:'#d4a843',border:'none',cursor:'pointer'}}>+ Add</button>
               </div>
               {groups.map((group, idx) => (
-                <div key={idx} className={`rounded-xl p-2 text-sm cursor-pointer transition-colors ${activeTab === idx ? 'bg-primary text-accent' : 'hover:bg-slate-100'}`}>
+                <div key={idx} className="rounded-xl p-2 text-sm cursor-pointer transition-colors" style={{background:activeTab===idx?'#1a3a5c':'transparent',color:activeTab===idx?'#d4a843':'#f8f8f2'}}>
                   <div className="flex items-center justify-between" onClick={() => { setActiveTab(idx); setActiveSymptom(null); }}>
                     <span className="font-medium truncate">{group.category}</span>
                     <span className="text-xs opacity-60">{group.symptoms.length}</span>
                   </div>
                   <div className="flex gap-1 mt-1 ml-1">
-                    <button onClick={(e) => { e.stopPropagation(); moveCategory(idx, -1); }} className={`text-xs px-1 ${activeTab === idx ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-slate-600'}`} disabled={idx === 0}>↑</button>
-                    <button onClick={(e) => { e.stopPropagation(); moveCategory(idx, 1); }} className={`text-xs px-1 ${activeTab === idx ? 'text-white/80 hover:text-white' : 'text-slate-400 hover:text-slate-600'}`} disabled={idx === groups.length - 1}>↓</button>
-                    <button onClick={(e) => { e.stopPropagation(); renameCategory(idx); }} className="text-xs text-slate-400 hover:text-slate-600 ml-1">✎</button>
-                    <button onClick={(e) => { e.stopPropagation(); removeCategory(idx); }} className="text-xs text-red-400 hover:text-red-600 ml-1">×</button>
+                    <button onClick={(e) => { e.stopPropagation(); moveCategory(idx, -1); }} className="text-xs px-1" style={{color:activeTab===idx?'#d4a843':'#6272a4'}} disabled={idx === 0}>↑</button>
+                    <button onClick={(e) => { e.stopPropagation(); moveCategory(idx, 1); }} className="text-xs px-1" style={{color:activeTab===idx?'#d4a843':'#6272a4'}} disabled={idx === groups.length - 1}>↓</button>
+                    <button onClick={(e) => { e.stopPropagation(); renameCategory(idx); }} className="text-xs ml-1" style={{color:'#6272a4'}}>✎</button>
+                    <button onClick={(e) => { e.stopPropagation(); removeCategory(idx); }} className="text-xs ml-1" style={{color:'#ff5555'}}>×</button>
                   </div>
                 </div>
               ))}
@@ -157,37 +157,36 @@ export default function SymptomEditor({ onClose }) {
             {/* Symptom list and editor */}
             <div className="flex-1 p-4">
               {groups.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-8">No categories yet. Click "+ Add" to create one.</p>
+                <p className="text-sm text-center py-8" style={{color:'#6272a4'}}>No categories yet. Click "+ Add" to create one.</p>
               ) : (
                 <>
                   {/* Symptom list */}
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-semibold text-slate-700">{groups[activeTab]?.category || 'Select a category'}</p>
-                    <button onClick={() => addSymptom(activeTab)} className="text-xs bg-primary text-white rounded-full px-3 py-1 hover:bg-primary-hover">+ Symptom</button>
+                    <p className="text-sm font-semibold" style={{color:'#f8f8f2'}}>{groups[activeTab]?.category || 'Select a category'}</p>
+                    <button onClick={() => addSymptom(activeTab)} className="text-xs rounded-full px-3 py-1" style={{background:'#1a3a5c',color:'#d4a843',border:'none',cursor:'pointer'}}>+ Symptom</button>
                   </div>
 
                   {(!groups[activeTab]?.symptoms || groups[activeTab].symptoms.length === 0) ? (
-                    <p className="text-sm text-slate-400 text-center py-6">No symptoms in this category. Click "+ Symptom" to add one.</p>
+                    <p className="text-sm text-center py-6" style={{color:'#6272a4'}}>No symptoms in this category. Click "+ Symptom" to add one.</p>
                   ) : (
                     <div className="space-y-1 mb-4">
                       {groups[activeTab].symptoms.map((sym, idx) => (
                         <div key={idx}
                           onClick={() => setActiveSymptom(idx)}
-                          className={`flex items-center justify-between rounded-xl p-2 cursor-pointer text-sm transition-colors ${
-                            activeSymptom === idx ? 'bg-slate-100 border border-slate-300' : 'hover:bg-slate-50 border border-transparent'
-                          }`}
+                          className="flex items-center justify-between rounded-xl p-2 cursor-pointer text-sm transition-colors"
+                          style={{background:activeSymptom===idx?'#44475a':'transparent',border:activeSymptom===idx?'1px solid #6272a4':'1px solid transparent'}}
                         >
                           <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-slate-400 text-xs w-5 shrink-0">#{idx + 1}</span>
-                            <span className="font-medium truncate">{sym.label}</span>
-                            <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                              sym.points >= 35 ? 'bg-red-100 text-red-700' : sym.points >= 25 ? 'bg-orange-100 text-orange-700' : 'bg-yellow-100 text-yellow-700'
-                            }`}>{sym.points}pts</span>
+                            <span className="text-xs w-5 shrink-0" style={{color:'#6272a4'}}>#{idx + 1}</span>
+                            <span className="font-medium truncate" style={{color:'#f8f8f2'}}>{sym.label}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full shrink-0`}
+                              style={{background:sym.points>=35?'#ff5555':sym.points>=25?'#ffb86c':'#f1fa8c',color:sym.points>=35?'#fff':'#282a36'}}
+                            >{sym.points}pts</span>
                           </div>
                           <div className="flex gap-1 shrink-0">
-                            <button onClick={(e) => { e.stopPropagation(); moveSymptom(activeTab, idx, -1); }} className="text-xs text-slate-400 hover:text-slate-600" disabled={idx === 0}>↑</button>
-                            <button onClick={(e) => { e.stopPropagation(); moveSymptom(activeTab, idx, 1); }} className="text-xs text-slate-400 hover:text-slate-600" disabled={idx === groups[activeTab].symptoms.length - 1}>↓</button>
-                            <button onClick={(e) => { e.stopPropagation(); removeSymptom(activeTab, idx); }} className="text-xs text-red-400 hover:text-red-600 ml-1">×</button>
+                            <button onClick={(e) => { e.stopPropagation(); moveSymptom(activeTab, idx, -1); }} className="text-xs" style={{color:'#6272a4'}} disabled={idx === 0}>↑</button>
+                            <button onClick={(e) => { e.stopPropagation(); moveSymptom(activeTab, idx, 1); }} className="text-xs" style={{color:'#6272a4'}} disabled={idx === groups[activeTab].symptoms.length - 1}>↓</button>
+                            <button onClick={(e) => { e.stopPropagation(); removeSymptom(activeTab, idx); }} className="text-xs ml-1" style={{color:'#ff5555'}}>×</button>
                           </div>
                         </div>
                       ))}
@@ -196,57 +195,57 @@ export default function SymptomEditor({ onClose }) {
 
                   {/* Symptom detail editor */}
                   {activeSymptom !== null && groups[activeTab]?.symptoms[activeSymptom] && (
-                    <div className="rounded-xl border p-4 space-y-3 bg-slate-50">
-                      <p className="font-semibold text-sm text-slate-700">Edit Symptom</p>
+                    <div className="rounded-xl p-4 space-y-3" style={{background:'#1e1e2e',border:'1px solid #44475a'}}>
+                      <p className="font-semibold text-sm" style={{color:'#f8f8f2'}}>Edit Symptom</p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
-                          <label className="admin-label">ID</label>
-                          <input className="admin-input font-mono text-xs" value={groups[activeTab].symptoms[activeSymptom].id}
+                          <label className="admin-label-dracula">ID</label>
+                          <input className="admin-input-dracula font-mono text-xs" value={groups[activeTab].symptoms[activeSymptom].id}
                             onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'id', e.target.value)} />
                         </div>
                         <div>
-                          <label className="admin-label">Label</label>
-                          <input className="admin-input" value={groups[activeTab].symptoms[activeSymptom].label}
+                          <label className="admin-label-dracula">Label</label>
+                          <input className="admin-input-dracula" value={groups[activeTab].symptoms[activeSymptom].label}
                             onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'label', e.target.value)} />
                         </div>
                         <div>
-                          <label className="admin-label">Risk Points</label>
-                          <input className="admin-input" type="number" min="0" max="100" value={groups[activeTab].symptoms[activeSymptom].points}
+                          <label className="admin-label-dracula">Risk Points</label>
+                          <input className="admin-input-dracula" type="number" min="0" max="100" value={groups[activeTab].symptoms[activeSymptom].points}
                             onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'points', parseInt(e.target.value) || 0)} />
                         </div>
                       </div>
 
                       {/* Triage recommendation */}
                       <div>
-                        <label className="admin-label">Triage Recommendation</label>
-                        <textarea className="admin-input min-h-[60px]" value={groups[activeTab].symptoms[activeSymptom].recommendation}
+                        <label className="admin-label-dracula">Triage Recommendation</label>
+                        <textarea className="admin-input-dracula min-h-[60px]" value={groups[activeTab].symptoms[activeSymptom].recommendation}
                           onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'recommendation', e.target.value)} />
                       </div>
 
                       {/* Note */}
                       <div>
-                        <label className="admin-label">Note (background context)</label>
-                        <textarea className="admin-input min-h-[60px]" value={groups[activeTab].symptoms[activeSymptom].note || ''}
+                        <label className="admin-label-dracula">Note (background context)</label>
+                        <textarea className="admin-input-dracula min-h-[60px]" value={groups[activeTab].symptoms[activeSymptom].note || ''}
                           onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'note', e.target.value)} />
                       </div>
 
                       {/* Causes */}
                       <div>
-                        <label className="admin-label">Possible Causes</label>
+                        <label className="admin-label-dracula">Possible Causes</label>
                         <div className="space-y-1">
                           {(groups[activeTab].symptoms[activeSymptom].causes || ['']).map((cause, ci) => (
                             <div key={ci} className="flex gap-2 items-center">
-                              <input className="admin-input flex-1" value={cause}
+                              <input className="admin-input-dracula flex-1" value={cause}
                                 onChange={(e) => {
                                   const causes = [...(groups[activeTab].symptoms[activeSymptom].causes || [''])];
                                   causes[ci] = e.target.value;
                                   updateSymptomField(activeTab, activeSymptom, 'causes', causes);
                                 }} />
-                              <button className="text-xs text-red-400 hover:text-red-600 shrink-0" onClick={() => {
+                              <button className="text-xs shrink-0" style={{color:'#ff5555'}} onClick={() => {
                                 const causes = groups[activeTab].symptoms[activeSymptom].causes.filter((_, i) => i !== ci);
                                 updateSymptomField(activeTab, activeSymptom, 'causes', causes.length ? causes : ['']);
                               }}>×</button>
-                              <button className="text-xs text-green-500 hover:text-green-700 shrink-0" onClick={() => {
+                              <button className="text-xs shrink-0" style={{color:'#50fa7b'}} onClick={() => {
                                 const causes = [...groups[activeTab].symptoms[activeSymptom].causes, ''];
                                 updateSymptomField(activeTab, activeSymptom, 'causes', causes);
                               }}>+</button>
@@ -257,28 +256,28 @@ export default function SymptomEditor({ onClose }) {
 
                       {/* Remedy */}
                       <div>
-                        <label className="admin-label">Suggested Remedy</label>
-                        <textarea className="admin-input min-h-[60px]" value={groups[activeTab].symptoms[activeSymptom].remedy}
+                        <label className="admin-label-dracula">Suggested Remedy</label>
+                        <textarea className="admin-input-dracula min-h-[60px]" value={groups[activeTab].symptoms[activeSymptom].remedy}
                           onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'remedy', e.target.value)} />
                       </div>
 
                       {/* Parts */}
                       <div>
-                        <label className="admin-label">Parts / Tools to Bring</label>
+                        <label className="admin-label-dracula">Parts / Tools to Bring</label>
                         <div className="space-y-1">
                           {(groups[activeTab].symptoms[activeSymptom].parts || ['']).map((part, pi) => (
                             <div key={pi} className="flex gap-2 items-center">
-                              <input className="admin-input flex-1" value={part}
+                              <input className="admin-input-dracula flex-1" value={part}
                                 onChange={(e) => {
                                   const parts = [...(groups[activeTab].symptoms[activeSymptom].parts || [''])];
                                   parts[pi] = e.target.value;
                                   updateSymptomField(activeTab, activeSymptom, 'parts', parts);
                                 }} />
-                              <button className="text-xs text-red-400 hover:text-red-600 shrink-0" onClick={() => {
+                              <button className="text-xs shrink-0" style={{color:'#ff5555'}} onClick={() => {
                                 const parts = groups[activeTab].symptoms[activeSymptom].parts.filter((_, i) => i !== pi);
                                 updateSymptomField(activeTab, activeSymptom, 'parts', parts.length ? parts : ['']);
                               }}>×</button>
-                              <button className="text-xs text-green-500 hover:text-green-700 shrink-0" onClick={() => {
+                              <button className="text-xs shrink-0" style={{color:'#50fa7b'}} onClick={() => {
                                 const parts = [...groups[activeTab].symptoms[activeSymptom].parts, ''];
                                 updateSymptomField(activeTab, activeSymptom, 'parts', parts);
                               }}>+</button>
@@ -288,22 +287,22 @@ export default function SymptomEditor({ onClose }) {
                       </div>
 
                       {/* Popup Triggers */}
-                      <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-3">
-                        <p className="font-semibold text-sm text-slate-700 flex items-center gap-2">🔔 Popup Triggers & Messages</p>
+                      <div className="rounded-xl p-3 space-y-3" style={{background:'#282a36',border:'1px solid #44475a'}}>
+                        <p className="font-semibold text-sm flex items-center gap-2" style={{color:'#f8f8f2'}}>🔔 Popup Triggers & Messages</p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                          <label className="flex items-center gap-2 text-sm cursor-pointer">
+                          <label className="flex items-center gap-2 text-sm cursor-pointer" style={{color:'#f8f8f2'}}>
                             <input type="checkbox" className="w-4 h-4 accent-amber-500"
                               checked={!!groups[activeTab].symptoms[activeSymptom].triggersBatteryPopup}
                               onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'triggersBatteryPopup', e.target.checked)} />
                             <span>🔋 Battery Popup</span>
                           </label>
-                          <label className="flex items-center gap-2 text-sm cursor-pointer">
+                          <label className="flex items-center gap-2 text-sm cursor-pointer" style={{color:'#f8f8f2'}}>
                             <input type="checkbox" className="w-4 h-4 accent-red-500"
                               checked={!!groups[activeTab].symptoms[activeSymptom].triggersDamageWarning}
                               onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'triggersDamageWarning', e.target.checked)} />
                             <span>⚠️ Damage Warning</span>
                           </label>
-                          <label className="flex items-center gap-2 text-sm cursor-pointer">
+                          <label className="flex items-center gap-2 text-sm cursor-pointer" style={{color:'#f8f8f2'}}>
                             <input type="checkbox" className="w-4 h-4 accent-blue-500"
                               checked={!!groups[activeTab].symptoms[activeSymptom].showPopupOnSelect}
                               onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'showPopupOnSelect', e.target.checked)} />
@@ -311,16 +310,16 @@ export default function SymptomEditor({ onClose }) {
                           </label>
                         </div>
                         {groups[activeTab].symptoms[activeSymptom].showPopupOnSelect && (
-                          <div className="space-y-2 border-t border-slate-200 pt-2">
+                          <div className="space-y-2 pt-2" style={{borderTop:'1px solid #44475a'}}>
                             <div>
-                              <label className="admin-label">Popup Title</label>
-                              <input className="admin-input" placeholder="e.g. Important Notice" 
+                              <label className="admin-label-dracula">Popup Title</label>
+                              <input className="admin-input-dracula" placeholder="e.g. Important Notice" 
                                 value={groups[activeTab].symptoms[activeSymptom].popupTitle || ''}
                                 onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'popupTitle', e.target.value)} />
                             </div>
                             <div>
-                              <label className="admin-label">Popup Message</label>
-                              <textarea className="admin-input min-h-[60px]" placeholder="Enter the message to show when this symptom is selected..."
+                              <label className="admin-label-dracula">Popup Message</label>
+                              <textarea className="admin-input-dracula min-h-[60px]" placeholder="Enter the message to show when this symptom is selected..."
                                 value={groups[activeTab].symptoms[activeSymptom].popupMessage || ''}
                                 onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'popupMessage', e.target.value)} />
                             </div>
@@ -335,15 +334,15 @@ export default function SymptomEditor({ onClose }) {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between p-5 border-t border-slate-200">
-            <p className="text-sm text-slate-500">
+          <div className="flex items-center justify-between p-5" style={{borderTop:'1px solid #44475a'}}>
+            <p className="text-sm" style={{color:'#6272a4'}}>
               {saved ? '✓ Changes saved' : 'Changes saved locally. Download to deploy.'}
             </p>
             <div className="flex gap-2">
-              <button onClick={downloadSymptoms} className="border border-slate-300 px-4 py-2 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors">
+              <button onClick={downloadSymptoms} className="px-4 py-2 rounded-xl text-sm font-medium transition-colors" style={{border:'1px solid #6272a4',color:'#f8f8f2',background:'transparent',cursor:'pointer'}}>
                 Download JSON
               </button>
-              <button onClick={save} className="bg-primary text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-primary-hover shadow transition-colors">
+              <button onClick={save} className="px-6 py-2 rounded-xl text-sm font-bold shadow transition-colors" style={{background:'#d4a843',color:'#1a3a5c',border:'none',cursor:'pointer'}}>
                 Save Changes
               </button>
             </div>

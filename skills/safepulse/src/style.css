@@ -220,6 +220,35 @@ button { cursor: pointer; font-family: inherit; }
 .admin-label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 0.25rem; }
 .admin-section { border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; }
 
+/* ── Dracula Admin Styles for Symptom Editor ── */
+.admin-label-dracula {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6272a4;
+  margin-bottom: 0.25rem;
+}
+.admin-input-dracula {
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #f8f8f2;
+  background: #44475a;
+  border: 1px solid #6272a4;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.admin-input-dracula:focus {
+  border-color: #d4a843;
+}
+.admin-input-dracula::placeholder {
+  color: #6272a4;
+  opacity: 0.7;
+}
+
 /* ── Futuristic font import ── */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
 
