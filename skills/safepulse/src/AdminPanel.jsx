@@ -160,24 +160,27 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             </div>
 
             {/* ─── Body: Tab Buttons with Popup Content ─── */}
-            <div className="p-4 space-y-4">
-              {/* Big Tappable Tabs — horizontal scroll row */}
-              <p className="text-xs text-slate-400 text-center -mb-2">← Scroll for more →</p>
-              <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-thin" style={{WebkitOverflowScrolling:'touch', scrollbarWidth:'thin'}}>
-                {tabs.map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`shrink-0 flex flex-col items-center gap-1 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 min-w-[90px] ${
-                      activeTab === tab.id
-                        ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md scale-105'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:shadow-sm'
-                    }`}
-                  >
-                    <span className="text-2xl">{tabIcons[tab.id]}</span>
-                    <span className="text-xs whitespace-nowrap">{tab.label}</span>
-                  </button>
-                ))}
+            <div className="p-3 space-y-3">
+              {/* Big Tappable Tabs — horizontal scroll with arrow controls */}
+              <div className="flex items-center gap-1">
+                <button id="admin-scroll-left" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: -150, behavior: 'smooth'}); }} className="shrink-0 h-10 w-8 rounded-lg bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">‹</button>
+                <div id="admin-tab-row" className="flex overflow-x-auto gap-1.5 pb-1 flex-1 snap-x snap-mandatory" style={{scrollbarWidth:'thin', WebkitOverflowScrolling:'touch'}}>
+                  {tabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`snap-start shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                        activeTab === tab.id
+                          ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
+                      }`}
+                    >
+                      <span className="text-lg">{tabIcons[tab.id]}</span>
+                      <span className="whitespace-nowrap">{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <button id="admin-scroll-right" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: 150, behavior: 'smooth'}); }} className="shrink-0 h-10 w-8 rounded-lg bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">›</button>
               </div>
 
               {/* Content Panel — full width below buttons */}
