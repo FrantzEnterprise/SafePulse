@@ -791,6 +791,7 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
 
 export default function SafePulseDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
   const [showAdmin, setShowAdmin] = useState(() => new URLSearchParams(window.location.search).get('admin') === 'true');
   const [showMapCalculator, setShowMapCalculator] = useState(false);
   const [showBatteryPopup, setShowBatteryPopup] = useState(false);
@@ -810,12 +811,22 @@ export default function SafePulseDemo() {
   const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService;
 
   // Apply CSS vars from config
+  const darkVars = darkMode ? {
+    '--color-bg': '#0f172a',
+    '--color-card-bg': '#1e293b',
+    '--color-card-border': '#334155',
+    '--color-body-text': '#e2e8f0',
+  } : {};
+
   useEffect(() => {
     const root = document.documentElement;
     Object.entries(cssVars).forEach(([key, val]) => {
       root.style.setProperty(key, val);
     });
-  }, [cssVars]);
+    Object.entries(darkVars).forEach(([key, val]) => {
+      root.style.setProperty(key, val);
+    });
+  }, [cssVars, darkMode]);
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/SafePulse/sw.js').catch(() => {});
@@ -915,6 +926,9 @@ Advice Helpful?: ${form.helped}`;
             <p className="text-slate-600"><span className="text-primary font-semibold">SafeTriage</span> by {config.tagline || 'Sacramento\'s Safe Specialist'}</p>
           </div>
           <div className="flex gap-2 shrink-0">
+            <button onClick={() => { setDarkMode(d => { const n = !d; localStorage.setItem('safepulse_dark', n); return n; }); }} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Toggle Dark Mode">
+              {darkMode ? '☀️' : '🌙'}
+            </button>
             <button onClick={() => setShowInstructions(true)} className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
               ? Instructions
             </button>
