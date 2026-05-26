@@ -899,7 +899,7 @@ Advice Helpful?: ${form.helped}`;
 
   return (
     <div className="min-h-screen bg-slate-100 p-6 text-slate-900">
-      <div className="mx-auto max-w-5xl space-y-6">
+      <div className="mx-auto max-w-5xl space-y-6 overflow-x-hidden">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold">{config.company.name}</h1>
