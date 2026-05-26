@@ -123,20 +123,20 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
           <div className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-200/50 overflow-hidden" style={{ backdropFilter: 'blur(20px)' }}>
             
             {/* ─── Dashboard Header ─── */}
-            <div className="bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-[#d4a843]/20 flex items-center justify-center text-lg shadow-inner">⚙️</div>
-                <div>
-                  <h2 className="text-lg font-bold text-white tracking-tight">SafeTriage Dashboard</h2>
-                  <p className="text-xs text-[#d4a843]/80 font-medium">Control Center</p>
+            <div className="bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] px-4 py-3 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="h-8 w-8 rounded-lg bg-[#d4a843]/20 flex items-center justify-center text-sm shadow-inner shrink-0">⚙️</div>
+                <div classname="min-w-0">
+                  <h2 className="text-base font-bold text-white tracking-tight truncate">SafeTriage Dashboard</h2>
+                  <p className="text-[10px] text-[#d4a843]/80 font-medium">Control Center</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className={`text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-300 ${saved ? 'bg-green-500/20 text-green-300' : 'bg-white/10 text-white/60'}`}>
-                  {saved ? '✓ Saved' : 'Unsaved'}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className={`text-[10px] font-medium px-2 py-1 rounded-full transition-all duration-300 ${saved ? 'bg-green-500/20 text-green-300' : 'bg-white/10 text-white/60'}`}>
+                  {saved ? '✓' : ''}
                 </span>
-                <button onClick={onClose} className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20 transition-all duration-200 shadow-sm backdrop-blur-sm border border-white/10">
-                  ✕ Close
+                <button onClick={onClose} className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/20 transition-all duration-200 border border-white/10">
+                  ✕
                 </button>
               </div>
             </div>
@@ -424,13 +424,13 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             </div>
 
             {/* ─── Footer ─── */}
-            <div className="border-t border-slate-100 px-6 py-3 flex items-center justify-between bg-slate-50/80">
-              <p className="text-xs text-slate-400">
-                SafeTriage v0.7.3 · All data stored locally
+            <div className="border-t border-slate-100 px-4 py-2.5 flex items-center justify-between bg-slate-50/80 gap-2">
+              <p className="text-[10px] text-slate-400 truncate">
+                SafeTriage v0.9.x
               </p>
               <button onClick={saveConfig}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] text-white px-6 py-2.5 text-sm font-bold hover:from-[#0f2440] hover:to-[#091a30] shadow-sm transition-all duration-200">
-                💾 Save Changes
+                className="shrink-0 rounded-lg bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] text-white px-4 py-2 text-xs font-bold hover:from-[#0f2440] hover:to-[#091a30] shadow-sm transition-all duration-200">
+                💾 Save
               </button>
             </div>
 
