@@ -141,53 +141,46 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
               </div>
             </div>
 
-            {/* ─── Quick Stats Bar ─── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-slate-100">
+            {/* ─── Quick Stats Bar — Single Horizontal Row ─── */}
+            <div className="flex overflow-x-auto gap-px bg-slate-100">
               {[
                 { label: 'Symptoms', value: (window.__safepulseSymptomGroups || []).flatMap(g => g.symptoms).length, icon: '🩺', color: 'from-blue-500 to-blue-600' },
                 { label: 'Categories', value: (window.__safepulseSymptomGroups || []).length, icon: '📂', color: 'from-purple-500 to-purple-600' },
                 { label: 'Brand Colors', value: '7', icon: '🎨', color: 'from-amber-500 to-amber-600' },
                 { label: 'Service Radius', value: (localConfig.serviceArea?.maxRadiusMiles || 0) + ' mi', icon: '📍', color: 'from-emerald-500 to-emerald-600' },
               ].map((stat, i) => (
-                <div key={i} className="bg-white px-5 py-4 flex items-center gap-3">
-                  <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-lg shadow-sm`}>{stat.icon}</div>
-                  <div>
-                    <p className="text-2xl font-bold text-slate-800 leading-none">{stat.value}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
+                <div key={i} className="bg-white px-3 py-2 flex items-center gap-2 shrink-0 min-w-0">
+                  <div className={`h-8 w-8 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center text-sm shadow-sm shrink-0`}>{stat.icon}</div>
+                  <div className="min-w-0">
+                    <p className="text-lg font-bold text-slate-800 leading-none">{stat.value}</p>
+                    <p className="text-[10px] text-slate-500 leading-tight truncate max-w-20">{stat.label}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* ─── Body: Sidebar + Content ─── */}
-            <div className="flex flex-col md:flex-row">
-              {/* Sidebar Navigation */}
-              <div className="w-full md:w-56 shrink-0 bg-slate-50/80 border-r border-slate-100 p-3">
-                <div className="space-y-1">
-                  {tabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${
-                        activeTab === tab.id
-                          ? 'bg-[#1a3a5c] text-[#d4a843] shadow-sm'
-                          : 'text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm'
-                      }`}
-                    >
-                      <span className="text-lg shrink-0">{tabIcons[tab.id]}</span>
-                      <div className="text-left min-w-0">
-                        <p className="truncate">{tab.label}</p>
-                        <p className={`text-[10px] leading-tight truncate ${activeTab === tab.id ? 'text-[#d4a843]/70' : 'text-slate-400 group-hover:text-slate-500'}`}>
-                          {tabDescriptions[tab.id]}
-                        </p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+            {/* ─── Body: Tab Buttons with Popup Content ─── */}
+            <div className="p-4 space-y-4">
+              {/* Big Tappable Tabs — horizontal scroll row */}
+              <div className="flex overflow-x-auto gap-2 pb-2">
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`shrink-0 flex flex-col items-center gap-1 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 min-w-[90px] ${
+                      activeTab === tab.id
+                        ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md scale-105'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:shadow-sm'
+                    }`}
+                  >
+                    <span className="text-2xl">{tabIcons[tab.id]}</span>
+                    <span className="text-xs whitespace-nowrap">{tab.label}</span>
+                  </button>
+                ))}
               </div>
 
-              {/* Content */}
-              <div className="flex-1 p-6 overflow-y-auto max-h-[60vh] min-h-[350px]">
+              {/* Content Panel — full width below buttons */}
+              <div className="rounded-xl border border-slate-200 bg-white shadow-sm max-h-[65vh] overflow-y-auto p-4">
 
                 {/* Branding */}
                 {activeTab === 'branding' && (
@@ -427,7 +420,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                   </div>
                 )}
 
-              </div>
+                </div>
             </div>
 
             {/* ─── Footer ─── */}
