@@ -126,7 +126,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             <div className="bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] px-4 py-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <div className="h-8 w-8 rounded-lg bg-[#d4a843]/20 flex items-center justify-center text-sm shadow-inner shrink-0">⚙️</div>
-                <div classname="min-w-0">
+                <div className="min-w-0">
                   <h2 className="text-base font-bold text-white tracking-tight truncate">SafeTriage Dashboard</h2>
                   <p className="text-[10px] text-[#d4a843]/80 font-medium">Control Center</p>
                 </div>
@@ -435,7 +435,6 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                 💾 Save
               </button>
             </div>
-
           </div>
         </div>
       </div>
