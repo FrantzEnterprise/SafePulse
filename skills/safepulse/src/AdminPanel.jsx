@@ -120,7 +120,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
     <>
       <div className="fixed inset-0 z-50 overflow-y-auto bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-sm">
         <div className="min-h-screen px-4 py-6 flex items-start justify-center">
-          <div className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-200/50 overflow-hidden" style={{ backdropFilter: 'blur(20px)' }}>
+          <div className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-200/50" style={{ backdropFilter: 'blur(20px)' }}>
             
             {/* ─── Dashboard Header ─── */}
             <div className="bg-gradient-to-r from-[#1a3a5c] to-[#0f2440] px-4 py-3 flex items-center justify-between gap-2">
@@ -182,7 +182,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
               </div>
 
               {/* Content Panel */}
-              <div className="p-3 max-h-[60vh] overflow-y-auto overflow-x-hidden">
+              <div className="p-3 max-h-[60vh] overflow-y-auto">
 
                 {/* Branding */}
                 {activeTab === 'branding' && (
