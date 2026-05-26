@@ -795,6 +795,7 @@ export default function SafePulseDemo() {
                 tech_name: selectedTech?.name || config?.company?.name || 'Technician',
                 report: customerReport,
                 phone: config?.company?.phone || '',
+                branding: 'Powered by Frantz Enterprise',
               }
             })
           });
@@ -823,6 +824,7 @@ export default function SafePulseDemo() {
                 risk_level: risk.level,
                 fee: calculatedTripFee.toFixed(2),
                 distance: distanceMiles || 'N/A',
+                branding: 'Powered by Frantz Enterprise',
               }
             })
           });
@@ -944,7 +946,9 @@ Calculated Service/Trip Fee: $${calculatedTripFee.toFixed(2)}
 Risk Score: ${score}/100
 Risk Level: ${risk.level}
 Recommendation: ${risk.advice}
-Advice Helpful?: ${form.helped}`;
+Advice Helpful?: ${form.helped}
+---
+Powered by Frantz Enterprise`;
 
   if (showAdmin) {
     return <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />;
@@ -1059,6 +1063,11 @@ Advice Helpful?: ${form.helped}`;
           onClose={() => { setShowDispatch(false); setDispatchTech(null); }}
         />
       )}
+
+      {/* Powered by Frantz Enterprise */}
+      <div className="mt-8 text-center text-xs text-slate-400">
+        Powered by Frantz Enterprise
+      </div>
     </div>
   );
 }
