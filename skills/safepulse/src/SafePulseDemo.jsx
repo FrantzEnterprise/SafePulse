@@ -1068,18 +1068,19 @@ Powered by Frantz Enterprise`;
       <div className="mt-8 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
         <div className="flex flex-col items-center gap-1 text-center">
           <p className="text-sm font-semibold text-slate-800">Frantz Locksmith Service</p>
-          <p className="text-xs text-slate-500">813 Harbor Blvd #307 &bull; West Sacramento, CA 95691</p>
           <p className="text-xs text-slate-500">
             <a href="tel:+19165344900" className="text-primary hover:underline">(916) 534-4900</a>
             &ensp;|&ensp;
-            <a href="mailto:tech@frantzlocksmithservice.com" className="text-primary hover:underline">tech@frantzlocksmithservice.com</a>
+            <a href="mailto:frantzlocksmith@hotmail.com" className="text-primary hover:underline">frantzlocksmith@hotmail.com</a>
           </p>
-          <p className="text-xs text-slate-500">CA Locksmith License LCO 4160 &bull; Bonded &amp; Insured</p>
+          <p className="text-xs text-slate-500">CA Locksmith License LCO 4160 &bull; Bonded &amp; Insured &bull; Mobile Service</p>
           <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-slate-400">
-            <a href="https://frantzlocksmithservice.com/Contact.html#Privacy_Policy" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <a href="https://frantzlocksmithservice.com/Contact.html#Privacy_Policy" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Privacy &amp; Legal</a>
             <a href="https://frantzlocksmithservice.com/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Visit Our Website</a>
-            <span className="text-slate-300">Powered by Frantz Enterprise</span>
           </div>
+          <p className="mt-2 text-xs font-bold tracking-widest uppercase text-amber-600" style={{ fontFamily: "'Orbitron', 'Audiowide', 'Press Start 2P', monospace", letterSpacing: '0.15em' }}>
+            Powered by Frantz Enterprise
+          </p>
         </div>
       </div>
     </div>

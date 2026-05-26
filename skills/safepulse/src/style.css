@@ -220,6 +220,9 @@ button { cursor: pointer; font-family: inherit; }
 .admin-label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 0.25rem; }
 .admin-section { border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; }
 
+/* ── Futuristic font import ── */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
+
 /* ── Print styles ── */
 @media print {
   body { background: white !important; }
