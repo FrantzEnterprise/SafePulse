@@ -452,7 +452,7 @@ function PhotoUpload({ uploadedPhotos, setUploadedPhotos, showPhotoUpload, setSh
   );
 }
 
-function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel, uploadedPhotos, photoSummary, distanceMiles }) {
+function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel, uploadedPhotos, photoSummary, distanceMiles, setShowDispatch, sendDispatch }) {
   const riskBannerStyles = {
     Low: "bg-green-100 border-green-300 text-green-800",
     Medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
@@ -471,30 +471,11 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           <p className="mt-2 text-sm font-medium">{risk.advice}</p>
         </div>
         <div className="flex gap-2 no-print mb-4"><Button onClick={() => { setForm({ ...form, helped: "Yes" }); }}>Advice Helped</Button><Button onClick={() => {
-          setForm({ ...form, helped: "No" });
-          // Build SMS notification
-          const companyPhone = config?.company?.phone || '';
-          const safePhone = companyPhone.replace(/[\s\(\)\-]/g, '');
-          const photoSummarySMS = Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None';
-          const msg = encodeURIComponent(
-`SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Currently Open: ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nCurrent Symptoms: ${form.symptoms.map(getSymptomLabel).join(', ') || 'None'}\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\nPhotos:\n${photoSummarySMS}\n\nEstimated Fee: \$${calculatedTripFee.toFixed(2)}\nDistance: ${distanceMiles || 'Not calculated'} miles`
-          );
-          // SMS to tech - use location.href for reliable mobile sms: protocol
-          if (safePhone) {
-            window.location.href = `sms:${safePhone}?body=${msg}`;
-          }
-          // Auto-reply to customer via email - delayed to allow SMS to process first
-          if (form.phone && form.phone.replace(/\D/g,'').length >= 10) {
-            const autoReply = encodeURIComponent(
-`Hi ${form.name || 'Valued Customer'},\n\nThank you for using Frantz Locksmith Service's SafeTriage tool.\n\nRobert has received your safe service request and will contact you ASAP at ${form.phone}.\n\n=== SAFE-TRIAGE REPORT ===\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Status: Currently ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nSymptoms Reported:\n${triageHistory.map(getSymptomLabel).join(', ') || 'None selected'}\n\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nPhotos Uploaded:\n${Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None'}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\n---\nIf you have additional details, call (916) 534-4900.\n\nBest,\nRobert Frantz\nFrantz Locksmith Service\n(916) 534-4900\nfrantzlocksmith@hotmail.com\nCA LCO 4160`
-            );
-            const recipient = config?.company?.email || '';
-            const customerEmail = form.email || '';
-            const toField = customerEmail || recipient;
-            const bccField = customerEmail ? recipient : '';
-            if (recipient) {
-              document.location.href = `mailto:${toField}?bcc=${bccField}&subject=SafeTriage%20Request%20-%20${encodeURIComponent(form.name || 'Customer')}&body=${autoReply}`;
-            }
+          const isMulti = config?.company?.companyType === 'multi';
+          if (isMulti && config?.company?.technicians?.length > 0) {
+            setShowDispatch(true);
+          } else {
+            sendDispatch(null);
           }
         }}>Still Needs Tech</Button></div>
         <div className="rounded-2xl bg-white p-4 space-y-3">
@@ -516,66 +497,11 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
         </div>
         {batteryAttempted && <div className="rounded-2xl border border-blue-300 bg-blue-50 p-4 text-blue-900"><p className="font-semibold">Customer attempted recommended premium batteries.</p><p className="mt-1 text-sm">If the issue continues after installing fresh Duracell Quantum or Energizer batteries, further diagnosis or technician service may be required.</p></div>}
         <div className="flex gap-2 no-print"><Button onClick={() => { setForm({ ...form, helped: "Yes" }); }}>Advice Helped</Button><Button onClick={() => {
-          setForm({ ...form, helped: "No" });
-          // Build SMS notification
-          const companyPhone = config?.company?.phone || '';
-          const safePhone = companyPhone.replace(/[\s\(\)\-]/g, '');
-          const photoSummarySMS = Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None';
-          const msg = encodeURIComponent(
-`SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Currently Open: ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nCurrent Symptoms: ${form.symptoms.map(getSymptomLabel).join(', ') || 'None'}\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\nPhotos:\n${photoSummarySMS}\n\nEstimated Fee: $${calculatedTripFee.toFixed(2)}\nDistance: ${distanceMiles || 'Not calculated'} miles`
-          );
-          // SMS to tech - use location.href for reliable mobile sms: protocol
-          if (safePhone) {
-            window.location.href = `sms:${safePhone}?body=${msg}`;
-          }
-          // Auto-reply to customer via email - delayed to allow SMS to process first
-          if (form.phone && form.phone.replace(/\D/g,'').length >= 10) {
-            const autoReply = encodeURIComponent(
-`Hi ${form.name || 'Valued Customer'},
-
-Thank you for using Frantz Locksmith Service's SafeTriage tool.
-
-Robert has received your safe service request and will contact you ASAP at ${form.phone}.
-
-=== SAFE-TRIAGE REPORT ===
-
-Customer: ${form.name || 'Not provided'}
-Phone: ${form.phone || 'Not provided'}
-Safe Brand: ${form.brand || 'Unknown'}
-Lock Type: ${form.lockType}
-Safe Status: Currently ${form.safeOpen}
-Years Since Service: ${form.serviceAge || 'Unknown'}
-
-Symptoms Reported:
-${triageHistory.map(getSymptomLabel).join(', ') || 'None selected'}
-
-Risk Score: ${score}/100 — ${risk.level}
-Recommendation: ${risk.advice}
-
-Photos Uploaded:
-${Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None'}
-
-What Customer Tried:
-${form.tried || 'Not provided'}
-
----
-If you have additional details, call (916) 534-4900.
-
-Best,
-Robert Frantz
-Frantz Locksmith Service
-(916) 534-4900
-frantzlocksmith@hotmail.com
-CA LCO 4160`
-            );
-            const recipient = config?.company?.email || '';
-            // BCC using the company email, send TO the customer if they provided an email
-            const customerEmail = form.email || '';
-            const toField = customerEmail || recipient;
-            const bccField = customerEmail ? recipient : '';
-            if (recipient) {
-              document.location.href = `mailto:${toField}?bcc=${bccField}&subject=SafeTriage%20Request%20-%20${encodeURIComponent(form.name || 'Customer')}&body=${autoReply}`;
-            }
+          const isMulti = config?.company?.companyType === "multi";
+          if (isMulti && config?.company?.technicians?.length > 0) {
+            setShowDispatch(true);
+          } else {
+            sendDispatch(null);
           }
         }}>Still Needs Tech</Button></div>
       </CardContent>
@@ -806,6 +732,86 @@ export default function SafePulseDemo() {
   const [showResultModal, setShowResultModal] = useState(false);
   const [lastSelectedSymptom, setLastSelectedSymptom] = useState(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showDispatch, setShowDispatch] = useState(false);
+  const [dispatchTech, setDispatchTech] = useState(null);
+  
+  const sendDispatch = async (selectedTech) => {
+    const ejs = config?.emailjs || {};
+    const isMulti = config?.company?.companyType === 'multi';
+    const companyPhone = config?.company?.phone || '';
+    const safePhone = (isMulti && selectedTech) ? selectedTech.phone : companyPhone;
+    const cleanPhone = (safePhone || '').replace(/[\s\(\)\-]/g, '');
+    const photoSummarySMS = Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None';
+
+    // Build full tech report
+    const techReport = `SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Currently Open: ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nCurrent Symptoms: ${form.symptoms.map(getSymptomLabel).join(', ') || 'None'}\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\nPhotos:\n${photoSummarySMS}\n\nEstimated Fee: \$${calculatedTripFee.toFixed(2)}\nDistance: ${distanceMiles || 'Not calculated'} miles`;
+
+    const customerReport = `Hi ${form.name || 'Valued Customer'},\n\nThank you for using ${config?.company?.name || 'Frantz Locksmith Service'}'s SafeTriage tool.\n\nWe have received your safe service request and will contact you ASAP.\n\n=== SAFE-TRIAGE REPORT ===\n\n${techReport}\n\n---\nIf you have additional details, call ${config?.company?.phone || ''}.\n\nBest,\n${config?.company?.name || 'Frantz Locksmith Service'}`;
+
+    // 1. SMS to tech
+    if (cleanPhone) {
+      window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent(techReport)}`;
+    }
+
+    // 2. Email via EmailJS (if configured)
+    if (ejs.publicKey && ejs.serviceId) {
+      // Send customer confirmation
+      if (form.email && ejs.templateIdConfirm) {
+        try {
+          await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+              service_id: ejs.serviceId,
+              template_id: ejs.templateIdConfirm,
+              user_id: ejs.publicKey,
+              template_params: {
+                to_email: form.email,
+                to_name: form.name || 'Customer',
+                customer_name: form.name || 'Valued Customer',
+                company_name: config?.company?.name || '',
+                tech_name: selectedTech?.name || config?.company?.name || 'Technician',
+                report: customerReport,
+                phone: config?.company?.phone || '',
+              }
+            })
+          });
+        } catch(e) { /* silent */ }
+      }
+
+      // Send tech report
+      const techEmail = isMulti && selectedTech?.email ? selectedTech.email : config?.company?.email;
+      if (techEmail && ejs.templateIdReport) {
+        try {
+          await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+              service_id: ejs.serviceId,
+              template_id: ejs.templateIdReport,
+              user_id: ejs.publicKey,
+              template_params: {
+                to_email: techEmail,
+                to_name: selectedTech?.name || 'Technician',
+                customer_name: form.name || 'Customer',
+                customer_phone: form.phone || '',
+                company_name: config?.company?.name || '',
+                report: techReport,
+                risk_score: score,
+                risk_level: risk.level,
+                fee: calculatedTripFee.toFixed(2),
+                distance: distanceMiles || 'N/A',
+              }
+            })
+          });
+        } catch(e) { /* silent */ }
+      }
+    }
+
+    setForm({ ...form, helped: 'No' });
+    setShowDispatch(false);
+    setDispatchTech(null);
+  };
   
   // Lock body scroll when any modal is open
   const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService;
@@ -962,7 +968,7 @@ Advice Helpful?: ${form.helped}`;
               />
             </CardContent>
           </Card>
-          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} />
+          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
         </div>
         <div className="print-only print-report">
           <div style={{background:'#1a3a5c',color:'#fff',padding:'24px 32px',textAlign:'center'}}>
@@ -1019,6 +1025,57 @@ Advice Helpful?: ${form.helped}`;
         />
       )}
       {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
+      {showDispatch && (
+        <DispatchModal
+          technicians={config?.company?.technicians || []}
+          onSelect={(tech) => sendDispatch(tech)}
+          onClose={() => { setShowDispatch(false); setDispatchTech(null); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function DispatchModal({ technicians, onSelect, onClose }) {
+  const [selectedIdx, setSelectedIdx] = useState(null);
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50" onClick={onClose}>
+      <div className="py-16 px-4" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full max-w-sm mx-auto rounded-2xl bg-white p-5 shadow-xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">📡 Dispatch Report</h2>
+          <p className="text-sm text-slate-600 mb-4">Select which technician should receive this report:</p>
+          <div className="space-y-2 mb-5">
+            {technicians.map((tech, i) => (
+              <button key={i} onClick={() => setSelectedIdx(i)}
+                style={{
+                  width:'100%', padding:'12px', borderRadius:8,
+                  border: selectedIdx === i ? '2px solid #d4a843' : '1px solid #e2e8f0',
+                  background: selectedIdx === i ? '#1a3a5c' : '#fff',
+                  color: selectedIdx === i ? '#d4a843' : '#1e293b',
+                  cursor:'pointer', textAlign:'left', fontSize:14, fontWeight: selectedIdx === i ? 700 : 400
+                }}
+              >
+                <span style={{fontSize:18,marginRight:8}}>👨‍🔧</span>
+                <strong>{tech.name || 'Unnamed Tech'}</strong>
+                <span style={{display:'block',fontSize:11,color: selectedIdx === i ? '#d4a843' : '#64748b',marginTop:2}}>{tech.phone} {tech.email ? `· ${tech.email}` : ''}</span>
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button onClick={onClose}
+              style={{flex:1,padding:'10px',border:'1px solid #e2e8f0',borderRadius:8,background:'#fff',color:'#64748b',cursor:'pointer',fontWeight:600,fontSize:13}}>Cancel</button>
+            <button onClick={() => selectedIdx !== null && onSelect(technicians[selectedIdx])}
+              disabled={selectedIdx === null}
+              style={{
+                flex:1,padding:'10px',border:'none',borderRadius:8,
+                background: selectedIdx !== null ? '#d4a843' : '#94a3b8',
+                color: selectedIdx !== null ? '#1a3a5c' : '#fff',
+                cursor: selectedIdx !== null ? 'pointer' : 'default',
+                fontWeight:700,fontSize:13
+              }}>Dispatch →</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
