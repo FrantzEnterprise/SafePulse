@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SymptomEditor from './SymptomEditor';
 
 const tabIcons = {
@@ -115,6 +115,11 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
   const handleInputStyle = {
     base: 'w-full rounded-lg border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 backdrop-blur-sm transition-all duration-200 focus:border-[#d4a843] focus:outline-none focus:ring-2 focus:ring-[#d4a843]/20 hover:border-slate-300',
   };
+
+  useEffect(() => {
+    document.body.style.overflowX = 'hidden';
+    return () => { document.body.style.overflowX = ''; };
+  }, []);
 
   return (
     <>
