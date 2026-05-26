@@ -160,11 +160,11 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             </div>
 
             {/* ─── Body: Tab Buttons with Popup Content ─── */}
-            <div className="p-3 space-y-3">
+            <div className="p-3 space-y-3 w-full min-w-0">
               {/* Big Tappable Tabs — horizontal scroll with arrow controls */}
               <div className="flex items-center gap-1">
-                <button id="admin-scroll-left" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: -150, behavior: 'smooth'}); }} className="shrink-0 h-10 w-8 rounded-lg bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">‹</button>
-                <div id="admin-tab-row" className="flex overflow-x-auto gap-1.5 pb-1 flex-1 snap-x snap-mandatory" style={{scrollbarWidth:'thin', WebkitOverflowScrolling:'touch'}}>
+                <button id="admin-scroll-left" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: -120, behavior: 'smooth'}); }} className="shrink-0 h-9 w-7 rounded-lg bg-slate-200 flex items-center justify-center text-base font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">‹</button>
+                <div id="admin-tab-row" className="flex overflow-x-auto gap-1.5 pb-1 flex-1 snap-x snap-mandatory min-w-0" style={{scrollbarWidth:'thin', WebkitOverflowScrolling:'touch'}}>
                   {tabs.map(tab => (
                     <button
                       key={tab.id}
@@ -180,11 +180,11 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                     </button>
                   ))}
                 </div>
-                <button id="admin-scroll-right" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: 150, behavior: 'smooth'}); }} className="shrink-0 h-10 w-8 rounded-lg bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">›</button>
+                <button id="admin-scroll-right" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: 120, behavior: 'smooth'}); }} className="shrink-0 h-9 w-7 rounded-lg bg-slate-200 flex items-center justify-center text-base font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">›</button>
               </div>
 
               {/* Content Panel — full width below buttons */}
-              <div className="rounded-xl border border-slate-200 bg-white shadow-sm max-h-[65vh] overflow-y-auto p-4">
+              <div className="rounded-xl border border-slate-200 bg-white shadow-sm max-h-[65vh] overflow-y-auto p-4 w-full min-w-0">
 
                 {/* Branding */}
                 {activeTab === 'branding' && (
