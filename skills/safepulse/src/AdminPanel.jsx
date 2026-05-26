@@ -161,26 +161,22 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
 
             {/* ─── Body: Tab Buttons with Popup Content ─── */}
             <div className="p-3 space-y-3 w-full min-w-0">
-              {/* Big Tappable Tabs — horizontal scroll with arrow controls */}
-              <div className="flex items-center gap-1">
-                <button id="admin-scroll-left" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: -120, behavior: 'smooth'}); }} className="shrink-0 h-9 w-7 rounded-lg bg-slate-200 flex items-center justify-center text-base font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">‹</button>
-                <div id="admin-tab-row" className="flex overflow-x-auto gap-1.5 pb-1 flex-1 snap-x snap-mandatory min-w-0" style={{scrollbarWidth:'thin', WebkitOverflowScrolling:'touch'}}>
-                  {tabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`snap-start shrink-0 flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                        activeTab === tab.id
-                          ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
-                      }`}
-                    >
-                      <span className="text-lg">{tabIcons[tab.id]}</span>
-                      <span className="whitespace-nowrap">{tab.label}</span>
-                    </button>
-                  ))}
-                </div>
-                <button id="admin-scroll-right" onClick={() => { const el = document.getElementById('admin-tab-row'); if(el) el.scrollBy({left: 120, behavior: 'smooth'}); }} className="shrink-0 h-9 w-7 rounded-lg bg-slate-200 flex items-center justify-center text-base font-bold text-slate-600 hover:bg-slate-300 active:bg-slate-400">›</button>
+              {/* Wrapping tab buttons — swipable via overflow, wraps naturally */}
+              <div className="flex flex-wrap gap-2">
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                      activeTab === tab.id
+                        ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
+                    }`}
+                  >
+                    <span className="text-lg">{tabIcons[tab.id]}</span>
+                    <span className="whitespace-nowrap">{tab.label}</span>
+                  </button>
+                ))}
               </div>
 
               {/* Content Panel — full width below buttons */}
