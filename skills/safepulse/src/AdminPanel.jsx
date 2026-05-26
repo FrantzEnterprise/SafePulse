@@ -159,28 +159,30 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
               ))}
             </div>
 
-            {/* ─── Body: Tab Buttons with Popup Content ─── */}
-            <div className="p-3 space-y-3 w-full min-w-0">
-              {/* Tab buttons — swipe to scroll, no arrows, no wrapping */}
-              <div className="flex overflow-x-auto gap-1.5 pb-1 -mx-1 px-1" style={{WebkitOverflowScrolling:'touch', scrollbarWidth:'thin'}}>
-                {tabs.map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`shrink-0 flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
-                      activeTab === tab.id
-                        ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
-                    }`}
-                  >
-                    <span className="text-base">{tabIcons[tab.id]}</span>
-                    <span className="whitespace-nowrap">{tab.label}</span>
-                  </button>
-                ))}
+            {/* ─── Body: Tab Buttons with Content Below ─── */}
+            <div className="w-full min-w-0">
+              {/* Tab buttons — scrollable row */}
+              <div className="px-3 pt-3 overflow-x-auto" style={{WebkitOverflowScrolling:'touch'}}>
+                <div className="flex gap-2" style={{minWidth:'fit-content'}}>
+                  {tabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`shrink-0 flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                        activeTab === tab.id
+                          ? 'bg-[#1a3a5c] text-[#d4a843] shadow-md'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300'
+                      }`}
+                    >
+                      <span className="text-base">{tabIcons[tab.id]}</span>
+                      <span className="whitespace-nowrap">{tab.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Content Panel — full width below buttons */}
-              <div className="rounded-xl border border-slate-200 bg-white shadow-sm max-h-[65vh] overflow-y-auto overflow-x-hidden p-3 w-full min-w-0">
+              {/* Content Panel */}
+              <div className="p-3 max-h-[60vh] overflow-y-auto overflow-x-hidden">
 
                 {/* Branding */}
                 {activeTab === 'branding' && (
