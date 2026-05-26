@@ -123,8 +123,8 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 overflow-y-auto w-screen bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-sm">
-        <div className="min-h-screen px-4 py-6 flex items-start justify-center overflow-x-hidden">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-sm">
+        <div className="min-h-screen px-4 py-6 flex items-start justify-center">
           <div className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl shadow-slate-900/20 ring-1 ring-slate-200/50">
             
             {/* ─── Dashboard Header ─── */}
