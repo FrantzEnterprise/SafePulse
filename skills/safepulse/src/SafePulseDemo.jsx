@@ -826,6 +826,7 @@ export default function SafePulseDemo() {
     Object.entries(darkVars).forEach(([key, val]) => {
       root.style.setProperty(key, val);
     });
+    root.classList.toggle('dark', darkMode);
   }, [cssVars, darkMode]);
   useEffect(() => {
     if ('serviceWorker' in navigator) {
