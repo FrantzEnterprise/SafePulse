@@ -95,11 +95,11 @@ const serviceFramework = {
   urgent: { standard: "$275 - $1,500", highSecurity: "$800 - $2,500+", notes: "Urgent condition with increased risk of lockout, major repair, or specialized service." },
 };
 
-const damageRiskTriggers = [
-  "handle_stuck_no_play", "handle_spins_no_release", "handle_resistance",
-  "door_stops_partial", "dial_stuck", "click_no_release",
-];
-const batteryTriggers = ["keypad_no_response", "repeating_beep_timeout", "keys_not_register"];
+// Used two places below — checks each symptom's triggersDamageWarning flag
+const hasDamageWarning = (id) => symptomOptions.find(s => s.id === id)?.triggersDamageWarning === true;
+const hasBatteryPopup = (id) => symptomOptions.find(s => s.id === id)?.triggersBatteryPopup === true;
+const hasCustomPopup = (id) => symptomOptions.find(s => s.id === id)?.showPopupOnSelect === true && symptomOptions.find(s => s.id === id)?.popupMessage;
+
 
 const dispatchRecommendations = {
   Low: { type: "Phone Assistance Recommended", time: "15–30 minutes" },
@@ -664,6 +664,27 @@ function BatteryPopup({ setShowBatteryPopup, setBatteryAttempted }) {
   );
 }
 
+function CustomPopupModal({ data, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50" onClick={onClose}>
+      <div className="flex min-h-full items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full max-w-lg rounded-2xl bg-white p-5 shadow-xl">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <h2 className="text-xl font-bold text-slate-900">{data?.title || 'Notice'}</h2>
+            <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+          </div>
+          <div className="rounded-xl border bg-slate-50 p-4 text-sm text-slate-700 whitespace-pre-wrap">
+            {data?.message || ''}
+          </div>
+          <div className="mt-5">
+            <Button onClick={onClose} className="w-full">Got It</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, setShowMapCalculator, config }) {
   const calculateTripFee = () => {
     const cfg = config?.serviceArea || { baseFee: 75, baseMilesIncluded: 17, perExtraMileRate: 2.5 };
@@ -734,6 +755,7 @@ export default function SafePulseDemo() {
   const [showInstructions, setShowInstructions] = useState(false);
   const [showDispatch, setShowDispatch] = useState(false);
   const [dispatchTech, setDispatchTech] = useState(null);
+  const [customPopupData, setCustomPopupData] = useState(null);
   
   const sendDispatch = async (selectedTech) => {
     const ejs = config?.emailjs || {};
@@ -814,7 +836,7 @@ export default function SafePulseDemo() {
   };
   
   // Lock body scroll when any modal is open
-  const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService;
+  const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService || customPopupData !== null;
 
   // Apply CSS vars from config
   const darkVars = darkMode ? {
@@ -866,12 +888,16 @@ export default function SafePulseDemo() {
   const serviceEstimate = serviceFramework[risk.level.toLowerCase()];
   const dispatchType = dispatchRecommendations[risk.level];
   const possibleCauses = triageHistory.map((id) => possibleCauseLibrary[id]).filter(Boolean);
-  const customerDamageRisk = triageHistory.some((symptom) => damageRiskTriggers.includes(symptom));
+  const customerDamageRisk = triageHistory.some((symptom) => hasDamageWarning(symptom));
   const symptomRecommendations = symptomOptions.filter((symptom) => triageHistory.includes(symptom.id)).map((symptom) => symptom.recommendation);
 
   const toggleSymptom = (id) => {
     if (lockedForService) return;
-    if (batteryTriggers.includes(id)) setShowBatteryPopup(true);
+    if (hasBatteryPopup(id)) setShowBatteryPopup(true);
+    if (hasCustomPopup(id)) {
+      const sym = symptomOptions.find(s => s.id === id);
+      setCustomPopupData({ title: sym.popupTitle || 'Notice', message: sym.popupMessage });
+    }
     setTriageHistory((prev) => {
       if (prev.includes(id)) return prev;
       const nextHistory = [...prev, id];
@@ -1016,6 +1042,7 @@ Advice Helpful?: ${form.helped}`;
       {lockedForService && <ServiceLockoutModal />}
       {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
       {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
+      {customPopupData && <CustomPopupModal data={customPopupData} onClose={() => setCustomPopupData(null)} />}
       {showResultModal && lastSelectedSymptom && (
         <SymptomResultModal
           symptomId={lastSelectedSymptom}

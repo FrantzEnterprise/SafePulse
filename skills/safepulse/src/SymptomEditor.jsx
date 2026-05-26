@@ -8,7 +8,12 @@ const emptySymptom = () => ({
   causes: [''],
   remedy: '',
   note: '',
-  parts: ['']
+  parts: [''],
+  triggersBatteryPopup: false,
+  triggersDamageWarning: false,
+  showPopupOnSelect: false,
+  popupTitle: '',
+  popupMessage: ''
 });
 
 export default function SymptomEditor({ onClose }) {
@@ -71,7 +76,7 @@ export default function SymptomEditor({ onClose }) {
     const updated = [...groups];
     updated[groupIdx] = {
       ...updated[groupIdx],
-      symptoms: [...updated[groupIdx].symptoms, { id, label, points: 20, recommendation: 'Describe the recommended action here.', causes: [''], remedy: '', note: '', parts: [''] }]
+      symptoms: [...updated[groupIdx].symptoms, { id, label, points: 20, recommendation: 'Describe the recommended action here.', causes: [''], remedy: '', note: '', parts: [''], triggersBatteryPopup: false, triggersDamageWarning: false, showPopupOnSelect: false, popupTitle: '', popupMessage: '' }]
     };
     setGroups(updated);
   };
@@ -280,6 +285,47 @@ export default function SymptomEditor({ onClose }) {
                             </div>
                           ))}
                         </div>
+                      </div>
+
+                      {/* Popup Triggers */}
+                      <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-3">
+                        <p className="font-semibold text-sm text-slate-700 flex items-center gap-2">🔔 Popup Triggers & Messages</p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                          <label className="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="checkbox" className="w-4 h-4 accent-amber-500"
+                              checked={!!groups[activeTab].symptoms[activeSymptom].triggersBatteryPopup}
+                              onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'triggersBatteryPopup', e.target.checked)} />
+                            <span>🔋 Battery Popup</span>
+                          </label>
+                          <label className="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="checkbox" className="w-4 h-4 accent-red-500"
+                              checked={!!groups[activeTab].symptoms[activeSymptom].triggersDamageWarning}
+                              onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'triggersDamageWarning', e.target.checked)} />
+                            <span>⚠️ Damage Warning</span>
+                          </label>
+                          <label className="flex items-center gap-2 text-sm cursor-pointer">
+                            <input type="checkbox" className="w-4 h-4 accent-blue-500"
+                              checked={!!groups[activeTab].symptoms[activeSymptom].showPopupOnSelect}
+                              onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'showPopupOnSelect', e.target.checked)} />
+                            <span>💬 Custom Popup</span>
+                          </label>
+                        </div>
+                        {groups[activeTab].symptoms[activeSymptom].showPopupOnSelect && (
+                          <div className="space-y-2 border-t border-slate-200 pt-2">
+                            <div>
+                              <label className="admin-label">Popup Title</label>
+                              <input className="admin-input" placeholder="e.g. Important Notice" 
+                                value={groups[activeTab].symptoms[activeSymptom].popupTitle || ''}
+                                onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'popupTitle', e.target.value)} />
+                            </div>
+                            <div>
+                              <label className="admin-label">Popup Message</label>
+                              <textarea className="admin-input min-h-[60px]" placeholder="Enter the message to show when this symptom is selected..."
+                                value={groups[activeTab].symptoms[activeSymptom].popupMessage || ''}
+                                onChange={(e) => updateSymptomField(activeTab, activeSymptom, 'popupMessage', e.target.value)} />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
