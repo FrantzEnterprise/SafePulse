@@ -39,6 +39,8 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
       else if (section === 'company') n.company = {...n.company, [key]: val};
       else if (section === 'serviceArea') n.serviceArea = {...n.serviceArea, [key]: val};
       else if (section === 'features') n.features = {...n.features, [key]: val};
+      else if (section === 'twilio') n.twilio = {...(n.twilio||{}), [key]: val};
+      else if (section === 'smtp') n.smtp = {...(n.smtp||{}), [key]: val};
       else n[key] = val;
       return n;
     });
@@ -275,18 +277,75 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
           )}
 
           {tab==='integrations' && (
-            <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:12}}>
-              <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:6}}>
-                <span style={{fontSize:18}}>🗺️</span>
-                <div style={{fontWeight:600,fontSize:13}}>Google Maps API Key</div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              {/* Google Maps */}
+              <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:12}}>
+                <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:6}}>
+                  <span style={{fontSize:18}}>🗺️</span>
+                  <div style={{fontWeight:600,fontSize:13}}>Google Maps API Key</div>
+                </div>
+                <div style={{fontSize:9,color:'#94a3b8',marginBottom:8}}>Required for address autocomplete &amp; distance calculation</div>
+                <div style={{position:'relative'}}>
+                  <input className={INP+' !pr-16'} type={showKey?'text':'password'} placeholder="AIzaSy..." value={cfg.googleMapsApiKey||''} onChange={e=>setVal('root','googleMapsApiKey',e.target.value)} />
+                  <button onClick={()=>setShowKey(v=>!v)} style={{position:'absolute',right:4,top:4,background:'transparent',border:'none',color:'#94a3b8',cursor:'pointer',fontSize:10,padding:'4px 8px'}}>{showKey?'Hide':'Show'}</button>
+                </div>
+                <div style={{marginTop:6}}>
+                  <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style={{color:'#60a5fa',fontSize:10,textDecoration:'underline'}}>Get a key →</a>
+                </div>
               </div>
-              <div style={{fontSize:9,color:'#94a3b8',marginBottom:8}}>Required for address autocomplete &amp; distance calculation</div>
-              <div style={{position:'relative'}}>
-                <input className={INP+' !pr-16'} type={showKey?'text':'password'} placeholder="AIzaSy..." value={cfg.googleMapsApiKey||''} onChange={e=>setVal('root','googleMapsApiKey',e.target.value)} />
-                <button onClick={()=>setShowKey(v=>!v)} style={{position:'absolute',right:4,top:4,background:'transparent',border:'none',color:'#94a3b8',cursor:'pointer',fontSize:10,padding:'4px 8px'}}>{showKey?'Hide':'Show'}</button>
+
+              {/* Twilio SMS */}
+              <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:12}}>
+                <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:6}}>
+                  <span style={{fontSize:18}}>💬</span>
+                  <div style={{fontWeight:600,fontSize:13}}>Twilio SMS</div>
+                </div>
+                <div style={{fontSize:9,color:'#94a3b8',marginBottom:8}}>Send automated SMS notifications to customers</div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Account SID</label>
+                    <input className={INP} type="text" placeholder="AC..." value={cfg.twilio?.accountSid||''} onChange={e=>setVal('twilio','accountSid',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Auth Token</label>
+                    <input className={INP} type="password" placeholder="***" value={cfg.twilio?.authToken||''} onChange={e=>setVal('twilio','authToken',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>From Number</label>
+                    <input className={INP} type="text" placeholder="+1234567890" value={cfg.twilio?.fromNumber||''} onChange={e=>setVal('twilio','fromNumber',e.target.value)} />
+                  </div>
+                </div>
               </div>
-              <div style={{marginTop:6}}>
-                <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" style={{color:'#60a5fa',fontSize:10,textDecoration:'underline'}}>Get a key →</a>
+
+              {/* SMTP Email */}
+              <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:12}}>
+                <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:6}}>
+                  <span style={{fontSize:18}}>📧</span>
+                  <div style={{fontWeight:600,fontSize:13}}>SMTP Email</div>
+                </div>
+                <div style={{fontSize:9,color:'#94a3b8',marginBottom:8}}>Send reports via email (SendGrid, Gmail SMTP, etc.)</div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>SMTP Host</label>
+                    <input className={INP} type="text" placeholder="smtp.sendgrid.net" value={cfg.smtp?.host||''} onChange={e=>setVal('smtp','host',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Port</label>
+                    <input className={INP} type="number" placeholder="587" value={cfg.smtp?.port||587} onChange={e=>setVal('smtp','port',parseInt(e.target.value,10)||587)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Username</label>
+                    <input className={INP} type="text" placeholder="apikey" value={cfg.smtp?.user||''} onChange={e=>setVal('smtp','user',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>Password</label>
+                    <input className={INP} type="password" placeholder="***" value={cfg.smtp?.pass||''} onChange={e=>setVal('smtp','pass',e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{fontSize:10,color:'#94a3b8',display:'block',marginBottom:2}}>From Email</label>
+                    <input className={INP} type="email" placeholder="you@example.com" value={cfg.smtp?.fromEmail||''} onChange={e=>setVal('smtp','fromEmail',e.target.value)} />
+                  </div>
+                </div>
               </div>
             </div>
           )}

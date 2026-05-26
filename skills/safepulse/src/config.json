@@ -31,6 +31,18 @@
     "maxRadiusMiles": 100
   },
   "googleMapsApiKey": "",
+  "twilio": {
+    "accountSid": "",
+    "authToken": "",
+    "fromNumber": ""
+  },
+  "smtp": {
+    "host": "",
+    "port": 587,
+    "user": "",
+    "pass": "",
+    "fromEmail": ""
+  },
   "features": {
     "showPhotoUpload": true,
     "showMapCalculator": true,
