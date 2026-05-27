@@ -96,6 +96,10 @@
     "showReviewRequests": false,
     "showLoyaltyProgram": false,
     "showIntegrations": false,
+    "showDemoMode": false,
+    "demoMode": false,
+    "demoCompany": "Capital City Safe & Lock",
+    "demoTagline": "Sacramento's demo safe service — see what 90 days looks like",
     "maxScoreBeforeLockout": 100
   },
   "tagline": "Sacramento's Safe Specialist — Mobile Service Since 1985",

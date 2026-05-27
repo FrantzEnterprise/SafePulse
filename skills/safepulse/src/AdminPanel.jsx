@@ -326,6 +326,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                   showReviewRequests: ['⭐ Review Requests','Auto-request Google/Yelp reviews'],
                   showLoyaltyProgram: ['💎 Loyalty Program','Points & rewards for repeat customers'],
                   showIntegrations: ['🔌 Integrations','API keys & third-party connections panel'],
+                  showDemoMode: ['🏪 Demo Mode','Show mock business data for sales demos'],
                 };
                 const [title, desc] = labels[k] || [k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase()).replace('Qa','Q&A'), ''];
                 return (
