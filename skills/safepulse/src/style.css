@@ -1,6 +1,9 @@
 /* SafePulse V3 - Complete Stylesheet */
 /* All utility classes used in SafePulseDemo.jsx */
 
+/* ── Futuristic font import (must be first per CSS spec) ── */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
+
 /* ── CSS Custom Properties (set by config) ── */
 :root {
   --color-primary: #1a3a5c;
@@ -249,8 +252,7 @@ button { cursor: pointer; font-family: inherit; }
   opacity: 0.7;
 }
 
-/* ── Futuristic font import ── */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
+
 
 /* ── Print styles ── */
 @media print {
