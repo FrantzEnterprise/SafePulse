@@ -10,7 +10,7 @@ const PLATFORMS = [
 ];
 
 /* ──────── Image Crop Modal ──────── */
-function CropModal({ src, aspectRatio, onSave, onClose }) {
+function CropModal({ src, aspectRatio, platforms, onSave, onClose }) {
   const imgRef = useRef(null);
   const [img, setImg] = useState(null);
   const containerRef = useRef(null);
@@ -83,13 +83,30 @@ function CropModal({ src, aspectRatio, onSave, onClose }) {
     if (!img) return;
     const sx = crop.x / scale, sy = crop.y / scale;
     const sw = crop.w / scale, sh = crop.h / scale;
+
+    // Output at exact platform dimensions
+    if (aspectRatio && platforms && platforms.length === 1) {
+      const p = PLATFORMS.find(x => x.id === platforms[0]);
+      if (p) {
+        const canvas = document.createElement('canvas');
+        canvas.width = p.maxW; canvas.height = p.maxH;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, p.maxW, p.maxH);
+        onSave(canvas.toDataURL('image/jpeg', 0.92));
+        return;
+      }
+    }
+
+    // Multiple platforms or free crop: output at the crop's native resolution (max 1920px)
+    const maxDim = Math.max(sw, sh);
+    const scaleOut = Math.min(1, 1920 / maxDim);
     const canvas = document.createElement('canvas');
-    const outW = aspectRatio ? Math.round(aspectRatio * 200) : Math.round(sw);
-    const outH = Math.round(aspectRatio ? 200 : sh);
+    const outW = Math.round(sw * scaleOut);
+    const outH = Math.round(sh * scaleOut);
     canvas.width = outW; canvas.height = outH;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
-    onSave(canvas.toDataURL('image/jpeg', 0.9));
+    onSave(canvas.toDataURL('image/jpeg', 0.92));
   };
 
   if (!img) return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}><div className="text-white text-sm">Loading...</div></div>;
@@ -294,6 +311,7 @@ export default function SocialComposer({ config }) {
         <CropModal
           src={imagePreview}
           aspectRatio={getActiveAspectRatio()}
+          platforms={selectedPlatforms}
           onSave={handleCropSave}
           onClose={() => setShowCrop(false)}
         />
