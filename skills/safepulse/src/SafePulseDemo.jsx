@@ -1192,13 +1192,13 @@ Powered by Frantz Enterprise`;
     return (
       <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{background:'linear-gradient(160deg, #0f1f3d 0%, #1a3a5c 50%, #0f1f3d 100%)'}}>
         <style>{`
-          @keyframes zoomSpin {
-            0% { transform: scale(3) rotate(180deg); opacity: 0; }
-            50% { transform: scale(1.1) rotate(10deg); opacity: 0.7; }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+          @keyframes zoomIn {
+            0% { transform: scale(0.2) rotate(-20deg); opacity: 0; }
+            60% { transform: scale(2.8) rotate(5deg); opacity: 1; }
+            100% { transform: scale(2.6) rotate(0deg); opacity: 1; }
           }
           .splash-logo {
-            animation: zoomSpin 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation: zoomIn 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
             padding: 12px;
             width: 168px;
             height: auto;
