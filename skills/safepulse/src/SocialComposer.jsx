@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
 
 const PLATFORMS = [
-  { id: 'facebook', label: 'Facebook', icon: '📘', color: '#1877F2' },
-  { id: 'linkedin', label: 'LinkedIn', icon: '💼', color: '#0A66C2' },
-  { id: 'twitter', label: 'X / Twitter', icon: '🐦', color: '#1DA1F2' },
-  { id: 'instagram', label: 'Instagram', icon: '📸', color: '#E4405F' },
-  { id: 'youtube', label: 'YouTube', icon: '▶️', color: '#FF0000' },
-  { id: 'tiktok', label: 'TikTok', icon: '🎵', color: '#000000' }
+  { id: 'facebook', label: 'Facebook', icon: '📘', color: '#1877F2', ratio: '1.91:1', maxW: 1200, maxH: 630 },
+  { id: 'linkedin', label: 'LinkedIn', icon: '💼', color: '#0A66C2', ratio: '1.91:1', maxW: 1200, maxH: 627 },
+  { id: 'twitter', label: 'X / Twitter', icon: '🐦', color: '#1DA1F2', ratio: '16:9', maxW: 1600, maxH: 900 },
+  { id: 'instagram', label: 'Instagram', icon: '📸', color: '#E4405F', ratio: '1:1', maxW: 1080, maxH: 1080 },
+  { id: 'youtube', label: 'YouTube', icon: '▶️', color: '#FF0000', ratio: '16:9', maxW: 1920, maxH: 1080 },
+  { id: 'tiktok', label: 'TikTok', icon: '🎵', color: '#000000', ratio: '9:16', maxW: 1080, maxH: 1920 }
 ];
 
 export default function SocialComposer({ config }) {
@@ -25,6 +25,20 @@ export default function SocialComposer({ config }) {
   });
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
+
+  const renderPlatformSizes = () => {
+    const sel = PLATFORMS.filter(p => selectedPlatforms.includes(p.id));
+    if (sel.length === 0) return null;
+    return (
+      <div className="mt-2 flex flex-wrap gap-2">
+        {sel.map(p => (
+          <span key={p.id} style={{fontSize:'11px',padding:'3px 8px',background:'#1a2a4a',borderRadius:'6px',border:'1px solid #2a3a5a',color:'#94a3b8'}}>
+            {p.icon} {p.label}: {p.ratio} ({p.maxW}×{p.maxH})
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   const togglePlatform = (id) => {
     setSelectedPlatforms(prev =>
@@ -148,6 +162,14 @@ export default function SocialComposer({ config }) {
         <div className="text-right text-xs mt-1" style={{color:'#6272a4'}}>{postText.length} chars</div>
       </div>
 
+      {/* Platform Size Hints */}
+      {selectedPlatforms.length > 0 && (
+        <div className="mb-3">
+          <label className="text-xs font-semibold mb-1 block" style={{color:'#94a3b8'}}>📐 Recommended sizes for selected platforms:</label>
+          {renderPlatformSizes()}
+        </div>
+      )}
+
       {/* Image Upload */}
       <div className="mb-4">
         <label className="text-sm font-semibold mb-1 block" style={{color:'#94a3b8'}}>Add Image:</label>
@@ -157,8 +179,8 @@ export default function SocialComposer({ config }) {
             📷 Choose Image
           </button>
           {imagePreview && (
-            <div className="relative">
-              <img src={imagePreview} alt="Preview" className="h-16 rounded" />
+            <div className="relative" style={{maxWidth:'280px',width:'100%'}}>
+              <img src={imagePreview} alt="Preview" style={{width:'100%',maxHeight:'160px',objectFit:'contain',borderRadius:'8px',background:'#0a1628'}} />
               <button onClick={removeImage}
                 style={{position:'absolute',top:-6,right:-6,background:'#ff5555',color:'#fff',border:'none',borderRadius:'50%',width:'20px',height:'20px',fontSize:'11px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
                 ×
@@ -178,8 +200,8 @@ export default function SocialComposer({ config }) {
             🎬 Choose Video
           </button>
           {videoPreview && (
-            <div className="relative">
-              <video src={videoPreview} className="h-16 rounded" controls />
+            <div className="relative" style={{maxWidth:'280px',width:'100%'}}>
+              <video src={videoPreview} style={{width:'100%',maxHeight:'160px',objectFit:'contain',borderRadius:'8px',background:'#0a1628'}} controls />
               <button onClick={removeVideo}
                 style={{position:'absolute',top:-6,right:-6,background:'#ff5555',color:'#fff',border:'none',borderRadius:'50%',width:'20px',height:'20px',fontSize:'11px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>
                 ×
@@ -243,8 +265,8 @@ export default function SocialComposer({ config }) {
                   <p className="text-sm" style={{color:'#e8edf5',whiteSpace:'pre-wrap',wordBreak:'break-word'}}>
                     {post.text.length > 120 ? post.text.slice(0,120) + '...' : post.text}
                   </p>
-                  {post.image && <img src={post.image} alt="" className="h-12 rounded mt-1" />}
-                  {post.video && <video src={post.video} className="h-12 rounded mt-1" controls />}
+                  {post.image && <img src={post.image} alt="" style={{maxWidth:'200px',maxHeight:'80px',objectFit:'contain',borderRadius:'6px',marginTop:'4px',background:'#0a1628'}} />}
+                  {post.video && <video src={post.video} style={{maxWidth:'200px',maxHeight:'80px',objectFit:'contain',borderRadius:'6px',marginTop:'4px',background:'#0a1628'}} controls />}
                   <div className="text-xs mt-1" style={{color:'#6272a4'}}>
                     {post.company} · {new Date(post.createdAt).toLocaleDateString()}
                     {post.scheduled ? ` · 📅 ${post.scheduled}` : ''}
