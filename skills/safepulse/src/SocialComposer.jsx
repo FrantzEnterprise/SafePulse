@@ -368,9 +368,16 @@ export default function SocialComposer({ config }) {
                   ×
                 </button>
               </div>
-              <button onClick={() => setShowCrop(true)} style={{padding:'5px 10px',background:'#2a3a5a',border:'1px solid #d4a843',borderRadius:'8px',color:'#d4a843',cursor:'pointer',fontSize:'11px'}}>
-                ✂️ Re-crop
-              </button>
+              <div style={{display:'flex',flexDirection:'column',gap:'4px'}}>
+                <button onClick={() => setShowCrop(true)} style={{padding:'5px 10px',background:'#2a3a5a',border:'1px solid #d4a843',borderRadius:'8px',color:'#d4a843',cursor:'pointer',fontSize:'11px'}}>
+                  ✂️ Re-crop
+                </button>
+                {croppedImage && (
+                  <button onClick={() => { setCroppedImage(null); setShowCrop(false); }} style={{padding:'5px 10px',background:'transparent',border:'1px solid #6272a4',borderRadius:'8px',color:'#6272a4',cursor:'pointer',fontSize:'11px'}}>
+                  ↩️ Original
+                  </button>
+                )}
+              </div>
             </>
           )}
         </div>
@@ -417,7 +424,16 @@ export default function SocialComposer({ config }) {
         {scheduledDate && scheduledTime ? '📅 Schedule Post' : '💾 Save Post'}
       </button>
 
-      <h3 className="text-lg font-bold mb-3" style={{color:'#e8edf5'}}>📋 Post History</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-lg font-bold" style={{color:'#e8edf5'}}>📋 Post History</h3>
+        <button onClick={() => {
+          if (!confirm('Delete all unsent posts?')) return;
+          setPostHistory([]);
+          localStorage.setItem('sp_social_history', '[]');
+        }} style={{padding:'4px 10px',background:'transparent',border:'1px solid #ff5555',borderRadius:'6px',color:'#ff5555',cursor:'pointer',fontSize:'11px'}}>
+          🗑️ Clear All
+        </button>
+      </div>
       {postHistory.length === 0 ? (
         <p className="text-sm" style={{color:'#6272a4'}}>No posts yet.</p>
       ) : (
