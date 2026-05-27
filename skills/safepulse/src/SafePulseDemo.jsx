@@ -286,11 +286,6 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
         </div>
       )}
-              Next — Service Quote
-            </button>
-          </div>
-        </div>
-      )}
 
       {step === 5 && (
         <div className="space-y-4">
