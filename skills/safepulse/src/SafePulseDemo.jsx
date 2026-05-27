@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useConfig } from "./useConfig";
 import AdminPanel from "./AdminPanel";
+import LoginModal from "./LoginModal";
+import { isLoggedIn, logout } from "./auth";
 
 // SAFEPOINT v0.5.1 — popup modal for symptom answers
 // Each symptom selection shows its result in a clean modal overlay
@@ -769,6 +771,8 @@ export default function SafePulseDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
   const [showAdmin, setShowAdmin] = useState(() => new URLSearchParams(window.location.search).get('admin') === 'true');
+  const [showLogin, setShowLogin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => isLoggedIn());
   const [showMapCalculator, setShowMapCalculator] = useState(false);
   const [showBatteryPopup, setShowBatteryPopup] = useState(false);
   const [batteryAttempted, setBatteryAttempted] = useState(false);
@@ -989,11 +993,17 @@ Advice Helpful?: ${form.helped}
 Powered by Frantz Enterprise`;
 
   if (showAdmin) {
-    return <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />;
+    return (
+      <div>
+        <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />
+        {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); }} onClose={() => setShowLogin(false)} />}
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-slate-100 p-6 text-slate-900">
+      {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); }} onClose={() => setShowLogin(false)} />}
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -1007,7 +1017,8 @@ Powered by Frantz Enterprise`;
             <button onClick={() => setShowInstructions(true)} className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
               ? Instructions
             </button>
-            <button onClick={() => setShowAdmin(true)} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Admin Settings">
+            <button onClick={() => { if (isAuthenticated) { setShowAdmin(true); } else { setShowLogin(true); } }} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Admin Settings">
+            {isAuthenticated && <button onClick={() => { logout(); setIsAuthenticated(false); }} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Sign Out">🚪</button>}
               &#9881; Admin
             </button>
             {config?.features?.showQaSection && config?.qaUrl && (
