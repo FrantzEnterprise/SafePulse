@@ -1006,9 +1006,12 @@ Powered by Frantz Enterprise`;
       {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); }} onClose={() => setShowLogin(false)} />}
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">{config.company.name}</h1>
-            <p className="text-slate-600"><span className="text-primary font-semibold">SafeTriage</span> by {config.tagline || 'Sacramento\'s Safe Specialist'}</p>
+          <div className="flex items-center gap-3">
+            <img src="frantz-logo.jpg" alt="Frantz Locksmith Service" className="h-12 w-auto rounded-lg shadow-sm" />
+            <div>
+              <h1 className="text-3xl font-bold">{config.company.name}</h1>
+              <p className="text-slate-600"><span className="text-primary font-semibold">SafeTriage</span> by {config.tagline || 'Sacramento\'s Safe Specialist'}</p>
+            </div>
           </div>
           <div className="flex gap-2 shrink-0">
             <button onClick={() => { setDarkMode(d => { const n = !d; localStorage.setItem('safepulse_dark', n); return n; }); }} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Toggle Dark Mode">
