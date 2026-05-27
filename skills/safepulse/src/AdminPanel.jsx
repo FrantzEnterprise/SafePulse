@@ -13,6 +13,7 @@ const TABS = [
   { id:'testimonials', label:'Testimonials', icon:'🎬' },
   { id:'triagelog', label:'Triage Log', icon:'📜' },
   { id:'qa', label:'Q&A', icon:'💡' },
+  { id:'ads', label:'Ads', icon:'📢' },
   { id:'symptoms', label:'Symptoms', icon:'🩺' },
   { id:'integrations', label:'Integrations', icon:'🔌' },
   { id:'export', label:'Export', icon:'📦' },
@@ -316,6 +317,10 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             </div>
           )}
 
+          {tab==='ads' && (
+            <AdManager config={cfg} setCfg={setCfg} setSaved={setSaved} />
+          )}
+
           {tab==='symptoms' && (
             <div>
               <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:10,marginBottom:8}}>
@@ -465,6 +470,277 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
       </div>
 
       {showEditor && <SymptomEditor onClose={()=>setShowEditor(false)} />}
+    </div>
+  );
+}
+
+/* ──────── Ad Manager ──────── */
+function AdManager({ config, setCfg, setSaved }) {
+  const [expanded, setExpanded] = useState(null);
+  const [editingIdx, setEditingIdx] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [uploading, setUploading] = useState(false);
+
+  const ads = config?.ads || [];
+
+  const setAds = (newAds) => {
+    const n = {...config};
+    n.ads = newAds;
+    setCfg(n);
+    setSaved(false);
+  };
+
+  // Text layout → image size mapping
+  const LAYOUT_SIZES = {
+    'image-only': { label: 'Image Only', w: 600, h: 500, desc: 'Tall image, no text' },
+    'text-above': { label: 'Text Above', w: 600, h: 400, desc: 'Image with caption above' },
+    'text-below': { label: 'Text Below', w: 600, h: 400, desc: 'Image with caption below' },
+    'text-both':  { label: 'Text Above & Below', w: 600, h: 300, desc: 'Image squeezed between captions' },
+  };
+
+  const LAYOUTS = ['image-only','text-above','text-below','text-both'];
+
+  const addNew = () => {
+    const newAd = {
+      id: Date.now().toString(36),
+      layout: 'image-only',
+      imageData: null,
+      fileName: '',
+      captionAbove: '',
+      captionBelow: '',
+      linkUrl: '',
+      active: true
+    };
+    setAds([...ads, newAd]);
+    setEditingIdx(ads.length);
+    setEditForm(newAd);
+    setExpanded(ads.length);
+  };
+
+  const startEdit = (idx) => {
+    setEditingIdx(idx);
+    setEditForm({...ads[idx]});
+  };
+
+  const saveEdit = () => {
+    const updated = [...ads];
+    updated[editingIdx] = editForm;
+    setAds(updated);
+    setEditingIdx(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingIdx(null);
+  };
+
+  const deleteAd = (idx) => {
+    if (!confirm('Delete this ad?')) return;
+    const updated = ads.filter((_, i) => i !== idx);
+    setAds(updated);
+    if (editingIdx === idx) setEditingIdx(null);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      // Resize to fit selected layout
+      const layout = LAYOUT_SIZES[editForm.layout] || LAYOUT_SIZES['image-only'];
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ratio = Math.min(layout.w / img.width, layout.h / img.height);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#1a2a4a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const ox = (canvas.width - img.width * ratio) / 2;
+        const oy = (canvas.height - img.height * ratio) / 2;
+        ctx.drawImage(img, ox, oy, img.width * ratio, img.height * ratio);
+        setEditForm({...editForm, imageData: canvas.toDataURL('image/jpeg', 0.85), fileName: file.name});
+        setUploading(false);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const getPreviewStyle = (layout) => {
+    const s = LAYOUT_SIZES[layout];
+    // Calculate preview aspect ratio respecting ad box constraint (roughly 1.2:1)
+    const maxPreviewW = 280;
+    const maxPreviewH = 180;
+    const ar = s.w / s.h;
+    let pw = maxPreviewW;
+    let ph = pw / ar;
+    if (ph > maxPreviewH) { ph = maxPreviewH; pw = ph * ar; }
+    return { width: Math.round(pw), height: Math.round(ph) };
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <div style={{fontWeight:600,fontSize:13,color:'#e8edf5'}}>📢 Ad Manager</div>
+          <div style={{fontSize:10,color:'#94a3b8',marginTop:2}}>Manage ad placeholders displayed under the risk meter</div>
+        </div>
+        <button onClick={addNew}
+          style={{background:'#d4a843',color:'#0a1628',border:'none',padding:'8px 16px',borderRadius:8,cursor:'pointer',fontWeight:700,fontSize:12}}>
+          + New Ad
+        </button>
+      </div>
+
+      {ads.length === 0 ? (
+        <div style={{padding:'20px',textAlign:'center',background:'#1a2a4a',borderRadius:'12px',border:'1px solid #2a3a5a'}}>
+          <p style={{color:'#6272a4',fontSize:13}}>No ads yet. Click "+ New Ad" to add your first advertisement.</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {ads.map((ad, idx) => (
+            <div key={ad.id || idx} style={{
+              borderRadius:10, border:'1px solid #2a3a5a', overflow:'hidden',
+              background: expanded === idx ? '#1a2a4a' : '#0f1f3d'
+            }}>
+              {/* Collapsed row */}
+              <div onClick={() => setExpanded(expanded === idx ? null : idx)}
+                style={{padding:'10px 12px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                <div className="flex items-center gap-2" style={{flex:1,minWidth:0}}>
+                  <span style={{fontSize:16}}>{ad.active ? '🟢' : '⚪'}</span>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:13,fontWeight:600,color:'#e8edf5',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+                      {ad.fileName || `Ad #${idx + 1}`}
+                    </div>
+                    <div style={{fontSize:10,color:'#6272a4'}}>
+                      {LAYOUTS.find(l => l === ad.layout) ? LAYOUT_SIZES[ad.layout]?.label || ad.layout : ad.layout}
+                      {ad.linkUrl ? ` · 🔗 ${ad.linkUrl.slice(0,30)}` : ''}
+                    </div>
+                  </div>
+                </div>
+                <span style={{color:'#6272a4',fontSize:10}}>{expanded === idx ? '▲' : '▼'}</span>
+              </div>
+
+              {/* Expanded editor */}
+              {expanded === idx && (
+                <div style={{padding:'12px',borderTop:'1px solid #2a3a5a'}}>
+                  {editingIdx === idx ? (
+                    <div className="space-y-3">
+                      {/* Layout selector */}
+                      <div>
+                        <label style={{fontSize:10,fontWeight:600,color:'#94a3b8',display:'block',marginBottom:4}}>Text Layout</label>
+                        <div style={{display:'flex',flexWrap:'wrap',gap:4}}>
+                          {LAYOUTS.map(l => {
+                            const ls = LAYOUT_SIZES[l];
+                            const pre = getPreviewStyle(l);
+                            return (
+                              <button key={l} onClick={() => setEditForm({...editForm, layout: l})}
+                                style={{
+                                  padding:'6px 10px', borderRadius:6, fontSize:10, border:'1px solid',
+                                  background: editForm.layout === l ? '#d4a843' : '#2a3a5a',
+                                  color: editForm.layout === l ? '#0a1628' : '#94a3b8',
+                                  borderColor: editForm.layout === l ? '#d4a843' : '#2a3a5a',
+                                  cursor:'pointer'
+                                }}>
+                                {ls.label}
+                                <span style={{fontSize:8,display:'block',opacity:0.7}}>{pre.w}×{pre.h}px</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Image upload */}
+                      <div>
+                        <label style={{fontSize:10,fontWeight:600,color:'#94a3b8',display:'block',marginBottom:4}}>Image</label>
+                        <label style={{display:'flex',alignItems:'center',gap:8,padding:'8px 12px',background:'#2a3a5a',borderRadius:8,cursor:'pointer'}}>
+                          <span style={{fontSize:11,color:'#94a3b8'}}>{editForm.fileName || 'Choose image...'}</span>
+                          <input type="file" accept="image/*" style={{display:'none'}} onChange={handleImageUpload} />
+                          {uploading && <span style={{fontSize:10,color:'#d4a843'}}>⏳</span>}
+                        </label>
+                        {editForm.imageData && (
+                          <div style={{marginTop:4,position:'relative',display:'inline-block'}}>
+                            <img src={editForm.imageData} alt="ad preview" style={{maxWidth:'100%',maxHeight:100,borderRadius:6,border:'1px solid #2a3a5a'}} />
+                            <button onClick={() => setEditForm({...editForm, imageData: null, fileName: ''})}
+                              style={{position:'absolute',top:-6,right:-6,background:'#ff5555',color:'#fff',border:'none',borderRadius:'50%',width:18,height:18,fontSize:10,cursor:'pointer'}}>✕</button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Captions */}
+                      {editForm.layout !== 'image-only' && (editForm.layout === 'text-above' || editForm.layout === 'text-both') && (
+                        <div>
+                          <label style={{fontSize:10,fontWeight:600,color:'#94a3b8',display:'block',marginBottom:4}}>Caption Above</label>
+                          <input value={editForm.captionAbove || ''} onChange={e => setEditForm({...editForm, captionAbove: e.target.value})}
+                            style={{width:'100%',padding:'8px',background:'#1a2a4a',border:'1px solid #2a3a5a',borderRadius:6,color:'#e8edf5',fontSize:12,boxSizing:'border-box'}} />
+                        </div>
+                      )}
+                      {(editForm.layout === 'text-below' || editForm.layout === 'text-both') && (
+                        <div>
+                          <label style={{fontSize:10,fontWeight:600,color:'#94a3b8',display:'block',marginBottom:4}}>Caption Below</label>
+                          <input value={editForm.captionBelow || ''} onChange={e => setEditForm({...editForm, captionBelow: e.target.value})}
+                            style={{width:'100%',padding:'8px',background:'#1a2a4a',border:'1px solid #2a3a5a',borderRadius:6,color:'#e8edf5',fontSize:12,boxSizing:'border-box'}} />
+                        </div>
+                      )}
+
+                      {/* Link URL */}
+                      <div>
+                        <label style={{fontSize:10,fontWeight:600,color:'#94a3b8',display:'block',marginBottom:4}}>Click URL (optional)</label>
+                        <input value={editForm.linkUrl || ''} onChange={e => setEditForm({...editForm, linkUrl: e.target.value})}
+                          placeholder="https://..."
+                          style={{width:'100%',padding:'8px',background:'#1a2a4a',border:'1px solid #2a3a5a',borderRadius:6,color:'#e8edf5',fontSize:12,boxSizing:'border-box'}} />
+                      </div>
+
+                      {/* Active toggle */}
+                      <div className="flex items-center gap-2">
+                        <label style={{fontSize:11,fontWeight:600,color:'#94a3b8'}}>Active</label>
+                        <label style={{position:'relative',display:'inline-block',cursor:'pointer',flexShrink:0}}>
+                          <input type="checkbox" style={{display:'none'}} checked={editForm.active !== false}
+                            onChange={e => setEditForm({...editForm, active: e.target.checked})} />
+                          <div style={{width:32,height:18,borderRadius:99,background:editForm.active!==false?'#d4a843':'#475569',transition:'0.2s',position:'relative'}}>
+                            <div style={{position:'absolute',top:2,left:editForm.active!==false?16:2,width:14,height:14,borderRadius:'50%',background:'#fff',transition:'0.2s'}} />
+                          </div>
+                        </label>
+                      </div>
+
+                      {/* Save/Cancel */}
+                      <div className="flex gap-2">
+                        <button onClick={saveEdit} style={{flex:1,padding:'8px',background:'#d4a843',color:'#0a1628',border:'none',borderRadius:6,cursor:'pointer',fontWeight:700,fontSize:12}}>
+                          💾 Save
+                        </button>
+                        <button onClick={cancelEdit} style={{flex:1,padding:'8px',background:'transparent',color:'#94a3b8',border:'1px solid #475569',borderRadius:6,cursor:'pointer',fontWeight:600,fontSize:12}}>
+                          Cancel
+                        </button>
+                        <button onClick={() => deleteAd(idx)} style={{padding:'8px',background:'transparent',color:'#ff5555',border:'1px solid #7f1d1d',borderRadius:6,cursor:'pointer',fontSize:12}}>
+                          🗑
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Preview thumbnail */}
+                      <div style={{textAlign:'center',marginBottom:10}}>
+                        {ad.imageData ? (
+                          <img src={ad.imageData} alt="ad" style={{maxWidth:'60%',maxHeight:80,borderRadius:6,border:'1px solid #2a3a5a'}} />
+                        ) : (
+                          <div style={{padding:20,background:'#1a2a4a',borderRadius:8,display:'inline-block'}}>
+                            <span style={{color:'#6272a4',fontSize:11}}>No image uploaded</span>
+                          </div>
+                        )}
+                      </div>
+                      <button onClick={() => startEdit(idx)}
+                        style={{width:'100%',padding:'8px',background:'#1a3a5c',color:'#d4a843',border:'none',borderRadius:6,cursor:'pointer',fontWeight:700,fontSize:12}}>
+                        ✏️ Edit Ad
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
