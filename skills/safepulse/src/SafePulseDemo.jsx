@@ -512,9 +512,9 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
 
 function InstructionsModal({ onClose }) {
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50" onClick={onClose}>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50" onClick={onClose} style={{overflowX:'hidden'}}>
       <div className="py-8 px-4" onClick={(e) => e.stopPropagation()}>
-        <div className="w-full max-w-2xl mx-auto rounded-2xl bg-white p-5 shadow-xl">
+        <div className="w-full mx-auto rounded-2xl bg-white p-5 shadow-xl" style={{maxWidth: 'min(90vw, 32rem)'}}>
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
           <h2 className="text-xl font-bold text-slate-900">How to use SafeTriage</h2>
@@ -1242,7 +1242,7 @@ Powered by Frantz Enterprise`;
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 p-6 text-slate-900">
+    <div className="min-h-screen bg-slate-100 p-6 text-slate-900 relative" style={{overflowX:'hidden'}}>
       {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); setShowAdmin(true); }} onClose={() => setShowLogin(false)} />}
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-start justify-between gap-4">
