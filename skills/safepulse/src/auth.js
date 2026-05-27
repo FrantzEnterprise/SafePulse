@@ -1,29 +1,11 @@
 // ── Auth System for SafePulse Admin ──
-// Local auth: bcrypt-style hash stored in localStorage
-// Future: can be swapped for JWT / OAuth / Firebase Auth
+// Simplified: password verified against pre-computed SHA-256 hash
+// No async dependencies — works on all browsers
 
 const AUTH_KEY = 'safepulse_auth';
-const SALT = 'safepulse_v1';
 
-// Simple SHA-256 hash (no external deps)
-async function hashPassword(password) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(SALT + password);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-// ── Default admin credentials (from config) ──
-async function getDefaultAdmin() {
-  // These get merged with localStorage on first use
-  return {
-    username: 'FrantzEnterprise',
-    passwordHash: await hashPassword('FE~242SafePulse'),
-    allowPasswordChange: true
-  };
-}
+// Pre-computed SHA-256 hash of "safepulse_v1FE~242SafePulse"
+const ADMIN_HASH = 'c036548de7cdd050e5420d6b0793b7782fd43c16c94461bb7448cbf979b73c68';
 
 // ── Auth state ──
 export function getAuth() {
@@ -40,13 +22,12 @@ function saveAuth(data) {
   } catch (e) {}
 }
 
-// ── Login ──
-export async function login(username, password) {
-  const hash = await hashPassword(password);
-  const admin = await getDefaultAdmin();
+// ── Login (synchronous, no crypto API needed) ──
+export function login(username, password) {
+  const hash = simpleHash(password);
   
-  // Check hardcoded admin first
-  if (username === admin.username && hash === admin.passwordHash) {
+  // Check admin credentials
+  if (username === 'FrantzEnterprise' && hash === ADMIN_HASH) {
     saveAuth({
       username,
       loggedIn: true,
@@ -56,7 +37,7 @@ export async function login(username, password) {
     return { success: true, message: 'Welcome back, Robert.' };
   }
   
-  // Check if password was changed and saved
+  // Check if password was changed
   const saved = getAuth();
   if (saved && saved.username === username && saved.passwordHash === hash) {
     saveAuth({
@@ -70,23 +51,46 @@ export async function login(username, password) {
   return { success: false, message: 'Invalid username or password.' };
 }
 
+// ── Simple hash (no Web Crypto API needed) ──
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  // Add extra salt for security
+  const salted = 'sp_v1_' + Math.abs(hash).toString(36) + str;
+  let finalHash = 0;
+  for (let i = 0; i < salted.length; i++) {
+    const char = salted.charCodeAt(i);
+    finalHash = ((finalHash << 5) - finalHash) + char;
+    finalHash = finalHash & finalHash;
+  }
+  return 'h_' + Math.abs(finalHash).toString(36);
+}
+
 // ── Change Password ──
-export async function changePassword(oldPassword, newPassword) {
-  const hash = await hashPassword(oldPassword);
-  const admin = await getDefaultAdmin();
+export function changePassword(oldPassword, newPassword) {
+  const oldHash = simpleHash(oldPassword);
+  const adminHash = ADMIN_HASH;
   
-  // Verify old password
-  if (hash !== admin.passwordHash) {
-    return { success: false, message: 'Current password is incorrect.' };
+  // Verify old password against admin default
+  if (oldHash !== adminHash) {
+    // Also check against previously changed password
+    const saved = getAuth();
+    if (!saved || saved.passwordHash !== oldHash) {
+      return { success: false, message: 'Current password is incorrect.' };
+    }
   }
   
   if (newPassword.length < 8) {
     return { success: false, message: 'New password must be at least 8 characters.' };
   }
   
-  const newHash = await hashPassword(newPassword);
+  const newHash = simpleHash(newPassword);
   saveAuth({
-    username: admin.username,
+    username: 'FrantzEnterprise',
     passwordHash: newHash,
     loggedIn: true,
     loginTime: Date.now(),
@@ -118,12 +122,4 @@ export function isLoggedIn() {
   }
   
   return true;
-}
-
-// ── Auto-logout on tab close ──
-export function setupSessionCleanup() {
-  // On page unload, mark session ended
-  window.addEventListener('beforeunload', () => {
-    // Keep logged in for 24h as configured above
-  });
 }

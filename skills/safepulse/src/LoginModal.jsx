@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { login, changePassword, isLoggedIn } from './auth';
+import { login, changePassword } from './auth';
 
 export default function LoginModal({ onLogin, onClose }) {
   const [username, setUsername] = useState('');
@@ -11,7 +11,7 @@ export default function LoginModal({ onLogin, onClose }) {
   const [confirmPass, setConfirmPass] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -21,7 +21,7 @@ export default function LoginModal({ onLogin, onClose }) {
       return;
     }
     
-    const result = await login(username, password);
+    const result = login(username, password);
     if (result.success) {
       if (onLogin) onLogin();
     } else {
@@ -29,7 +29,7 @@ export default function LoginModal({ onLogin, onClose }) {
     }
   };
 
-  const handleChangePassword = async (e) => {
+  const handleChangePassword = (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -44,7 +44,7 @@ export default function LoginModal({ onLogin, onClose }) {
       return;
     }
     
-    const result = await changePassword(oldPass, newPass);
+    const result = changePassword(oldPass, newPass);
     if (result.success) {
       setSuccess(result.message);
       setOldPass('');
