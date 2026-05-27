@@ -1323,6 +1323,55 @@ Powered by Frantz Enterprise`;
             {/* Risk Meter — compact */}
             <RiskMeterCard score={score} risk={risk} />
 
+            {/* Desktop: Copy / Email / Save — visible when report is ready */}
+            {score > 0 && risk && (
+              <div style={{background:'#e8edf5',border:'1px solid #b0c4de',borderRadius:'12px',padding:'10px',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
+                <div style={{display:'flex',gap:'4px',flexWrap:'wrap'}}>
+                  <button onClick={() => {
+                    const cleanPhone = (config?.company?.phone || '').replace(/[\s\(\)\-]/g,'');
+                    const txt = `TECH REPORT\n\nRisk: ${score}/100 — ${risk.level}\nCustomer: ${form.name || 'N/A'}\nRecommendation: ${risk.advice}`;
+                    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && cleanPhone) {
+                      window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent(txt)}`;
+                    } else {
+                      navigator.clipboard.writeText(txt).then(() => alert('📋 SMS text copied to clipboard!'));
+                    }
+                  }}
+                    style={{flex:1,minWidth:'72px',padding:'6px 0',border:'1px solid #94a3b8',borderRadius:'6px',background:'#f1f5f9',color:'#1e293b',fontWeight:700,fontSize:'10px',cursor:'pointer'}}>
+                    📱 SMS
+                  </button>
+                  <button onClick={() => {
+                    navigator.clipboard.writeText(`RISK: ${score}/100 — ${risk.level}\nCustomer: ${form.name || 'N/A'}\nPhone: ${form.phone || 'N/A'}\nSafe: ${form.brand || 'Unknown'}\nLock: ${form.lockType}\nSymptoms: ${form.symptoms.map(s => {try{return JSON.parse(s).label}catch{return s}}).join(', ') || 'None'}\nAdvice: ${risk.advice}`)
+                      .then(() => alert('📋 Report copied to clipboard! Paste anywhere.'));
+                  }}
+                    style={{flex:1,minWidth:'72px',padding:'6px 0',border:'1px solid #94a3b8',borderRadius:'6px',background:'#f1f5f9',color:'#1e293b',fontWeight:700,fontSize:'10px',cursor:'pointer'}}>
+                    📋 Copy
+                  </button>
+                  <button onClick={() => {
+                    const txt = `SafeTriage Report\n\nRisk: ${score}/100 — ${risk.level}\nCustomer: ${form.name || 'N/A'}\nPhone: ${form.phone || 'N/A'}\nSafe: ${form.brand || 'Unknown'}\nLock: ${form.lockType}\nSymptoms: ${form.symptoms.map(s => {try{return JSON.parse(s).label}catch{return s}}).join(', ') || 'None'}\nAdvice: ${risk.advice}\n\nPowered by Frantz Enterprise`;
+                    if (form.email) {
+                      window.location.href = `mailto:${form.email}?subject=SafeTriage Report&body=${encodeURIComponent(txt)}`;
+                    } else {
+                      alert('Customer email not provided. Use Copy instead, or enter an email in Step 1.');
+                    }
+                  }}
+                    style={{flex:1,minWidth:'72px',padding:'6px 0',border:'1px solid #94a3b8',borderRadius:'6px',background:'#f1f5f9',color:'#1e293b',fontWeight:700,fontSize:'10px',cursor:'pointer'}}>
+                    ✉️ Email
+                  </button>
+                  <button onClick={() => {
+                    const txt = `SafeTriage Report\n\nRisk: ${score}/100 — ${risk.level}\nCustomer: ${form.name || 'N/A'}\nPhone: ${form.phone || 'N/A'}\nSafe: ${form.brand || 'Unknown'}\nLock: ${form.lockType}\nSymptoms: ${form.symptoms.map(s => {try{return JSON.parse(s).label}catch{return s}}).join(', ') || 'None'}\nAdvice: ${risk.advice}\n\nPowered by Frantz Enterprise`;
+                    const blob = new Blob([txt], {type:'text/plain'});
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `SafeTriage-Report-${Date.now()}.txt`;
+                    a.click();
+                  }}
+                    style={{flex:1,minWidth:'72px',padding:'6px 0',border:'1px solid #94a3b8',borderRadius:'6px',background:'#f1f5f9',color:'#1e293b',fontWeight:700,fontSize:'10px',cursor:'pointer'}}>
+                    💾 Save
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Ad Placeholders */}
             <AdZone config={config} />
 
