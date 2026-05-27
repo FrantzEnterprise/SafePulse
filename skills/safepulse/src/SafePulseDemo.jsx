@@ -1009,8 +1009,8 @@ Powered by Frantz Enterprise`;
           }
           .splash-logo {
             animation: zoomSpin 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-            padding: 16px;
-            width: 96px;
+            padding: 12px;
+            width: 84px;
             height: auto;
           }
           @keyframes fadeInUp {
