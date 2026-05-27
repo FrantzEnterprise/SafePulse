@@ -740,15 +740,15 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
 /* ──────── Right-Column: Navigation Bar ──────── */
 function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setShowDispatch, isLastStep }) {
   return (
-    <div style={{background:'#1a2a4a',border:'1px solid #2a3a5a',borderRadius:'12px',padding:'12px'}}>
+    <div style={{background:'#e8edf5',border:'1px solid #b0c4de',borderRadius:'12px',padding:'12px',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
       <div style={{display:'flex',gap:'4px',marginBottom:'10px'}}>
         {Array.from({length: totalSteps}, (_, i) => i + 1).map(s => (
           <div key={s} onClick={() => s < step && goToStep(s)}
             style={{
               flex:1, textAlign:'center', padding:'6px 0', borderRadius:'6px', cursor: s < step ? 'pointer' : 'default',
               fontSize:'11px', fontWeight:700,
-              background: s === step ? '#d4a843' : s < step ? '#1a3a5c' : '#2a3a5a',
-              color: s === step ? '#0a1628' : s < step ? '#d4a843' : '#6272a4',
+              background: s === step ? '#1a3a5c' : s < step ? '#d4a843' : '#cbd5e1',
+              color: s === step ? '#f8fafc' : s < step ? '#0a1628' : '#475569',
               transition:'0.15s'
             }}>
             {s < step ? '✓' : s === step ? `▸ ${s}` : s}
@@ -758,13 +758,13 @@ function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setS
       <div style={{display:'flex',gap:'6px'}}>
         {step > 1 && (
           <button onClick={() => goToStep(step - 1)}
-            style={{flex:1,padding:'8px 0',borderRadius:'8px',border:'1px solid #2a3a5a',background:'transparent',color:'#94a3b8',fontWeight:600,fontSize:'12px',cursor:'pointer'}}>
+            style={{flex:1,padding:'8px 0',borderRadius:'8px',border:'1px solid #94a3b8',background:'#f1f5f9',color:'#1e293b',fontWeight:700,fontSize:'12px',cursor:'pointer'}}>
             ← Back
           </button>
         )}
         {!isLastStep ? (
           <button onClick={() => goToStep(step + 1)}
-            style={{flex:2,padding:'8px 0',borderRadius:'8px',border:'none',background:'#1a3a5c',color:'#d4a843',fontWeight:700,fontSize:'12px',cursor:'pointer'}}>
+            style={{flex:2,padding:'8px 0',borderRadius:'8px',border:'none',background:'#1a3a5c',color:'#f8fafc',fontWeight:700,fontSize:'12px',cursor:'pointer'}}>
             Next →
           </button>
         ) : (
