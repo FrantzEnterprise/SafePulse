@@ -1320,9 +1320,6 @@ Powered by Frantz Enterprise`;
               isLastStep={customerStep === 6}
             />
 
-            {/* Risk Meter — compact */}
-            <RiskMeterCard score={score} risk={risk} />
-
             {/* Desktop: Copy / Email / Save — visible when report is ready */}
             {score > 0 && risk && (
               <div style={{background:'#e8edf5',border:'1px solid #b0c4de',borderRadius:'12px',padding:'10px',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
@@ -1372,11 +1369,11 @@ Powered by Frantz Enterprise`;
               </div>
             )}
 
-            {/* Ad Placeholders */}
-            <AdZone config={config} />
-
-            {/* Full Tech Report (scrollable) */}
+            {/* Full Tech Report (scrollable) — with embedded risk display */}
             <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
+
+            {/* Ad Placeholders — below TriageResults */}
+            <AdZone config={config} />
           </div>
         </div>
         <div className="print-only print-report">
