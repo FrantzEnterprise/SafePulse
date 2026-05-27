@@ -280,7 +280,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <SymptomsSelector form={form} showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms} visibleGroups={visibleGroups} triageHistory={triageHistory} toggleSymptom={toggleSymptom} />
         </div>
       )}
-      {step === 4 && config?.features?.showPhotoUpload !== false && (
+      {step === 4 && (
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Photo Upload</h3>
           <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
@@ -292,11 +292,9 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <h3 className="font-semibold text-lg">Service Area & Quote</h3>
           <p className="text-sm text-slate-600">Enter the driving distance from your shop to estimate the trip fee.</p>
           <div className="rounded-2xl border bg-white p-4 space-y-4">
-            {config?.features?.showMapCalculator !== false && (
-              <button onClick={() => setShowMapCalculator(true)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
-                Open Map Calculator
-              </button>
-            )}
+            <button onClick={() => setShowMapCalculator(true)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+              Open Map Calculator
+            </button>
             <hr className="border-slate-200" />
             <div className="space-y-1">
               <label className="text-sm font-medium">Distance from shop (miles)</label>
@@ -346,10 +344,10 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
               <p className="font-bold text-amber-900" style={{fontSize:'15px',letterSpacing:'0.5px'}}>Parts Are Additional</p>
             </div>
 
-            {config?.features?.showServiceNotes && (
+            {config?.serviceNotesToggle && (
               <div className="rounded-xl border p-3">
                 <p className="font-semibold text-sm">Service Notes</p>
-                <p className="text-sm text-slate-600">{serviceEstimate?.notes || 'Issue may be resolved with simple troubleshooting or preventive service.'}</p>
+                <p className="text-sm text-slate-600">{config?.serviceNotes || 'Issue may be resolved with simple troubleshooting or preventive service.'}</p>
               </div>
             )}
 
@@ -972,9 +970,6 @@ export default function SafePulseDemo() {
     return () => clearTimeout(timer);
   }, []);
 
-  // ── Feature flags gate UI sections ──
-  const featureFlags = config?.features || {};
-  
   const sendDispatch = async (selectedTech) => {
     // Save to triage history
     const triageEntry = {
@@ -1138,7 +1133,7 @@ export default function SafePulseDemo() {
 
   const toggleSymptom = (id) => {
     if (lockedForService) return;
-    if (featureFlags.showBatteryPopup && hasBatteryPopup(id)) setShowBatteryPopup(true);
+    if (hasBatteryPopup(id)) setShowBatteryPopup(true);
     if (hasCustomPopup(id)) {
       const sym = symptomOptions.find(s => s.id === id);
       setCustomPopupData({ title: sym.popupTitle || 'Notice', message: sym.popupMessage });
@@ -1361,7 +1356,7 @@ Powered by Frantz Enterprise`;
       </div>
       {lockedForService && <ServiceLockoutModal />}
       {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
-      {featureFlags.showBatteryPopup && showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
+      {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
       {customPopupData && <CustomPopupModal data={customPopupData} onClose={() => setCustomPopupData(null)} />}
       {showResultModal && lastSelectedSymptom && (
         <SymptomResultModal

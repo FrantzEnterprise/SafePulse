@@ -200,6 +200,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                 {[
                   {label:'Company Name', key:'name', section:'company'},
                   {label:'Tagline', key:'tagline', section:'root'},
+                  {label:'Service Notes', key:'serviceNotes', section:'root'},
                   {label:'Phone', key:'phone', section:'company'},
                   {label:'Email', key:'email', section:'company'},
                   {label:'Address', key:'address', section:'company'},
@@ -781,7 +782,7 @@ function FeaturesPanel({ cfg, setCfg, setSaved }) {
         ['showPhotoUpload','📸 Photo Upload','Customer can attach photos of the safe'],
         ['showMapCalculator','🗺️ Map & Fee Calc','Distance & trip fee calculator'],
         ['showBatteryPopup','🔋 Battery Popup','Battery warning popup for electronic locks'],
-        ['showServiceNotes','📝 Service Notes','Service Notes card shown on step 6 cost framework'],
+        ['serviceNotesToggle','📝 Show Service Notes','Toggle: show/hide Service Notes card on step 6 cost framework'],
         ['showTechnicianReport','📋 Tech Report','Generate & view technician report'],
         ['showInstructions','📖 Instructions','Show instructions panel'],
         ['showDarkModeToggle','🌙 Dark Mode Toggle','Switch between light/dark themes'],
