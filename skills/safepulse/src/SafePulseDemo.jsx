@@ -770,6 +770,7 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
 export default function SafePulseDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
+  const [showSplash, setShowSplash] = useState(true);
   const [showAdmin, setShowAdmin] = useState(() => new URLSearchParams(window.location.search).get('admin') === 'true');
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(() => isLoggedIn());
@@ -791,6 +792,11 @@ export default function SafePulseDemo() {
   const [customPopupData, setCustomPopupData] = useState(null);
 
   // Feature-gating: respect config feature toggles from Admin panel
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     if (!config?.features) return;
     // Simple function: just set state visibility based on feature flags
@@ -992,6 +998,21 @@ Advice Helpful?: ${form.helped}
 ---
 Powered by Frantz Enterprise`;
 
+  if (showSplash) {
+    return (
+      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{background:'#0f1f3d'}}>
+        <img src="frantz-logo.jpg" alt="Frantz Locksmith Service" className="h-24 w-auto mb-4 rounded-lg shadow-lg" />
+        <div style={{color:'#d4a843',fontFamily:'Orbitron,monospace',fontWeight:700,fontSize:'14px',letterSpacing:'2px'}}>
+          SafePulse
+        </div>
+        <div style={{color:'#6272a4',fontSize:'12px',marginTop:'12px'}}>Powered by Frantz Enterprise</div>
+        <div className="mt-6 w-32 h-1 rounded-full overflow-hidden" style={{background:'#1a2a4a'}}>
+          <div className="h-full rounded-full animate-pulse" style={{background:'#d4a843',width:'40%'}} />
+        </div>
+      </div>
+    );
+  }
+
   if (showAdmin) {
     return (
       <div>
@@ -1007,7 +1028,6 @@ Powered by Frantz Enterprise`;
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src={config.features.showDemoMode && config.demoMode ? 'demo-logo.jpg' : 'frantz-logo.jpg'} alt={config.features.showDemoMode && config.demoMode ? config.demoCompany : 'Frantz Locksmith Service'} className="h-8 w-auto rounded shadow-sm" />
             <div>
               <h1 className="text-3xl font-bold">{config.company.name}</h1>
               <p className="text-slate-600"><span className="text-primary font-semibold">SafeTriage</span> by {config.tagline || 'Sacramento\'s Safe Specialist'}</p>
