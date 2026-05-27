@@ -1200,7 +1200,7 @@ Powered by Frantz Enterprise`;
           .splash-logo {
             animation: zoomSpin 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
             padding: 12px;
-            width: 84px;
+            width: 168px;
             height: auto;
           }
           @keyframes fadeInUp {
