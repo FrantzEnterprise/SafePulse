@@ -1,4 +1,4 @@
-# SafeTriag — Future Tasks & Roadmap
+# SafePulse — Full Business OS Roadmap
 
 ## Phase 1 Complete ✓
 - [x] Clean admin panel (dark theme, swipe tabs, no overflow)
@@ -42,6 +42,33 @@
 - [ ] Touch target minimum sizes (already good but verify)
 - [ ] Color-blind safe palette option
 - [ ] ADA compliance statement page within app
+
+#### Financial Suite (planned)
+- [ ] Invoicing (generate/send)
+- [ ] Estimates (create & email)
+- [ ] Receipts (payment receipts)
+- [ ] Labor & Services catalog
+- [ ] Parts catalog
+- [ ] Tax calculator by location
+- [ ] Discounts & coupon codes
+
+### Operations Suite (planned)
+- [ ] User roles (admin, tech, dispatcher, customer)
+- [ ] Audit log (all system changes tracked)
+- [ ] Commission tracking per job
+- [ ] Vehicle tracking & assignment
+- [ ] Timesheets (tech clock-in/out)
+- [ ] Purchase orders
+- [ ] Vendor directory
+- [ ] Equipment checklist per job
+- [ ] Certification/license tracking
+
+### Customer Relations (planned)
+- [ ] Customer notifications (auto SMS/email)
+- [ ] Lead source tracking (referral, web, call)
+- [ ] Marketing email campaigns
+- [ ] Review request automation (Google/Yelp)
+- [ ] Loyalty program (points & rewards)
 
 ### Productization (for selling)
 - Multi-tenant config support
