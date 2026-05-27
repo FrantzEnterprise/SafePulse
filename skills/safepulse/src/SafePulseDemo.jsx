@@ -1008,9 +1008,28 @@ export default function SafeTriageDemo() {
 
     const customerReport = `Hi ${form.name || 'Valued Customer'},\n\nThank you for using ${config?.company?.name || 'Frantz Locksmith Service'}'s SafeTriage tool.\n\nWe have received your safe service request and will contact you ASAP.\n\n=== SAFE-TRIAGE REPORT ===\n\n${techReport}\n\n---\nIf you have additional details, call ${config?.company?.phone || ''}.\n\nBest,\n${config?.company?.name || 'Frantz Locksmith Service'}`;
 
-    // 1. SMS to tech
+    // 1. SMS to tech (mobile) or copy to clipboard (desktop)
     if (cleanPhone) {
-      window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent(techReport)}`;
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent(techReport)}`;
+      } else {
+        try {
+          await navigator.clipboard.writeText(
+            `📞 Tech: ${cleanPhone}\n\n${techReport}`
+          );
+          alert('📋 Tech report and phone number copied to clipboard!\n\nOpen your messaging app and paste to send the dispatch.');
+        } catch {
+          // Fallback: create a text block for manual copy
+          const ta = document.createElement('textarea');
+          ta.value = `Tech phone: ${cleanPhone}\n\n${techReport}`;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          alert('📋 Report copied!\n\nTech phone: ' + cleanPhone + '\n\nPaste into your messaging app to send.');
+        }
+      }
     }
 
     // 2. Email via EmailJS (if configured)

@@ -225,7 +225,17 @@ export default function TriageHistoryLog({ config }) {
                           </a>
                         )}
                         {entry.phone && (
-                          <a href={`sms:${entry.phone}`} style={{padding:'4px 10px',background:'#2a3a5a',borderRadius:'6px',color:'#50fa7b',textDecoration:'none',fontSize:'12px'}}>
+                          <a href={`sms:${entry.phone}`} style={{padding:'4px 10px',background:'#2a3a5a',borderRadius:'6px',color:'#50fa7b',textDecoration:'none',fontSize:'12px'}}
+                            onClick={e => {
+                              if (!/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                                e.preventDefault();
+                                navigator.clipboard.writeText(entry.phone).then(() => {
+                                  alert('📋 Phone copied: ' + entry.phone);
+                                }).catch(() => {
+                                  prompt('Copy this phone number:', entry.phone);
+                                });
+                              }
+                            }}>
                             💬 Text
                           </a>
                         )}
