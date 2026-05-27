@@ -842,18 +842,110 @@ function RiskMeterCard({ score, risk }) {
 }
 
 /* ──────── Right-Column: Ad Placeholders ──────── */
-function AdZone() {
+/* ──────── Ad Popup Modal ──────── */
+function AdPopup({ onClose }) {
+  const [stage, setStage] = useState(0);
+  const messages = [
+    { text: 'Click Here', sub: '🚀', gradient: 'linear-gradient(135deg, #667eea, #764ba2)' },
+    { text: 'Put Your Ad Here', sub: '📢', gradient: 'linear-gradient(135deg, #f093fb, #f5576c)' },
+    { text: 'Call', sub: '(916) 534-4900', gradient: 'linear-gradient(135deg, #4facfe, #00f2fe)' },
+  ];
+
+  useEffect(() => {
+    if (stage < 2) {
+      const t = setTimeout(() => setStage(s => s + 1), 1500);
+      return () => clearTimeout(t);
+    }
+  }, [stage]);
+
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{background:'rgba(0,0,0,0.75)',backdropFilter:'blur(4px)'}} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()}
+        style={{
+          background: messages[stage]?.gradient || messages[0].gradient,
+          borderRadius:'20px', padding:'40px 50px', textAlign:'center',
+          maxWidth:'360px', width:'90%',
+          boxShadow:'0 20px 60px rgba(0,0,0,0.5)', cursor:'pointer',
+          animation:'adpopupBounce 0.4s ease-out'
+        }}
+        onClick={() => { if (stage < 2) setStage(s => s + 1); else onClose(); }}>
+        <div style={{fontSize:'48px',marginBottom:'12px',opacity:0.6}}>{messages[stage]?.sub}</div>
+        <div style={{
+          fontFamily:"'Orbitron',monospace",
+          fontSize: stage === 2 ? '22px' : '28px',
+          fontWeight: 800, color: '#fff',
+          textShadow: '0 2px 20px rgba(0,0,0,0.3)',
+          letterSpacing: '1px',
+          lineHeight: 1.3
+        }}>
+          {messages[stage]?.text}
+        </div>
+        <div style={{marginTop:'16px',fontSize:'11px',color:'rgba(255,255,255,0.5)',fontWeight:600}}>
+          {stage < 2 ? 'Tap to continue →' : 'Tap to close'}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ──────── Ad Zone (reads config.ads + mock placeholder) ──────── */
+function AdZone({ config }) {
+  const [showPopup, setShowPopup] = useState(false);
+  const ads = config?.ads || [];
+  const activeAds = ads.filter(a => a.active !== false);
+  
+  const renderAdBox = (ad, idx) => {
+    if (!ad) {
+      // Empty placeholder
+      return (
+        <div key={`empty-${idx}`} onClick={() => setShowPopup(true)}
+          style={{flex:1,background:'#0f1f3d',border:'1px dashed #d4a843',borderRadius:'8px',padding:idx === 0 ? '10px' : '10px',textAlign:'center',minHeight:'80px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',cursor:'pointer',transition:'0.15s'}}
+          onMouseEnter={e => e.currentTarget.style.background = '#1a2a4a'}
+          onMouseLeave={e => e.currentTarget.style.background = '#0f1f3d'}>
+          <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Click Here</span>
+          <span style={{fontSize:'8px',color:'#6272a4',marginTop:'4px'}}>300 × 250</span>
+        </div>
+      );
+    }
+
+    const hasAbove = ad.layout === 'text-above' || ad.layout === 'text-both';
+    const hasBelow = ad.layout === 'text-below' || ad.layout === 'text-both';
+
+    return (
+      <div key={ad.id || idx} onClick={() => { if (ad.linkUrl) window.open(ad.linkUrl, '_blank'); else setShowPopup(true); }}
+        style={{
+          flex:1, background:'#0f1f3d', border:'1px solid #2a3a5a', borderRadius:'8px',
+          padding:'8px', textAlign:'center', minHeight:'80px',
+          display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+          cursor:'pointer', transition:'0.15s'
+        }}
+        onMouseEnter={e => {e.currentTarget.style.borderColor = '#d4a843'; e.currentTarget.style.background = '#1a2a4a';}}
+        onMouseLeave={e => {e.currentTarget.style.borderColor = '#2a3a5a'; e.currentTarget.style.background = '#0f1f3d';}}>
+        {hasAbove && ad.captionAbove && (
+          <div style={{fontSize:'9px',fontWeight:600,color:'#d4a843',marginBottom:'4px',lineHeight:1.2}}>{ad.captionAbove}</div>
+        )}
+        {ad.imageData ? (
+          <img src={ad.imageData} alt="ad" style={{maxWidth:'100%',maxHeight:'60px',borderRadius:'4px',objectFit:'contain'}} />
+        ) : (
+          <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Click Here</span>
+        )}
+        {hasBelow && ad.captionBelow && (
+          <div style={{fontSize:'9px',fontWeight:600,color:'#d4a843',marginTop:'4px',lineHeight:1.2}}>{ad.captionBelow}</div>
+        )}
+      </div>
+    );
+  };
+
+  const slots = [
+    activeAds[0] || null,
+    activeAds[1] || null,
+  ];
+
   return (
     <div>
+      {showPopup && <AdPopup onClose={() => setShowPopup(false)} />}
       <div style={{display:'flex',gap:'6px'}}>
-        <div style={{flex:1,background:'#0f1f3d',border:'1px dashed #d4a843',borderRadius:'8px',padding:'10px',textAlign:'center',minHeight:'80px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-          <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Ad Space</span>
-          <span style={{fontSize:'8px',color:'#6272a4',marginTop:'4px'}}>300 × 250</span>
-        </div>
-        <div style={{flex:1,background:'#0f1f3d',border:'1px dashed #d4a843',borderRadius:'8px',padding:'10px',textAlign:'center',minHeight:'80px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-          <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Ad Space</span>
-          <span style={{fontSize:'8px',color:'#6272a4',marginTop:'4px'}}>300 × 250</span>
-        </div>
+        {slots.map((ad, idx) => renderAdBox(ad, idx))}
       </div>
       <p style={{fontSize:'9px',color:'#6272a4',textAlign:'center',marginTop:'6px',fontStyle:'italic'}}>
         Have a related product? Call (916) 534-4900 to place your ad here.
@@ -1145,6 +1237,11 @@ Powered by Frantz Enterprise`;
             0% { width: 0%; }
             100% { width: 85%; }
           }
+          @keyframes adpopupBounce {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+          }
           .splash-load { animation: loadBar 1.8s 0.6s cubic-bezier(0.4, 0, 0.2, 1) both; }
         `}</style>
         <img src="frantz-logo.jpg" alt="Frantz Locksmith Service" className="splash-logo rounded-xl" style={{boxShadow:'0 0 40px rgba(212,168,67,0.3)'}} />
@@ -1231,7 +1328,7 @@ Powered by Frantz Enterprise`;
             <RiskMeterCard score={score} risk={risk} />
 
             {/* Ad Placeholders */}
-            <AdZone />
+            <AdZone config={config} />
 
             {/* Full Tech Report (scrollable) */}
             <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
