@@ -184,9 +184,8 @@ function formatPhone(value) {
   return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6,10)}`;
 }
 
-function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleGroups, triageHistory, toggleSymptom, uploadedPhotos, setUploadedPhotos, showPhotoUpload, setShowPhotoUpload, distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, config, serviceEstimate, dispatchType, score, risk }) {
-  const [step, setStep] = useState(1);
-  const goToStep = (s) => { setStep(s); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleGroups, triageHistory, toggleSymptom, uploadedPhotos, setUploadedPhotos, showPhotoUpload, setShowPhotoUpload, distanceMiles, setDistanceMiles, calculatedTripFee, setCalculatedTripFee, config, serviceEstimate, dispatchType, score, risk, step, goToStep }) {
+  // step & goToStep come from parent now
   const totalSteps = 6;
 
   const calculateStep5Fee = () => {
@@ -345,14 +344,6 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
               </div>
             )}
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => goToStep(4)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
-              ← Back
-            </button>
-            <button onClick={() => goToStep(6)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
-              Next — Review & Cost
-            </button>
-          </div>
         </div>
       )}
 
@@ -390,11 +381,6 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
                 <p className="mt-1 font-semibold">Total: ${calculatedTripFee.toFixed(2)}</p>
               </div>
             )}
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => goToStep(5)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
-              ← Back
-            </button>
           </div>
         </div>
       )}
@@ -767,6 +753,132 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
   );
 }
 
+/* ──────── Right-Column: Navigation Bar ──────── */
+function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setShowDispatch, isLastStep }) {
+  return (
+    <div style={{background:'#1a2a4a',border:'1px solid #2a3a5a',borderRadius:'12px',padding:'12px'}}>
+      <div style={{display:'flex',gap:'4px',marginBottom:'10px'}}>
+        {Array.from({length: totalSteps}, (_, i) => i + 1).map(s => (
+          <div key={s} onClick={() => s < step && goToStep(s)}
+            style={{
+              flex:1, textAlign:'center', padding:'6px 0', borderRadius:'6px', cursor: s < step ? 'pointer' : 'default',
+              fontSize:'11px', fontWeight:700,
+              background: s === step ? '#d4a843' : s < step ? '#1a3a5c' : '#2a3a5a',
+              color: s === step ? '#0a1628' : s < step ? '#d4a843' : '#6272a4',
+              transition:'0.15s'
+            }}>
+            {s < step ? '✓' : s === step ? `▸ ${s}` : s}
+          </div>
+        ))}
+      </div>
+      <div style={{display:'flex',gap:'6px'}}>
+        {step > 1 && (
+          <button onClick={() => goToStep(step - 1)}
+            style={{flex:1,padding:'8px 0',borderRadius:'8px',border:'1px solid #2a3a5a',background:'transparent',color:'#94a3b8',fontWeight:600,fontSize:'12px',cursor:'pointer'}}>
+            ← Back
+          </button>
+        )}
+        {!isLastStep ? (
+          <button onClick={() => goToStep(step + 1)}
+            style={{flex:2,padding:'8px 0',borderRadius:'8px',border:'none',background:'#1a3a5c',color:'#d4a843',fontWeight:700,fontSize:'12px',cursor:'pointer'}}>
+            Next →
+          </button>
+        ) : (
+          <button onClick={() => {
+            const isMulti = config?.company?.companyType === 'multi';
+            if (isMulti && config?.company?.technicians?.length > 0) {
+              setShowDispatch(true);
+            } else {
+              sendDispatch(null);
+            }
+          }}
+            style={{flex:3,padding:'12px 0',borderRadius:'8px',border:'none',background:'#d4a843',color:'#0a1628',fontWeight:800,fontSize:'14px',cursor:'pointer',boxShadow:'0 2px 8px rgba(212,168,67,0.3)'}}>
+            🚚 Send To Tech Now
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ──────── Right-Column: Compact Risk Meter ──────── */
+function RiskMeterCard({ score, risk }) {
+  const gaugeColor = score >= 75 ? '#ff5555' : score >= 50 ? '#ffb86c' : score >= 25 ? '#f1fa8c' : '#50fa7b';
+  const riskLabels = {
+    Low: { label: 'LOW', color: '#50fa7b' },
+    Medium: { label: 'MODERATE', color: '#f1fa8c' },
+    High: { label: 'HIGH', color: '#ffb86c' },
+    Urgent: { label: 'URGENT', color: '#ff5555' }
+  };
+  const rl = riskLabels[risk?.level] || { label: 'NEW', color: '#6272a4' };
+  const circumference = 2 * Math.PI * 34;
+  const offset = circumference - (score / 100) * circumference;
+
+  return (
+    <div style={{background:'#1a2a4a',border:'1px solid #2a3a5a',borderRadius:'12px',padding:'14px'}}>
+      <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
+        {/* Gauge */}
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#2a3a5a" strokeWidth="6" />
+          <circle cx="40" cy="40" r="34" fill="none"
+            stroke={gaugeColor} strokeWidth="6" strokeLinecap="round"
+            strokeDasharray={circumference} strokeDashoffset={offset}
+            transform="rotate(-90 40 40)" style={{transition:'stroke-dashoffset 0.5s ease'}} />
+          <text x="40" y="36" textAnchor="middle" fill="#e8edf5" fontSize="20" fontWeight="bold">{score}</text>
+          <text x="40" y="54" textAnchor="middle" fill="#6272a4" fontSize="9">/ 100</text>
+        </svg>
+
+        <div style={{flex:1}}>
+          <div style={{fontSize:'13px',fontWeight:700,color:rl.color,letterSpacing:'0.5px'}}>{rl.label} RISK</div>
+          <div style={{fontSize:'11px',color:'#94a3b8',marginTop:'2px',lineHeight:1.4}}>{risk?.advice?.slice(0, 80) || 'Complete the intake steps to calculate risk score.'}</div>
+          {/* Tiny progress bar */}
+          <div style={{marginTop:'8px',height:'4px',background:'#2a3a5a',borderRadius:'99px',overflow:'hidden'}}>
+            <div style={{width:`${score}%`,height:'100%',background:gaugeColor,borderRadius:'99px',transition:'width 0.4s'}} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ──────── Right-Column: Offers & Products ──────── */
+function OfferZone() {
+  const [expandedOffer, setExpandedOffer] = useState(null);
+  const offers = [
+    { id:'parts', emoji:'🔩', title:'Safe Parts & Accessories', desc:'Keypads, dials, handles, relock kits, and more — in stock for local pickup or shipped.' },
+    { id:'batteries', emoji:'🔋', title:'Premium Batteries', desc:'Duracell Quantum & Energizer Ultimate Lithium — the only batteries we recommend for electronic locks.' },
+    { id:'service', emoji:'🔐', title:'Schedule Preventive Service', desc:'Keep your safe in top condition with an annual inspection. Call (916) 534-4900.' },
+    { id:'tools', emoji:'🛠️', title:'Technician Tool Bundles', desc:'SCOPE ONE, borescopes, manipulation tools, and drill guides — curated for safe techs.' },
+    { id:'referral', emoji:'🤝', title:'Refer a Friend', desc:'Know someone with a safe? Refer them and get $25 off your next service.' },
+  ];
+  return (
+    <div style={{background:'#0f1f3d',border:'1px solid #2a3a5a',borderRadius:'12px',padding:'12px'}}>
+      <div className="flex items-center gap-2 mb-2" style={{borderBottom:'1px solid #2a3a5a',paddingBottom:'8px'}}>
+        <span style={{fontSize:'11px',fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:'#d4a843'}}>Today's Offers</span>
+        <span style={{fontSize:'9px',color:'#6272a4'}}>Local pickup · Shipping</span>
+      </div>
+      {offers.map(o => (
+        <div key={o.id} onClick={() => setExpandedOffer(expandedOffer === o.id ? null : o.id)}
+          style={{
+            background: expandedOffer === o.id ? '#1e2a4a' : 'transparent',
+            borderRadius:'8px', padding:'6px 8px', marginBottom:'3px', cursor:'pointer',
+            border: expandedOffer === o.id ? '1px solid #d4a843' : '1px solid transparent',
+            transition:'0.15s'
+          }}>
+          <div className="flex items-center gap-2">
+            <span style={{fontSize:'13px'}}>{o.emoji}</span>
+            <span style={{fontWeight:600,fontSize:'11px',color:'#e8edf5',flex:1}}>{o.title}</span>
+            <span style={{color:'#6272a4',fontSize:'9px'}}>{expandedOffer === o.id ? '▲' : '▼'}</span>
+          </div>
+          {expandedOffer === o.id && (
+            <p style={{fontSize:'10px',color:'#94a3b8',marginTop:'5px',paddingTop:'5px',borderTop:'1px solid #2a3a5a'}}>{o.desc}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function SafePulseDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
@@ -790,6 +902,7 @@ export default function SafePulseDemo() {
   const [showDispatch, setShowDispatch] = useState(false);
   const [dispatchTech, setDispatchTech] = useState(null);
   const [customPopupData, setCustomPopupData] = useState(null);
+  const [customerStep, setCustomerStep] = useState(1);
 
   // Feature-gating: respect config feature toggles from Admin panel
   useEffect(() => {
@@ -1100,7 +1213,8 @@ Powered by Frantz Enterprise`;
             )}
           </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+          {/* ── Left Column: Intake Steps ── */}
           <Card className="rounded-2xl shadow-sm">
             <CardContent className="space-y-4 p-5">
               <CustomerIntake 
@@ -1116,10 +1230,29 @@ Powered by Frantz Enterprise`;
                 serviceEstimate={serviceEstimate}
                 dispatchType={dispatchType}
                 score={score} risk={risk}
+                step={customerStep}
+                goToStep={setCustomerStep}
               />
             </CardContent>
           </Card>
-          <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
+
+          {/* ── Right Column: Nav → Risk → Offers → Tech Report ── */}
+          <div className="space-y-4 sticky top-4" style={{alignSelf:'start'}}>
+            {/* Navigation Buttons */}
+            <CustomerNavBar step={customerStep} goToStep={setCustomerStep} totalSteps={6}
+              sendDispatch={sendDispatch} config={config} setShowDispatch={setShowDispatch}
+              isLastStep={customerStep === 6}
+            />
+
+            {/* Risk Meter — compact */}
+            <RiskMeterCard score={score} risk={risk} />
+
+            {/* Today's Offers */}
+            <OfferZone />
+
+            {/* Full Tech Report (scrollable) */}
+            <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
+          </div>
         </div>
         <div className="print-only print-report">
           <div style={{background:'#1a3a5c',color:'#fff',padding:'24px 32px',textAlign:'center'}}>
