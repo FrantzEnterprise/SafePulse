@@ -5,7 +5,7 @@
 const AUTH_KEY = 'safepulse_auth';
 
 // Pre-computed SHA-256 hash of "safepulse_v1FE~242SafePulse"
-const ADMIN_HASH = 'c036548de7cdd050e5420d6b0793b7782fd43c16c94461bb7448cbf979b73c68';
+const ADMIN_HASH = 'h_iofj3n';
 
 // ── Auth state ──
 export function getAuth() {
