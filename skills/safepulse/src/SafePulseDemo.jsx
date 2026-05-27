@@ -978,6 +978,7 @@ export default function SafePulseDemo() {
   const [dispatchTech, setDispatchTech] = useState(null);
   const [customPopupData, setCustomPopupData] = useState(null);
   const [customerStep, setCustomerStep] = useState(1);
+  const goToCustomerStep = (s) => { setCustomerStep(s); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   // Feature-gating: respect config feature toggles from Admin panel
   useEffect(() => {
@@ -1311,7 +1312,7 @@ Powered by Frantz Enterprise`;
                 dispatchType={dispatchType}
                 score={score} risk={risk}
                 step={customerStep}
-                goToStep={setCustomerStep}
+                goToStep={goToCustomerStep}
               />
             </CardContent>
           </Card>
@@ -1319,7 +1320,7 @@ Powered by Frantz Enterprise`;
           {/* ── Right Column: Nav → Risk → Offers → Tech Report ── */}
           <div className="space-y-4 sticky top-4" style={{alignSelf:'start'}}>
             {/* Navigation Buttons */}
-            <CustomerNavBar step={customerStep} goToStep={setCustomerStep} totalSteps={6}
+            <CustomerNavBar step={customerStep} goToStep={goToCustomerStep} totalSteps={6}
               sendDispatch={sendDispatch} config={config} setShowDispatch={setShowDispatch}
               isLastStep={customerStep === 6}
             />
