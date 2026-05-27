@@ -1007,7 +1007,7 @@ Powered by Frantz Enterprise`;
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src={config.features.showDemoMode && config.demoMode ? 'demo-logo.jpg' : 'frantz-logo.jpg'} alt={config.features.showDemoMode && config.demoMode ? config.demoCompany : 'Frantz Locksmith Service'} className="h-12 w-auto rounded-lg shadow-sm" />
+            <img src={config.features.showDemoMode && config.demoMode ? 'demo-logo.jpg' : 'frantz-logo.jpg'} alt={config.features.showDemoMode && config.demoMode ? config.demoCompany : 'Frantz Locksmith Service'} className="h-8 w-auto rounded shadow-sm" />
             <div>
               <h1 className="text-3xl font-bold">{config.company.name}</h1>
               <p className="text-slate-600"><span className="text-primary font-semibold">SafeTriage</span> by {config.tagline || 'Sacramento\'s Safe Specialist'}</p>
