@@ -806,6 +806,31 @@ export default function SafePulseDemo() {
 
   
   const sendDispatch = async (selectedTech) => {
+    // Save to triage history
+    const triageEntry = {
+      id: Date.now().toString(36),
+      createdAt: new Date().toISOString(),
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      brand: form.brand,
+      lockType: form.lockType,
+      safeOpen: form.safeOpen,
+      serviceAge: form.serviceAge,
+      symptoms: form.symptoms,
+      tried: form.tried,
+      score,
+      risk: risk.level,
+      dispatchType: dispatchType.type,
+      status: 'new',
+      notes: form.notes || ''
+    };
+    try {
+      const existing = JSON.parse(localStorage.getItem('sp_triage_history') || '[]');
+      existing.unshift(triageEntry);
+      localStorage.setItem('sp_triage_history', JSON.stringify(existing.slice(0, 500)));
+    } catch(e) { /* silent */ }
+
     const ejs = config?.emailjs || {};
     const isMulti = config?.company?.companyType === 'multi';
     const companyPhone = config?.company?.phone || '';

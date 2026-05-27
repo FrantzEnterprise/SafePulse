@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SymptomEditor from './SymptomEditor';
 import SocialComposer from './SocialComposer';
 import TestimonialGallery from './TestimonialGallery';
+import TriageHistoryLog from './TriageHistoryLog';
 
 const TABS = [
   { id:'branding', label:'Branding', icon:'🎨' },
@@ -10,6 +11,7 @@ const TABS = [
   { id:'features', label:'Features', icon:'⚙️' },
   { id:'social', label:'Social', icon:'📢' },
   { id:'testimonials', label:'Testimonials', icon:'🎬' },
+  { id:'triagelog', label:'Triage Log', icon:'📜' },
   { id:'qa', label:'Q&A', icon:'💡' },
   { id:'symptoms', label:'Symptoms', icon:'🩺' },
   { id:'integrations', label:'Integrations', icon:'🔌' },
@@ -291,6 +293,9 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
           )}
           {tab==='testimonials' && (
             <TestimonialGallery config={config} />
+          )}
+          {tab==='triagelog' && (
+            <TriageHistoryLog config={config} />
           )}
           {tab==='qa' && (
             <div>
