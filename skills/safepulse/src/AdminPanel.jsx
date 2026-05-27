@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import SymptomEditor from './SymptomEditor';
+import SocialComposer from './SocialComposer';
 
 const TABS = [
   { id:'branding', label:'Branding', icon:'🎨' },
   { id:'company', label:'Company', icon:'🏢' },
   { id:'service', label:'Service', icon:'📍' },
   { id:'features', label:'Features', icon:'⚙️' },
+  { id:'social', label:'Social', icon:'📢' },
   { id:'qa', label:'Q&A', icon:'💡' },
   { id:'symptoms', label:'Symptoms', icon:'🩺' },
   { id:'integrations', label:'Integrations', icon:'🔌' },
@@ -350,6 +352,9 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             </div>
           )}
 
+          {tab==='social' && (
+            <SocialComposer config={config} />
+          )}
           {tab==='qa' && (
             <div>
               <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:10,display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
