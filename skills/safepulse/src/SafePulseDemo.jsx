@@ -1017,8 +1017,8 @@ Powered by Frantz Enterprise`;
             <button onClick={() => setShowInstructions(true)} className="rounded-full bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
               ? Instructions
             </button>
-            <button onClick={() => { if (isAuthenticated) { setShowAdmin(true); } else { setShowLogin(true); } }} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Admin Settings">
             {isAuthenticated && <button onClick={() => { logout(); setIsAuthenticated(false); }} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Sign Out">🚪</button>}
+            <button onClick={() => { if (isAuthenticated) { setShowAdmin(true); } else { setShowLogin(true); } }} className="rounded-full bg-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Admin Settings">
               &#9881; Admin
             </button>
             {config?.features?.showQaSection && config?.qaUrl && (
