@@ -799,24 +799,24 @@ function RiskMeterCard({ score, risk }) {
   const offset = circumference - (score / 100) * circumference;
 
   return (
-    <div style={{background:'#1a2a4a',border:'1px solid #2a3a5a',borderRadius:'12px',padding:'14px'}}>
+    <div style={{background:'#e8edf5',border:'1px solid #b0c4de',borderRadius:'12px',padding:'14px',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
       <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
         {/* Gauge */}
         <svg width="80" height="80" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="34" fill="none" stroke="#2a3a5a" strokeWidth="6" />
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#cbd5e1" strokeWidth="6" />
           <circle cx="40" cy="40" r="34" fill="none"
             stroke={gaugeColor} strokeWidth="6" strokeLinecap="round"
             strokeDasharray={circumference} strokeDashoffset={offset}
             transform="rotate(-90 40 40)" style={{transition:'stroke-dashoffset 0.5s ease'}} />
-          <text x="40" y="36" textAnchor="middle" fill="#e8edf5" fontSize="20" fontWeight="bold">{score}</text>
-          <text x="40" y="54" textAnchor="middle" fill="#6272a4" fontSize="9">/ 100</text>
+          <text x="40" y="36" textAnchor="middle" fill="#1e293b" fontSize="20" fontWeight="bold">{score}</text>
+          <text x="40" y="54" textAnchor="middle" fill="#475569" fontSize="9">/ 100</text>
         </svg>
 
         <div style={{flex:1}}>
           <div style={{fontSize:'13px',fontWeight:700,color:rl.color,letterSpacing:'0.5px'}}>{rl.label} RISK</div>
-          <div style={{fontSize:'11px',color:'#94a3b8',marginTop:'2px',lineHeight:1.4}}>{risk?.advice?.slice(0, 80) || 'Complete the intake steps to calculate risk score.'}</div>
+          <div style={{fontSize:'11px',color:'#334155',marginTop:'2px',lineHeight:1.4}}>{risk?.advice?.slice(0, 80) || 'Complete the intake steps to calculate risk score.'}</div>
           {/* Tiny progress bar */}
-          <div style={{marginTop:'8px',height:'4px',background:'#2a3a5a',borderRadius:'99px',overflow:'hidden'}}>
+          <div style={{marginTop:'8px',height:'4px',background:'#cbd5e1',borderRadius:'99px',overflow:'hidden'}}>
             <div style={{width:`${score}%`,height:'100%',background:gaugeColor,borderRadius:'99px',transition:'width 0.4s'}} />
           </div>
         </div>
