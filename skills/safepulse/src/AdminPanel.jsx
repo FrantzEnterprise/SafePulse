@@ -781,6 +781,7 @@ function FeaturesPanel({ cfg, setCfg, setSaved }) {
         ['showPhotoUpload','📸 Photo Upload','Customer can attach photos of the safe'],
         ['showMapCalculator','🗺️ Map & Fee Calc','Distance & trip fee calculator'],
         ['showBatteryPopup','🔋 Battery Popup','Battery warning popup for electronic locks'],
+        ['showServiceNotes','📝 Service Notes','Service Notes card shown on step 6 cost framework'],
         ['showTechnicianReport','📋 Tech Report','Generate & view technician report'],
         ['showInstructions','📖 Instructions','Show instructions panel'],
         ['showDarkModeToggle','🌙 Dark Mode Toggle','Switch between light/dark themes'],

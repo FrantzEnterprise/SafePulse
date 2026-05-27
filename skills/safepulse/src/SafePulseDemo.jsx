@@ -280,7 +280,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <SymptomsSelector form={form} showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms} visibleGroups={visibleGroups} triageHistory={triageHistory} toggleSymptom={toggleSymptom} />
         </div>
       )}
-      {step === 4 && (
+      {step === 4 && config?.features?.showPhotoUpload !== false && (
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Photo Upload</h3>
           <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
@@ -292,9 +292,11 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <h3 className="font-semibold text-lg">Service Area & Quote</h3>
           <p className="text-sm text-slate-600">Enter the driving distance from your shop to estimate the trip fee.</p>
           <div className="rounded-2xl border bg-white p-4 space-y-4">
-            <button onClick={() => setShowMapCalculator(true)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
-              Open Map Calculator
-            </button>
+            {config?.features?.showMapCalculator !== false && (
+              <button onClick={() => setShowMapCalculator(true)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+                Open Map Calculator
+              </button>
+            )}
             <hr className="border-slate-200" />
             <div className="space-y-1">
               <label className="text-sm font-medium">Distance from shop (miles)</label>
@@ -344,11 +346,12 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
               <p className="font-bold text-amber-900" style={{fontSize:'15px',letterSpacing:'0.5px'}}>Parts Are Additional</p>
             </div>
 
-            {/* Service Notes */}
-            <div className="rounded-xl border p-3">
-              <p className="font-semibold text-sm">Service Notes</p>
-              <p className="text-sm text-slate-600">{serviceEstimate?.notes || 'Issue may be resolved with simple troubleshooting or preventive service.'}</p>
-            </div>
+            {config?.features?.showServiceNotes && (
+              <div className="rounded-xl border p-3">
+                <p className="font-semibold text-sm">Service Notes</p>
+                <p className="text-sm text-slate-600">{serviceEstimate?.notes || 'Issue may be resolved with simple troubleshooting or preventive service.'}</p>
+              </div>
+            )}
 
             {/* Trip Fee & Mileage Breakdown — below Parts */}
             <div className="rounded-xl border bg-slate-50 p-4">
@@ -969,13 +972,8 @@ export default function SafePulseDemo() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    if (!config?.features) return;
-    // Simple function: just set state visibility based on feature flags
-    // These control which UI sections show/hide
-  }, [config]);
-  
-
+  // ── Feature flags gate UI sections ──
+  const featureFlags = config?.features || {};
   
   const sendDispatch = async (selectedTech) => {
     // Save to triage history
@@ -1140,7 +1138,7 @@ export default function SafePulseDemo() {
 
   const toggleSymptom = (id) => {
     if (lockedForService) return;
-    if (hasBatteryPopup(id)) setShowBatteryPopup(true);
+    if (featureFlags.showBatteryPopup && hasBatteryPopup(id)) setShowBatteryPopup(true);
     if (hasCustomPopup(id)) {
       const sym = symptomOptions.find(s => s.id === id);
       setCustomPopupData({ title: sym.popupTitle || 'Notice', message: sym.popupMessage });
@@ -1363,7 +1361,7 @@ Powered by Frantz Enterprise`;
       </div>
       {lockedForService && <ServiceLockoutModal />}
       {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
-      {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
+      {featureFlags.showBatteryPopup && showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
       {customPopupData && <CustomPopupModal data={customPopupData} onClose={() => setCustomPopupData(null)} />}
       {showResultModal && lastSelectedSymptom && (
         <SymptomResultModal

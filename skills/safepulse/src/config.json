@@ -94,6 +94,7 @@
     "showReviewRequests": false,
     "showLoyaltyProgram": false,
     "showIntegrations": false,
+    "showServiceNotes": true,
     "showDemoMode": false,
     "demoMode": false,
     "demoCompany": "Capital City Safe & Lock",
