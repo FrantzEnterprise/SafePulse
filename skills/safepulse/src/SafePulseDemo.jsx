@@ -1042,14 +1042,13 @@ Powered by Frantz Enterprise`;
     return (
       <div>
         <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />
-        {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); }} onClose={() => setShowLogin(false)} />}
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-slate-100 p-6 text-slate-900">
-      {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); }} onClose={() => setShowLogin(false)} />}
+      {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); setShowAdmin(true); }} onClose={() => setShowLogin(false)} />}
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
