@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SymptomEditor from './SymptomEditor';
 import SocialComposer from './SocialComposer';
+import TestimonialGallery from './TestimonialGallery';
 
 const TABS = [
   { id:'branding', label:'Branding', icon:'🎨' },
@@ -8,6 +9,7 @@ const TABS = [
   { id:'service', label:'Service', icon:'📍' },
   { id:'features', label:'Features', icon:'⚙️' },
   { id:'social', label:'Social', icon:'📢' },
+  { id:'testimonials', label:'Testimonials', icon:'🎬' },
   { id:'qa', label:'Q&A', icon:'💡' },
   { id:'symptoms', label:'Symptoms', icon:'🩺' },
   { id:'integrations', label:'Integrations', icon:'🔌' },
@@ -354,6 +356,9 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
 
           {tab==='social' && (
             <SocialComposer config={config} />
+          )}
+          {tab==='testimonials' && (
+            <TestimonialGallery config={config} />
           )}
           {tab==='qa' && (
             <div>
