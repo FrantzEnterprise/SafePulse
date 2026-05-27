@@ -280,23 +280,49 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
 
           {tab==='features' && (
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
-              {Object.entries(cfg.features).filter(([k])=>k!=='maxScoreBeforeLockout').map(([k,v]) => (
-                <div key={k} style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:10,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                  <div>
-                    <div style={{fontWeight:600,fontSize:13,color:'#fff'}}>
-                      {k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase()).replace('Qa','Q&A')}
+              {Object.entries(cfg.features).filter(([k])=>k!=='maxScoreBeforeLockout').map(([k,v]) => {
+                const labels = {
+                  showPhotoUpload: ['📸 Photo Upload','Customer can attach photos of the safe'],
+                  showMapCalculator: ['🗺️ Map & Fee Calc','Distance & trip fee calculator'],
+                  showBatteryPopup: ['🔋 Battery Popup','Battery warning popup for electronic locks'],
+                  showTechnicianReport: ['📋 Tech Report','Generate & view technician report'],
+                  showInstructions: ['📖 Instructions','Show instructions panel'],
+                  showQaSection: ['❓ Q&A Section','Knowledge base Q&A section'],
+                  showDarkModeToggle: ['🌙 Dark Mode Toggle','Switch between light/dark themes'],
+                  showTriageHistory: ['📜 Triage History','Customer lookup & past triage log'],
+                  showCopyReport: ['📋 Copy Report','One-tap copy report to clipboard'],
+                  showPdfExport: ['📄 PDF Export','Download report as PDF'],
+                  showDispatchEmail: ['📧 Email Dispatch','Send dispatch emails via EmailJS'],
+                  showDispatchSms: ['📱 SMS Dispatch','Send dispatch SMS notifications'],
+                  showCauseLibrary: ['📚 Cause Library','Admin editor for cause library'],
+                  showTechStatus: ['🚚 Tech Status','Arrival/completion status tracking'],
+                  showCustomerPortal: ['🔐 Customer Portal','Customer login to view past reports'],
+                  showStripePayments: ['💳 Stripe Payments','Accept credit card payments online'],
+                  showAccountingExport: ['📊 Accounting Export','QuickBooks/CSV export'],
+                  showScheduling: ['📅 Scheduling','Calendar booking integration'],
+                  showInventory: ['📦 Inventory','Track parts used per job'],
+                  showAnalytics: ['📈 Analytics','Dashboard charts & metrics'],
+                  showMultiLanguage: ['🌐 Multi-Language','Spanish & other language support'],
+                };
+                const [title, desc] = labels[k] || [k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase()).replace('Qa','Q&A'), ''];
+                return (
+                  <div key={k} style={{borderRadius:8,border:'1px solid #334155',background:v?'#1e293b':'#1a1f2e',padding:10,display:'flex',alignItems:'center',justifyContent:'space-between',opacity:v?1:0.55}}>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:600,fontSize:13,color:v?'#fff':'#94a3b8'}}>
+                        {title}
+                      </div>
+                      <div style={{fontSize:10,color:'#64748b',marginTop:2}}>{desc}</div>
                     </div>
-                    <div style={{fontSize:9,color:'#94a3b8'}}>{v?'On':'Off'}</div>
+                    <label style={{position:'relative',display:'inline-block',cursor:'pointer',flexShrink:0,marginLeft:8}}>
+                      <input type="checkbox" style={{display:'none'}} checked={v}
+                        onChange={e=>{const n={...cfg};n.features={...n.features,[k]:e.target.checked};setCfg(n);setSaved(false);}} />
+                      <div style={{width:36,height:20,borderRadius:99,background:v?'#d4a843':'#475569',transition:'0.2s',position:'relative'}}>
+                        <div style={{position:'absolute',top:2,left:v?18:2,width:16,height:16,borderRadius:'50%',background:'#fff',transition:'0.2s'}} />
+                      </div>
+                    </label>
                   </div>
-                  <label style={{position:'relative',display:'inline-block',cursor:'pointer'}}>
-                    <input type="checkbox" style={{display:'none'}} checked={v}
-                      onChange={e=>{const n={...cfg};n.features={...n.features,[k]:e.target.checked};setCfg(n);setSaved(false);}} />
-                    <div style={{width:36,height:20,borderRadius:99,background:v?'#d4a843':'#475569',transition:'0.2s',position:'relative'}}>
-                      <div style={{position:'absolute',top:2,left:v?18:2,width:16,height:16,borderRadius:'50%',background:'#fff',transition:'0.2s'}} />
-                    </div>
-                  </label>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 

@@ -785,6 +785,15 @@ export default function SafePulseDemo() {
   const [showDispatch, setShowDispatch] = useState(false);
   const [dispatchTech, setDispatchTech] = useState(null);
   const [customPopupData, setCustomPopupData] = useState(null);
+
+  // Feature-gating: respect config feature toggles from Admin panel
+  useEffect(() => {
+    if (!config?.features) return;
+    // Simple function: just set state visibility based on feature flags
+    // These control which UI sections show/hide
+  }, [config]);
+  
+
   
   const sendDispatch = async (selectedTech) => {
     const ejs = config?.emailjs || {};

@@ -8,12 +8,24 @@
 - [x] Map integration / trip fee calculator
 - [x] Photo upload
 - [x] Technician report generation
+- [x] Popup triggers (battery, damage, custom)
+- [x] Dracula dark theme for Symptom Editor
+- [x] Company type toggle (sole/multi-tech)
+- [x] EmailJS dispatch (auto-responder)
+- [x] Branded footer with company info & "Powered by Frantz Enterprise"
 
 ## Next Up
-- [ ] **Mobile PWA** — "Add to Home Screen" prompt, manifest, service worker (feels like a real app)
-- [ ] **Clean PDF export** — downloadable PDF report for customers instead of textarea
-- [ ] **Dark mode toggle** — switch main app between light/dark themes
-- [ ] **Email Delivery** — fix `mailto:` to actually send via backend service
+- [ ] **WCAG 2.1 AA Accessibility (Phase 1)**
+  - [ ] `aria-label` on all icon buttons
+  - [ ] Improve color contrast (text/background ratios)
+  - [ ] Focus trap on all modal popups
+  - [ ] Form field `<label>` elements
+  - [ ] Screen reader announcements for triage results
+- [ ] **Mobile PWA** — "Add to Home Screen" prompt, manifest, service worker
+- [ ] **Clean PDF export** — downloadable PDF report for customers
+- [ ] **Triage History Log** — customer lookup & past triages
+- [ ] **Copy Report Button** — one-tap copy to clipboard
+- [ ] **Tech Arrival/Completion Status** — status tracking per job
 
 ## To Do (unprioritized)
 
@@ -22,6 +34,14 @@
 - Configurable autoresponder messages (SMS/email templates)
 - Symptom cause library editor in admin
 - User role management if selling as product
+
+### Accessibility (WCAG 2.1 AA) — Phase 2
+- [ ] Keyboard navigation audit
+- [ ] Screen reader field announcements
+- [ ] Skip-to-content links
+- [ ] Touch target minimum sizes (already good but verify)
+- [ ] Color-blind safe palette option
+- [ ] ADA compliance statement page within app
 
 ### Productization (for selling)
 - Multi-tenant config support
@@ -32,9 +52,8 @@
 
 ### Polish & Testing
 - Test on iOS (iPhone)
-- Offline / PWA support?
+- Offline / PWA support
 - Loading states & error handling
-- Accessibility review
 - Swipeable photo gallery in results
 - Mobile collapsible sections
 
