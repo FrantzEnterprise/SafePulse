@@ -841,40 +841,23 @@ function RiskMeterCard({ score, risk }) {
   );
 }
 
-/* ──────── Right-Column: Offers & Products ──────── */
-function OfferZone() {
-  const [expandedOffer, setExpandedOffer] = useState(null);
-  const offers = [
-    { id:'parts', emoji:'🔩', title:'Safe Parts & Accessories', desc:'Keypads, dials, handles, relock kits, and more — in stock for local pickup or shipped.' },
-    { id:'batteries', emoji:'🔋', title:'Premium Batteries', desc:'Duracell Quantum & Energizer Ultimate Lithium — the only batteries we recommend for electronic locks.' },
-    { id:'service', emoji:'🔐', title:'Schedule Preventive Service', desc:'Keep your safe in top condition with an annual inspection. Call (916) 534-4900.' },
-    { id:'tools', emoji:'🛠️', title:'Technician Tool Bundles', desc:'SCOPE ONE, borescopes, manipulation tools, and drill guides — curated for safe techs.' },
-    { id:'referral', emoji:'🤝', title:'Refer a Friend', desc:'Know someone with a safe? Refer them and get $25 off your next service.' },
-  ];
+/* ──────── Right-Column: Ad Placeholders ──────── */
+function AdZone() {
   return (
-    <div style={{background:'#0f1f3d',border:'1px solid #2a3a5a',borderRadius:'12px',padding:'12px'}}>
-      <div className="flex items-center gap-2 mb-2" style={{borderBottom:'1px solid #2a3a5a',paddingBottom:'8px'}}>
-        <span style={{fontSize:'11px',fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:'#d4a843'}}>Today's Offers</span>
-        <span style={{fontSize:'9px',color:'#6272a4'}}>Local pickup · Shipping</span>
-      </div>
-      {offers.map(o => (
-        <div key={o.id} onClick={() => setExpandedOffer(expandedOffer === o.id ? null : o.id)}
-          style={{
-            background: expandedOffer === o.id ? '#1e2a4a' : 'transparent',
-            borderRadius:'8px', padding:'6px 8px', marginBottom:'3px', cursor:'pointer',
-            border: expandedOffer === o.id ? '1px solid #d4a843' : '1px solid transparent',
-            transition:'0.15s'
-          }}>
-          <div className="flex items-center gap-2">
-            <span style={{fontSize:'13px'}}>{o.emoji}</span>
-            <span style={{fontWeight:600,fontSize:'11px',color:'#e8edf5',flex:1}}>{o.title}</span>
-            <span style={{color:'#6272a4',fontSize:'9px'}}>{expandedOffer === o.id ? '▲' : '▼'}</span>
-          </div>
-          {expandedOffer === o.id && (
-            <p style={{fontSize:'10px',color:'#94a3b8',marginTop:'5px',paddingTop:'5px',borderTop:'1px solid #2a3a5a'}}>{o.desc}</p>
-          )}
+    <div>
+      <div style={{display:'flex',gap:'6px'}}>
+        <div style={{flex:1,background:'#0f1f3d',border:'1px dashed #d4a843',borderRadius:'8px',padding:'10px',textAlign:'center',minHeight:'80px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+          <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Ad Space</span>
+          <span style={{fontSize:'8px',color:'#6272a4',marginTop:'4px'}}>300 × 250</span>
         </div>
-      ))}
+        <div style={{flex:1,background:'#0f1f3d',border:'1px dashed #d4a843',borderRadius:'8px',padding:'10px',textAlign:'center',minHeight:'80px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
+          <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Ad Space</span>
+          <span style={{fontSize:'8px',color:'#6272a4',marginTop:'4px'}}>300 × 250</span>
+        </div>
+      </div>
+      <p style={{fontSize:'9px',color:'#6272a4',textAlign:'center',marginTop:'6px',fontStyle:'italic'}}>
+        Have a related product? Call (916) 534-4900 to place your ad here.
+      </p>
     </div>
   );
 }
@@ -1247,8 +1230,8 @@ Powered by Frantz Enterprise`;
             {/* Risk Meter — compact */}
             <RiskMeterCard score={score} risk={risk} />
 
-            {/* Today's Offers */}
-            <OfferZone />
+            {/* Ad Placeholders */}
+            <AdZone />
 
             {/* Full Tech Report (scrollable) */}
             <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
