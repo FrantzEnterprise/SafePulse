@@ -80,7 +80,7 @@ export default function LoginModal({ onLogin, onClose }) {
               }}>🔐</div>
               <div style={{fontWeight:700,fontSize:'18px',color:'#fff'}}>Admin Access</div>
               <div style={{fontSize:'12px',color:'#8899bb',marginTop:'4px'}}>
-                Sign in to configure SafePulse
+                Sign in to configure SafeTriage
               </div>
             </div>
 
@@ -232,7 +232,7 @@ export default function LoginModal({ onLogin, onClose }) {
 
         {/* Powered by */}
         <div style={{textAlign:'center',marginTop:'16px',fontSize:'10px',color:'#556688',fontFamily:"'Orbitron',monospace",letterSpacing:'1px'}}>
-          SafePulse — Powered by Frantz Enterprise
+          SafeTriage — Powered by Frantz Enterprise
         </div>
       </div>
     </div>

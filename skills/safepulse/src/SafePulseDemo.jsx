@@ -517,7 +517,7 @@ function InstructionsModal({ onClose }) {
         <div className="w-full max-w-2xl mx-auto rounded-2xl bg-white p-5 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-5 border-b border-slate-200 pb-3">
-          <h2 className="text-xl font-bold text-slate-900">How to use SafePulse</h2>
+          <h2 className="text-xl font-bold text-slate-900">How to use SafeTriage</h2>
           <button onClick={onClose} className="shrink-0 rounded-full bg-blue-600 text-accent px-5 py-2 text-sm font-bold hover:bg-blue-700 shadow">&larr; Back</button>
         </div>
 
@@ -553,7 +553,7 @@ function InstructionsModal({ onClose }) {
           </section>
 
           <section className="rounded-xl border-l-4 border-l-blue-500 bg-blue-50 p-4">
-            <p className="text-sm font-medium text-blue-900">SafePulse is a triage tool to help identify safe issues and guide next steps. Always consult a qualified safe technician for any repair work.</p>
+            <p className="text-sm font-medium text-blue-900">SafeTriage is a triage tool to help identify safe issues and guide next steps. Always consult a qualified safe technician for any repair work.</p>
           </section>
         </div>
 
@@ -938,7 +938,7 @@ function AdZone({ config }) {
   );
 }
 
-export default function SafePulseDemo() {
+export default function SafeTriageDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
   const [showSplash, setShowSplash] = useState(true);
@@ -1223,7 +1223,7 @@ Powered by Frantz Enterprise`;
         `}</style>
         <img src="frantz-logo.jpg" alt="Frantz Locksmith Service" className="splash-logo rounded-xl" style={{boxShadow:'0 0 40px rgba(212,168,67,0.3)'}} />
         <div className="splash-text" style={{color:'#d4a843',fontFamily:'Orbitron,monospace',fontWeight:700,fontSize:'14px',letterSpacing:'3px',marginTop:'8px'}}>
-          SafePulse
+          SafeTriage
         </div>
         <div className="splash-sub" style={{color:'#6272a4',fontSize:'11px',marginTop:'8px',letterSpacing:'1px'}}>Powered by Frantz Enterprise</div>
         <div className="splash-bar mt-6 w-40 h-0.5 rounded-full overflow-hidden" style={{background:'#1a2a4a'}}>

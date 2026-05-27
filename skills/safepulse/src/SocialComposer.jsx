@@ -291,7 +291,7 @@ export default function SocialComposer({ config }) {
       scheduled: scheduledDate && scheduledTime ? `${scheduledDate} ${scheduledTime}` : null,
       createdAt: new Date().toISOString(),
       status: scheduledDate && scheduledTime ? 'Scheduled' : 'Draft',
-      company: config?.demoMode ? config.demoCompany : (config?.company?.name || 'SafePulse')
+      company: config?.demoMode ? config.demoCompany : (config?.company?.name || 'SafeTriage')
     };
     const updated = [post, ...postHistory];
     setPostHistory(updated);

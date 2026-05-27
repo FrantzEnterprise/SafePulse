@@ -1,10 +1,10 @@
-// ── Auth System for SafePulse Admin ──
+// ── Auth System for SafeTriage Admin ──
 // Simplified: password verified against pre-computed SHA-256 hash
 // No async dependencies — works on all browsers
 
 const AUTH_KEY = 'safepulse_auth';
 
-// Pre-computed SHA-256 hash of "safepulse_v1FE~242SafePulse"
+// Pre-computed SHA-256 hash of "safetriage_v1FE~242SafePulse"
 const ADMIN_HASH = 'h_iofj3n';
 
 // ── Auth state ──
