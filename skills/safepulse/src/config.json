@@ -62,8 +62,6 @@
     "showTriageHistory": true,
     "showCopyReport": true,
     "showPdfExport": true,
-    "showDispatchEmail": true,
-    "showDispatchSms": true,
     "showCauseLibrary": false,
     "showTechStatus": false,
     "showCustomerPortal": false,

@@ -283,75 +283,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
           )}
 
           {tab==='features' && (
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6}}>
-              {Object.entries(cfg.features).filter(([k])=>k!=='maxScoreBeforeLockout').map(([k,v]) => {
-                const labels = {
-                  showPhotoUpload: ['📸 Photo Upload','Customer can attach photos of the safe'],
-                  showMapCalculator: ['🗺️ Map & Fee Calc','Distance & trip fee calculator'],
-                  showBatteryPopup: ['🔋 Battery Popup','Battery warning popup for electronic locks'],
-                  showTechnicianReport: ['📋 Tech Report','Generate & view technician report'],
-                  showInstructions: ['📖 Instructions','Show instructions panel'],
-                  showQaSection: ['❓ Q&A Section','Knowledge base Q&A section'],
-                  showDarkModeToggle: ['🌙 Dark Mode Toggle','Switch between light/dark themes'],
-                  showTriageHistory: ['📜 Triage History','Customer lookup & past triage log'],
-                  showCopyReport: ['📋 Copy Report','One-tap copy report to clipboard'],
-                  showPdfExport: ['📄 PDF Export','Download report as PDF'],
-                  showDispatchEmail: ['📧 Email Dispatch','Send dispatch emails via EmailJS'],
-                  showDispatchSms: ['📱 SMS Dispatch','Send dispatch SMS notifications'],
-                  showCauseLibrary: ['📚 Cause Library','Admin editor for cause library'],
-                  showTechStatus: ['🚚 Tech Status','Arrival/completion status tracking'],
-                  showCustomerPortal: ['🔐 Customer Portal','Customer login to view past reports'],
-                  showStripePayments: ['💳 Stripe Payments','Accept credit card payments online'],
-                  showAccountingExport: ['📊 Accounting Export','QuickBooks/CSV export'],
-                  showScheduling: ['📅 Scheduling','Calendar booking integration'],
-                  showInventory: ['📦 Inventory','Track parts used per job'],
-                  showAnalytics: ['📈 Analytics','Dashboard charts & metrics'],
-                  showMultiLanguage: ['🌐 Multi-Language','Spanish & other language support'],
-                  showInvoicing: ['🧾 Invoicing','Generate & send invoices to customers'],
-                  showEstimates: ['📝 Estimates','Create & email service estimates'],
-                  showReceipts: ['🧾 Receipts','Payment receipts for completed jobs'],
-                  showLaborServices: ['🔧 Labor & Services','Labor categories with hourly rates'],
-                  showPartsCatalog: ['🔩 Parts Catalog','Manage parts & pricing catalog'],
-                  showUserRoles: ['👥 User Roles','Role-based access (admin, tech, dispatcher, customer)'],
-                  showAuditLog: ['📋 Audit Log','Track all actions & changes in the system'],
-                  showTaxCalculator: ['💰 Tax Calculator','Auto-calculate sales tax per location'],
-                  showDiscountCoupons: ['🎫 Discounts & Coupons','Promo codes & discount management'],
-                  showContractTemplates: ['📄 Contract Templates','Service agreement templates'],
-                  showCustomerNotifications: ['🔔 Customer Notifications','Auto SMS/email status updates'],
-                  showCommissionTracking: ['💵 Commission Tracking','Per-job tech commissions'],
-                  showVehicleTracking: ['🚐 Vehicle Tracking','Tech vehicle assignment & tracking'],
-                  showTimesheets: ['⏱️ Timesheets','Tech clock-in/out & hours tracking'],
-                  showPurchaseOrders: ['📋 Purchase Orders','PO management for supplies'],
-                  showVendorDirectory: ['🏪 Vendor Directory','Supply vendor contact management'],
-                  showEquipmentChecklist: ['✅ Equip Checklist','Pre-job equipment checklist for techs'],
-                  showCertificationTracking: ['🎓 Certifications','Tech license & cert expiration tracking'],
-                  showLeadSourceTracking: ['📊 Lead Sources','Where leads come from (referral, web, call)'],
-                  showMarketingEmails: ['📧 Marketing Emails','Campaign email blasts to customer list'],
-                  showReviewRequests: ['⭐ Review Requests','Auto-request Google/Yelp reviews'],
-                  showLoyaltyProgram: ['💎 Loyalty Program','Points & rewards for repeat customers'],
-                  showIntegrations: ['🔌 Integrations','API keys & third-party connections panel'],
-                  showDemoMode: ['🏪 Demo Mode','Show mock business data for sales demos'],
-                };
-                const [title, desc] = labels[k] || [k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase()).replace('Qa','Q&A'), ''];
-                return (
-                  <div key={k} style={{borderRadius:8,border:'1px solid #334155',background:v?'#1e293b':'#1a1f2e',padding:10,display:'flex',alignItems:'center',justifyContent:'space-between',opacity:v?1:0.55}}>
-                    <div style={{flex:1}}>
-                      <div style={{fontWeight:600,fontSize:13,color:v?'#fff':'#94a3b8'}}>
-                        {title}
-                      </div>
-                      <div style={{fontSize:10,color:'#64748b',marginTop:2}}>{desc}</div>
-                    </div>
-                    <label style={{position:'relative',display:'inline-block',cursor:'pointer',flexShrink:0,marginLeft:8}}>
-                      <input type="checkbox" style={{display:'none'}} checked={v}
-                        onChange={e=>{const n={...cfg};n.features={...n.features,[k]:e.target.checked};setCfg(n);setSaved(false);}} />
-                      <div style={{width:36,height:20,borderRadius:99,background:v?'#d4a843':'#475569',transition:'0.2s',position:'relative'}}>
-                        <div style={{position:'absolute',top:2,left:v?18:2,width:16,height:16,borderRadius:'50%',background:'#fff',transition:'0.2s'}} />
-                      </div>
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
+            <FeaturesPanel cfg={cfg} setCfg={setCfg} setSaved={setSaved} />
           )}
 
           {tab==='social' && (
@@ -528,6 +460,156 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
       </div>
 
       {showEditor && <SymptomEditor onClose={()=>setShowEditor(false)} />}
+    </div>
+  );
+}
+
+/* ──────── Tiers Features Panel ──────── */
+function FeaturesPanel({ cfg, setCfg, setSaved }) {
+  const [expanded, setExpanded] = useState({});
+
+  const toggle = (id) => setExpanded(prev => ({...prev, [id]: !prev[id]}));
+
+  const renderSwitch = (key, checked) => (
+    <label style={{position:'relative',display:'inline-block',cursor:'pointer',flexShrink:0}}>
+      <input type="checkbox" style={{display:'none'}} checked={checked}
+        onChange={e=>{const n={...cfg};n.features={...n.features,[key]:e.target.checked};setCfg(n);setSaved(false);}} />
+      <div style={{width:36,height:20,borderRadius:99,background:checked?'#d4a843':'#475569',transition:'0.2s',position:'relative'}}>
+        <div style={{position:'absolute',top:2,left:checked?18:2,width:16,height:16,borderRadius:'50%',background:'#fff',transition:'0.2s'}} />
+      </div>
+    </label>
+  );
+
+  const renderItem = (key, title, desc) => {
+    const v = cfg.features?.[key];
+    return (
+      <div key={key} style={{borderRadius:8,border:'1px solid #334155',background:v?'#1e293b':'#1a1f2e',padding:10,display:'flex',alignItems:'center',justifyContent:'space-between',opacity:v?1:0.55,marginBottom:4}}>
+        <div style={{flex:1}}>
+          <div style={{fontWeight:600,fontSize:13,color:v?'#fff':'#94a3b8'}}>{title}</div>
+          <div style={{fontSize:10,color:'#64748b',marginTop:2}}>{desc}</div>
+        </div>
+        {renderSwitch(key, v)}
+      </div>
+    );
+  };
+
+  const sections = [
+    {
+      id:'core', label:'Tier 1 — Core (Free)', color:'#50fa7b', icon:'🆓',
+      items:[
+        ['showPhotoUpload','📸 Photo Upload','Customer can attach photos of the safe'],
+        ['showMapCalculator','🗺️ Map & Fee Calc','Distance & trip fee calculator'],
+        ['showBatteryPopup','🔋 Battery Popup','Battery warning popup for electronic locks'],
+        ['showTechnicianReport','📋 Tech Report','Generate & view technician report'],
+        ['showInstructions','📖 Instructions','Show instructions panel'],
+        ['showDarkModeToggle','🌙 Dark Mode Toggle','Switch between light/dark themes'],
+        ['showQaSection','❓ Q&A Section','Knowledge base Q&A section'],
+        ['showTriageHistory','📜 Triage History','Customer lookup & past triage log'],
+        ['showCopyReport','📋 Copy Report','One-tap copy report to clipboard'],
+        ['showPdfExport','📄 PDF Export','Download report as PDF'],
+        ['showCauseLibrary','📚 Cause Library','Admin editor for cause library'],
+        ['showTechStatus','🚚 Tech Status','Arrival/completion status tracking'],
+      ]
+    },
+    {
+      id:'marketing', label:'Tier 2 — Marketing ($29/mo)', color:'#8be9fd', icon:'📢',
+      items:[
+        ['showDispatchEmail','📧 Email Dispatch','Send dispatch emails via EmailJS'],
+        ['showDispatchSms','📱 SMS Dispatch','Send dispatch SMS notifications'],
+        ['showReviewRequests','⭐ Review Requests','Auto-request Google/Yelp reviews'],
+      ],
+      addons:[
+        { key:'showSocialComposer', title:'📱 Social Media Post', desc:'(+$10/mo) Post to Facebook, Instagram, LinkedIn, X, YouTube, TikTok', alwaysOn: false },
+        { key:'showTestimonialsGallery', title:'🎬 Video Testimonials', desc:'(+$10/mo) Collect video/photo testimonials with review wall', alwaysOn: false },
+      ]
+    },
+    {
+      id:'pro', label:'Tier 3 — Pro ($59/mo)', color:'#ffb86c', icon:'💼',
+      items:[
+        ['showEstimates','📝 Estimates','Create & email service estimates'],
+        ['showInvoicing','🧾 Invoicing','Generate & send invoices to customers'],
+        ['showReceipts','🧾 Receipts','Payment receipts for completed jobs'],
+        ['showCustomerPortal','🔐 Customer Portal','Customer login to view past reports'],
+        ['showScheduling','📅 Scheduling','Calendar booking integration'],
+        ['showLeadSourceTracking','📊 Lead Sources','Where leads come from (referral, web, call)'],
+        ['showLaborServices','🔧 Labor & Services','Labor categories with hourly rates'],
+        ['showPartsCatalog','🔩 Parts Catalog','Manage parts & pricing catalog'],
+        ['showContractTemplates','📄 Contract Templates','Service agreement templates'],
+        ['showCustomerNotifications','🔔 Customer Notifications','Auto SMS/email status updates'],
+      ]
+    },
+    {
+      id:'allinone', label:'Tier 4 — All-in-One ($99/mo)', color:'#ff5555', icon:'👑',
+      items:[
+        ['showStripePayments','💳 Stripe Payments','Accept credit card payments online'],
+        ['showAccountingExport','📊 Accounting Export','QuickBooks/CSV export'],
+        ['showInventory','📦 Inventory','Track parts used per job'],
+        ['showAnalytics','📈 Analytics','Dashboard charts & metrics'],
+        ['showUserRoles','👥 User Roles','Role-based access (admin, tech, dispatcher, customer)'],
+        ['showAuditLog','📋 Audit Log','Track all actions & changes in the system'],
+        ['showTaxCalculator','💰 Tax Calculator','Auto-calculate sales tax per location'],
+        ['showDiscountCoupons','🎫 Discounts & Coupons','Promo codes & discount management'],
+        ['showCommissionTracking','💵 Commission Tracking','Per-job tech commissions'],
+        ['showVehicleTracking','🚐 Vehicle Tracking','Tech vehicle assignment & tracking'],
+        ['showTimesheets','⏱️ Timesheets','Tech clock-in/out & hours tracking'],
+        ['showPurchaseOrders','📋 Purchase Orders','PO management for supplies'],
+        ['showVendorDirectory','🏪 Vendor Directory','Supply vendor contact management'],
+        ['showEquipmentChecklist','✅ Equip Checklist','Pre-job equipment checklist for techs'],
+        ['showCertificationTracking','🎓 Certifications','Tech license & cert expiration tracking'],
+        ['showMarketingEmails','📧 Marketing Emails','Campaign email blasts to customer list'],
+        ['showLoyaltyProgram','💎 Loyalty Program','Points & rewards for repeat customers'],
+        ['showIntegrations','🔌 Integrations','API keys & third-party connections panel'],
+        ['showDemoMode','🏪 Demo Mode','Show mock business data for sales demos'],
+        ['showMultiLanguage','🌐 Multi-Language','Spanish & other language support'],
+      ]
+    }
+  ];
+
+  return (
+    <div>
+      <div className="mb-3" style={{color:'#94a3b8',fontSize:'12px',textAlign:'center'}}>
+        Feature toggles organized by tier. Click a section header to expand/collapse.
+      </div>
+      {sections.map(sec => (
+        <div key={sec.id} style={{marginBottom:12,borderRadius:10,border:'1px solid #2a3a5a',overflow:'hidden'}}>
+          {/* Header */}
+          <div onClick={() => toggle(sec.id)}
+            style={{
+              padding:'10px 14px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between',
+              background: expanded[sec.id] ? '#1a2a4a' : '#0f1f3d', userSelect:'none',
+              borderBottom: expanded[sec.id] ? '1px solid #2a3a5a' : 'none'
+            }}>
+            <div className="flex items-center gap-2">
+              <span style={{fontSize:'16px'}}>{sec.icon}</span>
+              <span style={{fontWeight:700,fontSize:'14px',color:sec.color}}>{sec.label}</span>
+            </div>
+            <span style={{color:'#6272a4',fontSize:'12px'}}>{expanded[sec.id] ? '▲' : '▼'}</span>
+          </div>
+
+          {expanded[sec.id] && (
+            <div style={{padding:'8px'}}>
+              {/* Main items */}
+              {sec.items.map(([k, t, d]) => renderItem(k, t, d))}
+
+              {/* Add-ons */}
+              {sec.addons && sec.addons.length > 0 && (
+                <div style={{marginTop:8,marginBottom:4}}>
+                  <div style={{fontSize:'11px',fontWeight:600,color:'#d4a843',textTransform:'uppercase',letterSpacing:'1px',marginBottom:6}}>✨ Add-ons</div>
+                  {sec.addons.map(addon => (
+                    <div key={addon.key} style={{borderRadius:8,border:'1px dashed #d4a843',background:'#1a1f2e',padding:10,display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4}}>
+                      <div style={{flex:1}}>
+                        <div style={{fontWeight:600,fontSize:13,color:'#e8edf5'}}>{addon.title}</div>
+                        <div style={{fontSize:10,color:'#94a3b8',marginTop:2}}>{addon.desc}</div>
+                      </div>
+                      {renderSwitch(addon.key, cfg.features?.[addon.key])}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
