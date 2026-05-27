@@ -230,9 +230,6 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <input className="w-full rounded-xl border p-3" placeholder="Customer name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input className="w-full rounded-xl border p-3" placeholder="(916) 555-1234" value={form.phone} onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
           <input className="w-full rounded-xl border p-3" placeholder="Enter email for a copy of results - Optional" type="email" value={form.email || ''} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-          <button onClick={() => goToStep(2)} className="w-full rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
-            Next — Safe Details
-          </button>
         </div>
       )}
 
@@ -274,14 +271,6 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
             </div>
             <textarea className="w-full rounded-xl border p-3" placeholder="Battery changes, combinations attempted, observations..." value={form.tried} onChange={(e) => setForm({ ...form, tried: e.target.value })} />
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => goToStep(1)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
-              ← Back
-            </button>
-            <button onClick={() => goToStep(3)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
-              Next — Symptoms
-            </button>
-          </div>
         </div>
       )}
 
@@ -289,25 +278,14 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Symptoms</h3>
           <SymptomsSelector form={form} showSymptoms={showSymptoms} setShowSymptoms={setShowSymptoms} visibleGroups={visibleGroups} triageHistory={triageHistory} toggleSymptom={toggleSymptom} />
-          <div className="flex gap-2">
-            <button onClick={() => goToStep(2)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
-              ← Back
-            </button>
-            <button onClick={() => goToStep(4)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
-              Next — Photos
-            </button>
-          </div>
         </div>
       )}
       {step === 4 && (
         <div className="space-y-4">
           <h3 className="font-semibold text-lg">Photo Upload</h3>
           <PhotoUpload uploadedPhotos={uploadedPhotos} setUploadedPhotos={setUploadedPhotos} showPhotoUpload={showPhotoUpload} setShowPhotoUpload={setShowPhotoUpload} />
-          <div className="flex gap-2">
-            <button onClick={() => goToStep(3)} className="flex-1 rounded-xl border border-slate-300 px-4 py-3 font-semibold text-slate-600 hover:bg-slate-50">
-              ← Back
-            </button>
-            <button onClick={() => goToStep(5)} className="flex-1 rounded-xl bg-primary px-6 py-3 font-semibold text-accent shadow-md hover:opacity-90">
+        </div>
+      )}
               Next — Service Quote
             </button>
           </div>
@@ -352,11 +330,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
           <h3 className="font-semibold text-lg">Service & Cost Framework</h3>
           <p className="text-sm text-slate-600">Ballpark estimates based on your selections. Final pricing depends on safe type, lock condition, and complexity.</p>
           <div className="rounded-2xl border bg-white p-4 space-y-4">
-            <div className="rounded-xl border bg-slate-50 p-4">
-              <p className="font-semibold">Service Trip Fee</p>
-              <p className="text-3xl font-bold text-accent">${calculatedTripFee.toFixed(2)}</p>
-              <p className="text-xs text-slate-500 mt-1">$75 minimum includes 17 miles. $2.50/mile beyond.</p>
-            </div>
+            {/* Pricing — Standard & High Security first */}
             <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-xl border p-3">
                 <p className="text-sm text-slate-500">Standard Safes</p>
@@ -369,9 +343,23 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
                 <p className="text-sm text-slate-500 mt-1">Starting at $800</p>
               </div>
             </div>
+            
+            {/* Parts statement */}
+            <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-center">
+              <p className="font-bold text-amber-900" style={{fontSize:'15px',letterSpacing:'0.5px'}}>Parts Are Additional</p>
+            </div>
+
+            {/* Service Notes */}
             <div className="rounded-xl border p-3">
               <p className="font-semibold text-sm">Service Notes</p>
               <p className="text-sm text-slate-600">{serviceEstimate?.notes || 'Issue may be resolved with simple troubleshooting or preventive service.'}</p>
+            </div>
+
+            {/* Trip Fee & Mileage Breakdown — below Parts */}
+            <div className="rounded-xl border bg-slate-50 p-4">
+              <p className="font-semibold">Service Trip Fee</p>
+              <p className="text-3xl font-bold text-accent">${calculatedTripFee.toFixed(2)}</p>
+              <p className="text-xs text-slate-500 mt-1">$75 minimum includes 17 miles. $2.50/mile beyond.</p>
             </div>
             {distanceMiles && Number(distanceMiles) > 0 && (
               <div className="rounded-xl border p-3 text-sm">
