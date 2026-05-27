@@ -1000,14 +1000,39 @@ Powered by Frantz Enterprise`;
 
   if (showSplash) {
     return (
-      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{background:'#0f1f3d'}}>
-        <img src="frantz-logo.jpg" alt="Frantz Locksmith Service" className="h-24 w-auto mb-4 rounded-lg shadow-lg" />
-        <div style={{color:'#d4a843',fontFamily:'Orbitron,monospace',fontWeight:700,fontSize:'14px',letterSpacing:'2px'}}>
+      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center" style={{background:'linear-gradient(160deg, #0f1f3d 0%, #1a3a5c 50%, #0f1f3d 100%)'}}>
+        <style>{`
+          @keyframes zoomSpin {
+            0% { transform: scale(3) rotate(180deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(10deg); opacity: 0.7; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+          }
+          .splash-logo {
+            animation: zoomSpin 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            padding: 16px;
+            width: 96px;
+            height: auto;
+          }
+          @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+          .splash-text { animation: fadeInUp 0.6s 0.6s both; }
+          .splash-sub { animation: fadeInUp 0.6s 0.8s both; }
+          .splash-bar { animation: fadeInUp 0.6s 1.0s both; }
+          @keyframes loadBar {
+            0% { width: 0%; }
+            100% { width: 85%; }
+          }
+          .splash-load { animation: loadBar 1.8s 0.6s cubic-bezier(0.4, 0, 0.2, 1) both; }
+        `}</style>
+        <img src="frantz-logo.jpg" alt="Frantz Locksmith Service" className="splash-logo rounded-xl" style={{boxShadow:'0 0 40px rgba(212,168,67,0.3)'}} />
+        <div className="splash-text" style={{color:'#d4a843',fontFamily:'Orbitron,monospace',fontWeight:700,fontSize:'14px',letterSpacing:'3px',marginTop:'8px'}}>
           SafePulse
         </div>
-        <div style={{color:'#6272a4',fontSize:'12px',marginTop:'12px'}}>Powered by Frantz Enterprise</div>
-        <div className="mt-6 w-32 h-1 rounded-full overflow-hidden" style={{background:'#1a2a4a'}}>
-          <div className="h-full rounded-full animate-pulse" style={{background:'#d4a843',width:'40%'}} />
+        <div className="splash-sub" style={{color:'#6272a4',fontSize:'11px',marginTop:'8px',letterSpacing:'1px'}}>Powered by Frantz Enterprise</div>
+        <div className="splash-bar mt-6 w-40 h-0.5 rounded-full overflow-hidden" style={{background:'#1a2a4a'}}>
+          <div className="splash-load h-full rounded-full" style={{background:'#d4a843'}} />
         </div>
       </div>
     );
