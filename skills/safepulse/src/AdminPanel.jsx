@@ -300,7 +300,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             <TestimonialGallery config={config} />
           )}
           {tab==='dashboard' && (
-            <ClientDashboard config={config} onUpdateConfig={onUpdateConfig} />
+            <ClientDashboard config={config} onUpdateConfig={updateConfig} />
           )}
           {tab==='triagelog' && (
             <TriageHistoryLog config={config} />
