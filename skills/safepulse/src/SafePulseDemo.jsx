@@ -490,14 +490,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           {possibleCauses.length > 0 && <div className="space-y-3"><p className="font-semibold">Possible Causes & Remedies</p>{possibleCauses.map((item, index) => <div key={index} className="rounded-xl border bg-slate-50 p-3"><p className="font-medium">Possible Causes</p><ul className="ml-5 list-disc text-sm">{item.causes.map((cause, causeIndex) => <li key={causeIndex}>{cause}</li>)}</ul><p className="mt-3 font-medium">Suggested Remedy</p><p className="text-sm">{item.remedy}</p><p className="mt-3 font-medium">Possible Parts Needed</p><ul className="ml-5 list-disc text-sm">{item.parts.map((part, partIndex) => <li key={partIndex}>{part}</li>)}</ul></div>)}</div>}
         </div>
         {batteryAttempted && <div className="rounded-2xl border border-blue-300 bg-blue-50 p-4 text-blue-900"><p className="font-semibold">Customer attempted recommended premium batteries.</p><p className="mt-1 text-sm">If the issue continues after installing fresh Duracell Quantum or Energizer batteries, further diagnosis or technician service may be required.</p></div>}
-        <div className="flex gap-2 no-print"><Button onClick={() => { setForm({ ...form, helped: "Yes" }); }}>Advice Helped</Button><Button onClick={() => {
-          const isMulti = config?.company?.companyType === "multi";
-          if (isMulti && config?.company?.technicians?.length > 0) {
-            setShowDispatch(true);
-          } else {
-            sendDispatch(null);
-          }
-        }}>Still Needs Tech</Button></div>
+
       </CardContent>
     </Card>
   );
