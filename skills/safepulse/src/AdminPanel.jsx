@@ -566,6 +566,9 @@ function AdManager({ config, setCfg, setSaved }) {
   const [editingIdx, setEditingIdx] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [cropModal, setCropModal] = useState(null); // { src, aspect, onCrop }
+  const [cropAspect, setCropAspect] = useState('free'); // free | 2:1 | 1.5:1 | 1:1
+  const [cropRect, setCropRect] = useState(null); // { x, y, w, h, imgW, imgH }
 
   const ads = config?.ads || [];
 
@@ -666,6 +669,64 @@ function AdManager({ config, setCfg, setSaved }) {
     return { width: Math.round(pw), height: Math.round(ph) };
   };
 
+  // ── Crop Modal ──
+  const [cropModal, setCropModal] = useState(null);
+  const [cropAspect, setCropAspect] = useState('free');
+  const [cropRect, setCropRect] = useState(null);
+
+  const openCrop = (src) => {
+    const img = new Image();
+    img.onload = () => {
+      const defaultSize = Math.min(img.width, img.height) * 0.8;
+      setCropRect({ x: (img.width - defaultSize) / 2, y: (img.height - defaultSize) / 2, w: defaultSize, h: defaultSize, imgW: img.width, imgH: img.height });
+      setCropModal(src);
+    };
+    img.src = src;
+  };
+
+  const applyCrop = () => {
+    if (!cropModal || !cropRect) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = cropRect.w;
+    canvas.height = cropRect.h;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, cropRect.x, cropRect.y, cropRect.w, cropRect.h, 0, 0, cropRect.w, cropRect.h);
+      setEditForm({...editForm, imageData: canvas.toDataURL('image/jpeg', 0.92), fileName: editForm.fileName});
+      setCropModal(null);
+    };
+    img.src = cropModal;
+  };
+
+  const handleCropMouseDown = (e) => {
+    const imgEl = document.getElementById('crop-image');
+    if (!imgEl || !imgEl.complete) return;
+    const rect = imgEl.getBoundingClientRect();
+    const scaleX = cropRect.imgW / rect.width;
+    const scaleY = cropRect.imgH / rect.height;
+    const startX = (e.clientX - rect.left) * scaleX;
+    const startY = (e.clientY - rect.top) * scaleY;
+
+    const onMove = (ev) => {
+      const curX = Math.max(0, Math.min(cropRect.imgW, (ev.clientX - rect.left) * scaleX));
+      const curY = Math.max(0, Math.min(cropRect.imgH, (ev.clientY - rect.top) * scaleY));
+      let w = Math.abs(curX - startX);
+      let h = Math.abs(curY - startY);
+      if (cropAspect !== 'free') {
+        const parts = cropAspect.split(':');
+        const ar = parseFloat(parts[0]) / parseFloat(parts[1]);
+        h = w / ar;
+      }
+      const x = Math.min(startX, curX);
+      const y = Math.min(startY, curY);
+      setCropRect({ ...cropRect, x: Math.max(0, x), y: Math.max(0, y), w: Math.min(cropRect.imgW - x, w), h: Math.min(cropRect.imgH - y, h) });
+    };
+    const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
@@ -746,10 +807,16 @@ function AdManager({ config, setCfg, setSaved }) {
                           {uploading && <span style={{fontSize:10,color:'#d4a843'}}>⏳</span>}
                         </label>
                         {editForm.imageData && (
-                          <div style={{marginTop:4,position:'relative',display:'inline-block'}}>
-                            <img src={editForm.imageData} alt="ad preview" style={{maxWidth:'100%',maxHeight:100,borderRadius:6,border:'1px solid #2a3a5a'}} />
-                            <button onClick={() => setEditForm({...editForm, imageData: null, fileName: ''})}
-                              style={{position:'absolute',top:-6,right:-6,background:'#ff5555',color:'#fff',border:'none',borderRadius:'50%',width:18,height:18,fontSize:10,cursor:'pointer'}}>✕</button>
+                          <div style={{marginTop:4,display:'flex',alignItems:'flex-start',gap:'6px'}}>
+                            <div style={{position:'relative',display:'inline-block'}}>
+                              <img src={editForm.imageData} alt="ad preview" style={{maxWidth:'100%',maxHeight:100,borderRadius:6,border:'1px solid #2a3a5a'}} />
+                              <button onClick={() => setEditForm({...editForm, imageData: null, fileName: ''})}
+                                style={{position:'absolute',top:-6,right:-6,background:'#ff5555',color:'#fff',border:'none',borderRadius:'50%',width:18,height:18,fontSize:10,cursor:'pointer'}}>✕</button>
+                            </div>
+                            <button onClick={() => openCrop(editForm.imageData)}
+                              style={{padding:'6px 10px',background:'#2a3a5a',border:'1px solid #d4a843',borderRadius:6,color:'#d4a843',fontSize:10,cursor:'pointer',whiteSpace:'nowrap'}}>
+                              ✂ Crop
+                            </button>
                           </div>
                         )}
                       </div>
@@ -825,6 +892,44 @@ function AdManager({ config, setCfg, setSaved }) {
               )}
             </div>
           ))}
+        </div>
+      )}
+    </div>
+
+      {/* ── Crop Modal ── */}
+      {cropModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{background:'rgba(0,0,0,0.85)'}} onClick={() => setCropModal(null)}>
+          <div onClick={e => e.stopPropagation()} style={{background:'#1a2a4a',borderRadius:'16px',padding:'20px',maxWidth:'90vw',maxHeight:'90vh',display:'flex',flexDirection:'column',gap:'12px',border:'1px solid #2a3a5a'}}>
+            <div style={{display:'flex',gap:'8px',alignItems:'center',flexWrap:'wrap'}}>
+              <span style={{fontSize:'11px',fontWeight:600,color:'#94a3b8'}}>Aspect:</span>
+              {['free','2:1','1.5:1','1:1','3:4','9:16'].map(a => (
+                <button key={a} onClick={() => setCropAspect(a)}
+                  style={{
+                    padding:'4px 10px',borderRadius:'6px',border:'1px solid ' + (cropAspect === a ? '#d4a843' : '#2a3a5a'),
+                    background: cropAspect === a ? '#d4a843' : 'transparent',
+                    color: cropAspect === a ? '#0a1628' : '#94a3b8',
+                    fontWeight:700,fontSize:'10px',cursor:'pointer'
+                  }}>{a === 'free' ? 'Free' : a}</button>
+              ))}
+            </div>
+            <div style={{position:'relative',overflow:'hidden',borderRadius:'8px',border:'1px solid #2a3a5a',maxHeight:'60vh',maxWidth:'80vw',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <img id="crop-image" src={cropModal} alt="crop" style={{maxWidth:'100%',maxHeight:'55vh',objectFit:'contain',cursor:'crosshair'}} onMouseDown={handleCropMouseDown} />
+              {cropRect && (
+                <div style={{
+                  position:'absolute',left: (cropRect.x / cropRect.imgW * 100) + '%', top: (cropRect.y / cropRect.imgH * 100) + '%',
+                  width: (cropRect.w / cropRect.imgW * 100) + '%', height: (cropRect.h / cropRect.imgH * 100) + '%',
+                  border:'2px dashed #d4a843', background:'rgba(212,168,67,0.08)', pointerEvents:'none',
+                  boxSizing:'border-box'
+                }} />
+              )}
+            </div>
+            <div style={{display:'flex',gap:'8px',justifyContent:'flex-end'}}>
+              <button onClick={() => setCropModal(null)}
+                style={{padding:'8px 16px',borderRadius:'8px',border:'1px solid #2a3a5a',background:'transparent',color:'#94a3b8',fontWeight:600,fontSize:'11px',cursor:'pointer'}}>Cancel</button>
+              <button onClick={applyCrop}
+                style={{padding:'8px 16px',borderRadius:'8px',border:'none',background:'#d4a843',color:'#0a1628',fontWeight:700,fontSize:'11px',cursor:'pointer'}}>✂ Apply Crop</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
