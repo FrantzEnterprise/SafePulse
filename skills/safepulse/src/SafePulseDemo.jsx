@@ -453,7 +453,7 @@ function PhotoUpload({ uploadedPhotos, setUploadedPhotos, showPhotoUpload, setSh
   );
 }
 
-function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel, uploadedPhotos, photoSummary, distanceMiles, setShowDispatch, sendDispatch }) {
+function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk, dispatchType, serviceEstimate, calculatedTripFee, possibleCauses, batteryAttempted, form, setForm, config, triageHistory, getSymptomLabel, uploadedPhotos, photoSummary, distanceMiles, setShowDispatch, sendDispatch, setShowReview }) {
   const riskBannerStyles = {
     Low: "bg-green-100 border-green-300 text-green-800",
     Medium: "bg-yellow-100 border-yellow-300 text-yellow-800",
@@ -491,6 +491,17 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
         </div>
         {batteryAttempted && <div className="rounded-2xl border border-blue-300 bg-blue-50 p-4 text-blue-900"><p className="font-semibold">Customer attempted recommended premium batteries.</p><p className="mt-1 text-sm">If the issue continues after installing fresh Duracell Quantum or Energizer batteries, further diagnosis or technician service may be required.</p></div>}
 
+        {/* ── Review Button — inside TriageResults container, above ads ── */}
+        <button onClick={() => { setForm({ ...form, helped: "Yes" }); setShowReview(true); }}
+          style={{
+            width:'100%', padding:'14px 12px', borderRadius:'10px',
+            border:'none', background:'linear-gradient(135deg, #1a3a5c, #2a5a8c)',
+            color:'#d4a843', fontWeight:800, fontSize:'16px', cursor:'pointer',
+            letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
+            boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
+          }}>
+          ✨ Did Our Advice Solve The Issue? Click Here
+        </button>
       </CardContent>
     </Card>
   );
@@ -1405,21 +1416,9 @@ Powered by Frantz Enterprise`;
             )}
 
             {/* Full Tech Report (scrollable) — with embedded risk display */}
-            <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
+            <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} setShowReview={setShowReview} />
 
-            {/* ── Review Button — below Service Notes card, above ads ── */}
-            <button onClick={() => { setForm({ ...form, helped: "Yes" }); setShowReview(true); }}
-              style={{
-                width:'100%', padding:'14px 12px', borderRadius:'10px',
-                border:'none', background:'linear-gradient(135deg, #1a3a5c, #2a5a8c)',
-                color:'#d4a843', fontWeight:800, fontSize:'16px', cursor:'pointer',
-                letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
-                boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
-              }}>
-              ✨ Did Our Advice Solve The Issue? Click Here
-            </button>
-
-            {/* Ad Placeholders — below review button */}
+            {/* Ad Placeholders */}
             <AdZone config={config} />
           </div>
         </div>
