@@ -979,6 +979,9 @@ function AdZone({ config }) {
   return (
     <div>
       {showPopup && <AdPopup onClose={() => setShowPopup(false)} />}
+      <p style={{fontSize:'8px',color:'#6272a4',textAlign:'center',marginBottom:'2px',fontStyle:'italic',letterSpacing:'0.5px'}}>
+        ⚡ Paid Advertisements ⚡
+      </p>
       <div style={{display:'flex',flexDirection:'column',gap:'6px',padding:'0 4px',width:'100%',boxSizing:'border-box'}}>
         {slots.map((ad, idx) => (
           <div key={idx} style={{width:'100%'}}>
