@@ -471,14 +471,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
           </div>
           <p className="mt-2 text-sm font-medium">{risk.advice}</p>
         </div>
-        <div className="flex gap-2 no-print mb-4"><Button onClick={() => { setForm({ ...form, helped: "Yes" }); }}>Advice Helped</Button><Button onClick={() => {
-          const isMulti = config?.company?.companyType === 'multi';
-          if (isMulti && config?.company?.technicians?.length > 0) {
-            setShowDispatch(true);
-          } else {
-            sendDispatch(null);
-          }
-        }}>Still Needs Tech</Button></div>
+
         <div className="rounded-2xl bg-white p-4 space-y-3">
           <div><p className="font-semibold">General Recommendation</p><p>{risk.advice}</p></div>
           {symptomRecommendations.length > 0 && <div><p className="font-semibold">Symptom Analysis</p><ul className="ml-5 list-disc text-sm space-y-2">{symptomRecommendations.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
@@ -738,7 +731,7 @@ function MapCalculatorModal({ distanceMiles, setDistanceMiles, calculatedTripFee
 }
 
 /* ──────── Right-Column: Navigation Bar ──────── */
-function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setShowDispatch, isLastStep }) {
+function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setShowDispatch, isLastStep, setShowReview, setForm, form }) {
   return (
     <div style={{background:'#e8edf5',border:'1px solid #b0c4de',borderRadius:'12px',padding:'12px',boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
       <div style={{display:'flex',gap:'4px',marginBottom:'10px'}}>
@@ -781,6 +774,17 @@ function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setS
           </button>
         )}
       </div>
+      {/* Advice Helped — large elegant button below nav */}
+      <button onClick={() => { setForm({ ...form, helped: "Yes" }); setShowReview(true); }}
+        style={{
+          width:'100%', marginTop:'10px', padding:'14px 0', borderRadius:'10px',
+          border:'none', background:'linear-gradient(135deg, #1a3a5c, #2a5a8c)',
+          color:'#d4a843', fontWeight:800, fontSize:'16px', cursor:'pointer',
+          letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
+          boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
+        }}>
+        ✨ Advice Helped?
+      </button>
     </div>
   );
 }
@@ -827,6 +831,55 @@ function RiskMeterCard({ score, risk }) {
 
 /* ──────── Right-Column: Ad Placeholders ──────── */
 /* ──────── Ad Popup Modal ──────── */
+/* ──────── Review Popup ──────── */
+function ReviewPopup({ onClose }) {
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{background:'rgba(0,0,0,0.75)',backdropFilter:'blur(4px)'}} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()}
+        style={{
+          background:'#1a3a5c', borderRadius:'20px', padding:'40px 30px', textAlign:'center',
+          maxWidth:'340px', width:'90%',
+          boxShadow:'0 20px 60px rgba(0,0,0,0.5)',
+          animation:'adpopupBounce 0.4s ease-out'
+        }}>
+        <div style={{fontSize:'36px',marginBottom:'8px'}}>⭐</div>
+        <div style={{
+          fontFamily:"'Orbitron',monospace", fontSize:'22px', fontWeight:800,
+          color:'#d4a843', letterSpacing:'1px', marginBottom:'16px'
+        }}>
+          Leave A Review
+        </div>
+        <div style={{display:'flex',justifyContent:'center',gap:'12px',marginBottom:'20px',flexWrap:'wrap'}}>
+          {/* Google */}
+          <a href="https://g.page/r/Cb-BPkeRo65MEAg/review" target="_blank" rel="noopener"
+            style={{padding:'10px 14px',background:'#fff',borderRadius:'10px',textDecoration:'none',fontWeight:700,fontSize:'13px',color:'#1a3a5c'}}>
+            <span style={{marginRight:6}}>🔴</span>Google
+          </a>
+          {/* Yelp */}
+          <a href="https://www.yelp.com/writeareview" target="_blank" rel="noopener"
+            style={{padding:'10px 14px',background:'#fff',borderRadius:'10px',textDecoration:'none',fontWeight:700,fontSize:'13px',color:'#1a3a5c'}}>
+            <span style={{marginRight:6}}>📕</span>Yelp
+          </a>
+          {/* Facebook */}
+          <a href="https://www.facebook.com" target="_blank" rel="noopener"
+            style={{padding:'10px 14px',background:'#fff',borderRadius:'10px',textDecoration:'none',fontWeight:700,fontSize:'13px',color:'#1a3a5c'}}>
+            <span style={{marginRight:6}}>👍</span>Facebook
+          </a>
+        </div>
+        <button onClick={onClose}
+          style={{
+            padding:'12px 24px', borderRadius:'10px', border:'2px solid #d4a843',
+            background:'transparent', color:'#d4a843', fontWeight:800, fontSize:'16px',
+            fontFamily:"'Orbitron',monospace", cursor:'pointer', width:'100%'
+          }}>
+          Close App
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ──────── Ad Popup ──────── */
 function AdPopup({ onClose }) {
   const [stage, setStage] = useState(0);
   const messages = [
@@ -958,6 +1011,7 @@ export default function SafeTriageDemo() {
   const [showResultModal, setShowResultModal] = useState(false);
   const [lastSelectedSymptom, setLastSelectedSymptom] = useState(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showReview, setShowReview] = useState(false);
   const [showDispatch, setShowDispatch] = useState(false);
   const [dispatchTech, setDispatchTech] = useState(null);
   const [customPopupData, setCustomPopupData] = useState(null);
@@ -1318,6 +1372,7 @@ Powered by Frantz Enterprise`;
             <CustomerNavBar step={customerStep} goToStep={goToCustomerStep} totalSteps={6}
               sendDispatch={sendDispatch} config={config} setShowDispatch={setShowDispatch}
               isLastStep={customerStep === 6}
+              setShowReview={setShowReview} setForm={setForm} form={form}
             />
 
             {/* Desktop: Copy / Email / Save — visible when report is ready */}
@@ -1421,6 +1476,7 @@ Powered by Frantz Enterprise`;
       </div>
       {lockedForService && <ServiceLockoutModal />}
       {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
+      {showReview && <ReviewPopup onClose={() => setShowReview(false)} />}
       {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
       {customPopupData && <CustomPopupModal data={customPopupData} onClose={() => setCustomPopupData(null)} />}
       {showResultModal && lastSelectedSymptom && (
