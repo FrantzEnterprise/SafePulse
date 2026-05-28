@@ -1059,6 +1059,7 @@ function SafeTriageDemo() {
   const [dispatchEmailSent, setDispatchEmailSent] = useState(false);
   const [dispatchDone, setDispatchDone] = useState(false);
   const [dispatchSending, setDispatchSending] = useState(false);
+  const [customPopupData, setCustomPopupData] = useState(null);
 
   // Feature-gating: respect config feature toggles from Admin panel
   useEffect(() => {
