@@ -3,6 +3,7 @@ import SymptomEditor from './SymptomEditor';
 import SocialComposer from './SocialComposer';
 import TestimonialGallery from './TestimonialGallery';
 import TriageHistoryLog from './TriageHistoryLog';
+import ClientDashboard from './ClientDashboard';
 
 const TABS = [
   { id:'branding', label:'Branding', icon:'🎨' },
@@ -12,6 +13,7 @@ const TABS = [
   { id:'social', label:'Social', icon:'📢' },
   { id:'testimonials', label:'Testimonials', icon:'🎬' },
   { id:'triagelog', label:'Triage Log', icon:'📜' },
+  { id:'dashboard', label:'Clients', icon:'🗂️' },
   { id:'qa', label:'Q&A', icon:'💡' },
   { id:'ads', label:'Ads', icon:'📢' },
   { id:'reviews', label:'Reviews', icon:'⭐' },
@@ -296,6 +298,9 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
           )}
           {tab==='testimonials' && (
             <TestimonialGallery config={config} />
+          )}
+          {tab==='dashboard' && (
+            <ClientDashboard config={config} onUpdateConfig={onUpdateConfig} />
           )}
           {tab==='triagelog' && (
             <TriageHistoryLog config={config} />
