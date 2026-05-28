@@ -24,6 +24,7 @@ function buildDefaultSymptomGroups() {
         { id: "dial_loose_spin", label: "Dial is loose, seems to spin too easy and will not engage to open", points: 30, recommendation: "Dial loose from wear — try pulling dial toward you while dialing. If it opens, leave it open and call technician.", causes: ["Hard usage wear", "Long-term wear", "Drive cam worn", "Engagement teeth stripped"], remedy: "Try pulling the dial toward you while you dial. You may feel it pick up the wheels and get it open. If it opens, leave it open and call technician to service the lock.", note: "This is not a good sign and indicates wear, either from hard, rough and/or long time usage.", parts: ["Replacement dial", "Drive cam assembly", "Lock case rebuild kit"] },
         { id: "dial_drag", label: "Dialing the combination, it does not unlock easily and have to dial it multiple times to unlock it", points: 20, recommendation: "Dial not unlocking easily — try dialing slightly over/under target number. Wear will worsen over time.", causes: ["Lock wear from age", "Wheel pack friction", "Dried lubrication", "Spindle misalignment"], remedy: "Check dialing sequence first. Try dialing slightly over/under target number, or wiggle dial if it skips past engagement. This condition worsens over time — technician needed.", note: "If you're dialing the sequence correctly, this is usually caused by wear, your lock will need servicing to repair it.", parts: ["Lock case service kit", "Lubrication/graphite", "Wheel pack bushings"] },
         { id: "dial_lost_combo", label: "Lost or forgotten combination, probate, damaged in a burglary, or simply a broken dial lock", points: 40, recommendation: "Lost combination or broken dial lock — technician required to open and repair.", causes: ["Lost combination", "Forgotten combination", "Probate/estate safe", "Burglary damage", "Broken dial lock"], remedy: "You will need to call the technician to open and repair the safe. A skilled safe technician can get through this, possibly without any damage.", note: "Those are always difficult issues, I'm sorry you have to go through this.", parts: ["Dial removal tools", "Replacement lock", "Safe opening tools"] },
+        { id: "dial_forgot_combo", label: "I forgot how to dial my combination!", points: 10, recommendation: "We understand it is confusing. Follow the exact dialing sequence provided. Left = counter-clockwise (numbers increase). Right = clockwise (numbers decrease). If you pass a target number you must start over.", causes: ["Confusing dialing direction", "Passing the target number", "Wrong sequence used"], remedy: "Rules:\nLeft is counter clockwise, when you dial left the numbers on the dial increases.\nRight is clockwise, when you dial right the numbers on the dial decreases.\nAny time you pass a number, no matter how close to the last number, it counts as one. {This is the number 1 mistake people make,}\nIf you pass your target number you cannot go back, you must start over.\n\nThe Sequence\nDial your 1st number 4 times to the Left\nDial your 2nd number 3 times to the Right\nDial your 3rd number 2 times to the Left\nDial to the right until you feel it engage and continue until you hit a dead stop. Usually between 85 and 95.\nTurn your handle to open\n\nSome safes have a more simple sequence\nDial your 1st number 3 times to the Right\nDial your 2nd number 2 times to the Left\nDial your 3rd number 1 time to the Right\nTurn your handle to open\n\nSome are the exact reverse sequence\nDial your 1st number 3 times to the Left\nDial Your 2nd number 2 times to the right\nDial your 3rd number 1 time to the Left\nTurn your handle to open", note: "I forgot how to dial is the most common issue people face with mechanical dial locks. Follow these sequences carefully and make sure you stop exactly on each target number.", parts: ["Practice dial", "Combination card", "Pen and paper to write down numbers"] },
       ],
     },
     {
@@ -44,7 +45,6 @@ function buildDefaultSymptomGroups() {
         { id: "handle_resistance", label: "My handle moves a little bit and I feel resistance when trying to open it", points: 25, recommendation: "Handle has resistance — push on door while slowly moving handle to open. Stop if no progress.", causes: ["Door sag misalignment", "Bolt drag on frame", "Rust or debris in bolt path"], remedy: "Apply pressure to the door while slowly moving the handle to open. If the safe is open, check the bolt alignment. If it does not open, stop trying and call the technician.", note: "Keep trying gently while pushing on the door. This often works for door sag or bolt drag.", parts: ["Lubricant spray", "Door alignment shims"], triggersBatteryPopup: false, triggersDamageWarning: true, showPopupOnSelect: false, popupTitle: "", popupMessage: "" },
         { id: "door_stops_partial", label: "When opening the safe the door only comes open a little bit and stops", points: 35, recommendation: "Door only opens partway — likely severed bolt connection. Call technician immediately. Do not force.", causes: ["Broken internal bolt connection", "Detached bolt-work link", "Obstruction behind bolts"], remedy: "Do not force the door open further. This usually indicates a broken bolt connection. Call a technician immediately.", note: "This could mean a severed connection between the handle or lock to the bolts.", parts: ["Bolt-work repair kit", "Relock trigger assembly"], triggersBatteryPopup: false, triggersDamageWarning: true, showPopupOnSelect: false, popupTitle: "", popupMessage: "" },
         { id: "cannot_lock_safe", label: "I cannot lock my safe! I close it and throw the bolts but they will not lock in place", points: 20, recommendation: "Cannot lock — check for obstruction blocking bolts. Open door 90°, release bolt detent, extend bolts fully.", causes: ["Obstruction in bolt path", "Bolt detent not engaging", "Alignment shift"], remedy: "Check for any obstruction where the bolts extend. Open the door 90°, release the bolt detent, and extend the bolts fully to verify they move freely.", note: "Make sure nothing is blocking the bolts from fully extending.", parts: ["Bolt lubricant", "Replacement detent spring"] },
-        { id: "dial_forgot_combo", label: "I forgot how to dial my combination!", points: 10, recommendation: "We understand it is confusing. Follow the exact dialing sequence provided. Left = counter-clockwise (numbers increase). Right = clockwise (numbers decrease). If you pass a target number you must start over.", causes: ["Confusing dialing direction", "Passing the target number", "Wrong sequence used"], remedy: "Rules:\nLeft is counter clockwise, when you dial left the numbers on the dial increases.\nRight is clockwise, when you dial right the numbers on the dial decreases.\nAny time you pass a number, no matter how close to the last number, it counts as one. {This is the number 1 mistake people make,}\nIf you pass your target number you cannot go back, you must start over.\n\nThe Sequence\nDial your 1st number 4 times to the Left\nDial your 2nd number 3 times to the Right\nDial your 3rd number 2 times to the Left\nDial to the right until you feel it engage and continue until you hit a dead stop. Usually between 85 and 95.\nTurn your handle to open\n\nSome safes have a more simple sequence\nDial your 1st number 3 times to the Right\nDial your 2nd number 2 times to the Left\nDial your 3rd number 1 time to the Right\nTurn your handle to open\n\nSome are the exact reverse sequence\nDial your 1st number 3 times to the Left\nDial Your 2nd number 2 times to the right\nDial your 3rd number 1 time to the Left\nTurn your handle to open", note: "I forgot how to dial is the most common issue people face with mechanical dial locks. Follow these sequences carefully and make sure you stop exactly on each target number.", parts: ["Practice dial", "Combination card", "Pen and paper to write down numbers"] },
       ],
     },
     {
@@ -564,7 +564,7 @@ function InstructionsModal({ onClose }) {
   );
 }
 
-function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
+function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose, setShowReview }) {
   if (!symptomData) return null;
   const modalContent = (
     <div className="rounded-2xl bg-white p-5 shadow-xl max-h-full overflow-y-auto">
@@ -594,8 +594,21 @@ function SymptomResultModal({ symptomId, symptomData, symptomLabel, onClose }) {
         <p className="font-semibold text-base mb-2">Suggested Remedy</p>
         <p className="text-sm text-green-900" style={{whiteSpace:'pre-line'}}>{symptomData.remedy}</p>
       </div>
+      {/* Review button inside solution popup */}
+      <div className="mt-4 flex justify-center">
+        <button onClick={() => { if (setShowReview) setShowReview(true); }}
+          style={{
+            width:'100%', padding:'14px 10px', borderRadius:'10px',
+            border:'none', background:'linear-gradient(135deg, #1a3a5c, #2a5a8c)',
+            color:'#d4a843', fontWeight:800, fontSize:'14px', cursor:'pointer',
+            letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
+            boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
+          }}>
+          ✨ Did Our Advice Solve The Issue? Click Here
+        </button>
+      </div>
       {/* Bottom return button */}
-      <div className="mt-6 flex justify-center">
+      <div className="mt-4 flex justify-center">
         <button onClick={onClose} className="w-full max-w-xs rounded-xl bg-blue-600 text-accent py-3 text-base font-bold hover:bg-blue-700 shadow transition-colors">
           ← Return to Symptom Selection
         </button>
@@ -1494,6 +1507,7 @@ Powered by Frantz Enterprise`;
           symptomData={possibleCauseLibrary[lastSelectedSymptom]}
           symptomLabel={getSymptomLabel(lastSelectedSymptom)}
           onClose={() => { setShowResultModal(false); setLastSelectedSymptom(null); }}
+          setShowReview={setShowReview}
         />
       )}
       {showInstructions && <InstructionsModal onClose={() => setShowInstructions(false)} />}
