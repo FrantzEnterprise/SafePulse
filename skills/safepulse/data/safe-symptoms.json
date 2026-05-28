@@ -12,6 +12,7 @@
     "dial_loose_spin",
     "dial_drag",
     "dial_lost_combo",
+    "dial_forgot_combo",
     "keypad_no_response",
     "repeating_beep_timeout",
     "keys_not_register",
@@ -30,6 +31,7 @@
   "severity_map": {
     "dial_stuck": "critical",
     "dial_lost_combo": "critical",
+    "dial_forgot_combo": "low",
     "handle_spins_no_release": "critical",
     "door_stops_partial": "critical",
     "click_no_release": "critical",
@@ -54,6 +56,7 @@
     "dial_loose_spin": "Dial is loose, seems to spin too easy and will not engage to open",
     "dial_drag": "Dialing the combination, it does not unlock easily and have to dial it multiple times to unlock it",
     "dial_lost_combo": "Lost or forgotten combination, probate, damaged in a burglary, or simply a broken dial lock",
+    "dial_forgot_combo": "I forgot how to dial my combination!",
     "keypad_no_response": "My keypad does not respond when I touch a key",
     "repeating_beep_timeout": "I put my combination in 3 times or more and now it beeps every 10 or 15 seconds",
     "keys_not_register": "Some of my keys do not register when I push them",
