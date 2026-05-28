@@ -27,6 +27,16 @@ export function useConfig() {
     return { ...defaultConfig };
   });
 
+  // On first-ever load, seed localStorage with defaults so refresh survives
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('safepulse_config');
+      if (!saved) {
+        localStorage.setItem('safepulse_config', JSON.stringify(config));
+      }
+    } catch (e) { /* ignore */ }
+  }, []);
+
   const [loaded, setLoaded] = useState(true);
 
   const updateConfig = (patch) => {
