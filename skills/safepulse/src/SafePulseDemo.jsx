@@ -783,7 +783,7 @@ function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setS
           letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
           boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
         }}>
-        ✨ Advice Helped?
+        ✨ Did Our Advice Solve The Issue? Click Here
       </button>
     </div>
   );
