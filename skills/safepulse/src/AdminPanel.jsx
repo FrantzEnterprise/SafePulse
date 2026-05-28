@@ -566,9 +566,6 @@ function AdManager({ config, setCfg, setSaved }) {
   const [editingIdx, setEditingIdx] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [uploading, setUploading] = useState(false);
-  const [cropModal, setCropModal] = useState(null); // { src, aspect, onCrop }
-  const [cropAspect, setCropAspect] = useState('free'); // free | 2:1 | 1.5:1 | 1:1
-  const [cropRect, setCropRect] = useState(null); // { x, y, w, h, imgW, imgH }
 
   const ads = config?.ads || [];
 
@@ -894,9 +891,8 @@ function AdManager({ config, setCfg, setSaved }) {
           ))}
         </div>
       )}
-    </div>
 
-      {/* ── Crop Modal ── */}
+      {/* Crop Modal — INSIDE wrapper div */}
       {cropModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{background:'rgba(0,0,0,0.85)'}} onClick={() => setCropModal(null)}>
           <div onClick={e => e.stopPropagation()} style={{background:'#1a2a4a',borderRadius:'16px',padding:'20px',maxWidth:'90vw',maxHeight:'90vh',display:'flex',flexDirection:'column',gap:'12px',border:'1px solid #2a3a5a'}}>
