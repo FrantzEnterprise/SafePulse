@@ -469,7 +469,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
             <div className="text-2xl font-bold">{risk.level === "Low" && "✓ LOW RISK"}{risk.level === "Medium" && "⚠ MODERATE RISK"}{risk.level === "High" && "⚠ HIGH RISK"}{risk.level === "Urgent" && "⛔ URGENT CONDITION"}</div>
             <div className="text-3xl font-bold" style={{color: score >= 75 ? '#dc2626' : score >= 50 ? '#ea580c' : score >= 25 ? '#ca8a04' : '#16a34a'}}>{score}/100</div>
           </div>
-          <p className="mt-2 text-sm font-medium">{risk.advice}</p>
+          <p className="mt-2 text-sm font-medium" style={{color:'#475569'}}>{score < 25 ? "You're Looking Good So Far" : score < 50 ? 'You should be concerned and have that looked at should the issue become more serious' : score < 80 ? 'Your issues are serious and you should schedule a service soon' : "⚠️ You Really Need To Contact A Qualified Expert Safe Technician Immediately!"}</p>
         </div>
 
         <div className="space-y-3" style={{marginBottom:'16px'}}>
