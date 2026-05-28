@@ -767,17 +767,6 @@ function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setS
           </button>
         )}
       </div>
-      {/* Advice Helped — large elegant button below nav */}
-      <button onClick={() => { setForm({ ...form, helped: "Yes" }); setShowReview(true); }}
-        style={{
-          width:'100%', marginTop:'10px', padding:'14px 0', borderRadius:'10px',
-          border:'none', background:'linear-gradient(135deg, #1a3a5c, #2a5a8c)',
-          color:'#d4a843', fontWeight:800, fontSize:'16px', cursor:'pointer',
-          letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
-          boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
-        }}>
-        ✨ Did Our Advice Solve The Issue? Click Here
-      </button>
     </div>
   );
 }
@@ -968,8 +957,12 @@ function AdZone({ config }) {
   return (
     <div>
       {showPopup && <AdPopup onClose={() => setShowPopup(false)} />}
-      <div style={{display:'flex',gap:'6px'}}>
-        {slots.map((ad, idx) => renderAdBox(ad, idx))}
+      <div style={{display:'flex',flexDirection:'column',gap:'6px',padding:'0 4px',width:'100%',boxSizing:'border-box'}}>
+        {slots.map((ad, idx) => (
+          <div key={idx} style={{width:'100%'}}>
+            {renderAdBox(ad, idx)}
+          </div>
+        ))}
       </div>
       <p style={{fontSize:'9px',color:'#6272a4',textAlign:'center',marginTop:'6px',fontStyle:'italic'}}>
         Have a related product? Call (916) 534-4900 to place your ad here.
@@ -1410,6 +1403,23 @@ Powered by Frantz Enterprise`;
                 </div>
               </div>
             )}
+
+            {/* ── Review Button — standalone between actions and TriageResults ── */}
+            {(() => {
+              const ReviewBtn = ({ c, f, sf, sr }) => (
+                <button onClick={() => { sf({ ...f, helped: "Yes" }); sr(true); }}
+                  style={{
+                    width:'100%', padding:'14px 12px', borderRadius:'10px',
+                    border:'none', background:'linear-gradient(135deg, #1a3a5c, #2a5a8c)',
+                    color:'#d4a843', fontWeight:800, fontSize:'16px', cursor:'pointer',
+                    letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
+                    boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
+                  }}>
+                  ✨ Did Our Advice Solve The Issue? Click Here
+                </button>
+              );
+              return <ReviewBtn c={config} f={form} sf={setForm} sr={setShowReview} />;
+            })()}
 
             {/* Full Tech Report (scrollable) — with embedded risk display */}
             <TriageResults score={score} risk={risk} symptomRecommendations={symptomRecommendations} customerDamageRisk={customerDamageRisk} dispatchType={dispatchType} serviceEstimate={serviceEstimate} calculatedTripFee={calculatedTripFee} possibleCauses={possibleCauses} batteryAttempted={batteryAttempted} form={form} setForm={setForm} triageHistory={triageHistory} getSymptomLabel={getSymptomLabel} config={config} uploadedPhotos={uploadedPhotos} photoSummary={photoSummary} distanceMiles={distanceMiles} setShowDispatch={setShowDispatch} sendDispatch={sendDispatch} />
