@@ -993,7 +993,7 @@ function AdZone({ config }) {
         ))}
       </div>
       <p style={{fontSize:'22px',color:'#6272a4',textAlign:'center',marginTop:'6px',fontStyle:'italic',fontWeight:600}}>
-        Have a related product? Call (916) 534-4900 to place your ad here.
+        Have a related Business and/or Product? Call (916) 534-4900 to place your ad here.
       </p>
     </div>
   );
