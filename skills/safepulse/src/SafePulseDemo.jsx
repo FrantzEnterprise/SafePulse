@@ -979,7 +979,7 @@ function AdZone({ config }) {
   return (
     <div>
       {showPopup && <AdPopup onClose={() => setShowPopup(false)} />}
-      <p style={{fontSize:'11px',color:'#6272a4',textAlign:'center',marginBottom:'4px',fontStyle:'italic',letterSpacing:'0.5px',fontWeight:600}}>
+      <p style={{fontSize:'19px',color:'#6272a4',textAlign:'center',marginBottom:'4px',fontStyle:'italic',letterSpacing:'0.5px',fontWeight:600}}>
         ⚡ Paid Advertisements ⚡
       </p>
       <div style={{display:'flex',flexDirection:'column',gap:'6px',padding:'0 4px',width:'100%',boxSizing:'border-box'}}>
@@ -989,7 +989,7 @@ function AdZone({ config }) {
           </div>
         ))}
       </div>
-      <p style={{fontSize:'11px',color:'#6272a4',textAlign:'center',marginTop:'6px',fontStyle:'italic',fontWeight:600}}>
+      <p style={{fontSize:'22px',color:'#6272a4',textAlign:'center',marginTop:'6px',fontStyle:'italic',fontWeight:600}}>
         Have a related product? Call (916) 534-4900 to place your ad here.
       </p>
     </div>
