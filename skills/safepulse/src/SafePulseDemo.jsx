@@ -967,7 +967,7 @@ function AdZone({ config }) {
       // Empty placeholder
       return (
         <div key={`empty-${idx}`} onClick={() => setShowPopup(true)}
-          style={{flex:1,background:'#0f1f3d',border:'1px dashed #d4a843',borderRadius:'8px',padding:idx === 0 ? '10px' : '10px',textAlign:'center',minHeight:'80px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',cursor:'pointer',transition:'0.15s'}}
+          style={{flex:1,background:'#0f1f3d',border:'1px dashed #d4a843',borderRadius:'8px',padding:idx === 0 ? '10px' : '10px',textAlign:'center',minHeight:'140px',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',cursor:'pointer',transition:'0.15s'}}
           onMouseEnter={e => e.currentTarget.style.background = '#1a2a4a'}
           onMouseLeave={e => e.currentTarget.style.background = '#0f1f3d'}>
           <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Click Here</span>
@@ -983,7 +983,7 @@ function AdZone({ config }) {
       <div key={ad.id || idx} onClick={() => { if (ad.linkUrl) window.open(ad.linkUrl, '_blank'); else setShowPopup(true); }}
         style={{
           flex:1, background:'#0f1f3d', border:'1px solid #2a3a5a', borderRadius:'8px',
-          padding:'8px', textAlign:'center', minHeight:'80px',
+          padding:'8px', textAlign:'center', minHeight:'140px',
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
           cursor:'pointer', transition:'0.15s'
         }}
@@ -992,8 +992,8 @@ function AdZone({ config }) {
         {hasAbove && ad.captionAbove && (
           <div style={{fontSize:'9px',fontWeight:600,color:'#d4a843',marginBottom:'4px',lineHeight:1.2}}>{ad.captionAbove}</div>
         )}
-        {ad.imageData ? (
-          <img src={ad.imageData} alt="ad" style={{width:'100%',borderRadius:'6px',display:'block'}} />
+        {(ad.imageData || ad.imageUrl) ? (
+          <img src={ad.imageData || ad.imageUrl} alt="ad" style={{width:'100%',borderRadius:'6px',display:'block'}} />
         ) : (
           <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Click Here</span>
         )}
