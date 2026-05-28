@@ -24,30 +24,23 @@ export function useConfig() {
         return deepMerge(defaultConfig, JSON.parse(saved));
       }
     } catch (e) { /* ignore */ }
-    return defaultConfig;
+    return { ...defaultConfig };
   });
 
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    // Try fetching a custom config.json from the server (for deployment)
-    fetch('./config.json')
-      .then(r => r.ok ? r.json() : null)
-      .then(serverConfig => {
-        if (serverConfig) {
-          const merged = deepMerge(defaultConfig, serverConfig);
-          setConfig(merged);
-        }
-        setLoaded(true);
-      })
-      .catch(() => {
-        // Fallback: use default or localStorage
-        setLoaded(true);
-      });
-  }, []);
+  const [loaded, setLoaded] = useState(true);
 
   const updateConfig = (patch) => {
-    const newConfig = { ...config, ...patch };
+    const newConfig = deepMerge(config, patch);
+    setConfig(newConfig);
+    try {
+      localStorage.setItem('safepulse_config', JSON.stringify(newConfig));
+    } catch (e) { /* ignore */ }
+  };
+
+  const updateDeep = (path, key, val) => {
+    const newConfig = { ...config };
+    if (!newConfig[path]) newConfig[path] = {};
+    newConfig[path] = { ...newConfig[path], [key]: val };
     setConfig(newConfig);
     try {
       localStorage.setItem('safepulse_config', JSON.stringify(newConfig));
@@ -72,5 +65,5 @@ export function useConfig() {
     '--radius-lg': config.branding.borderRadiusLg || '12px',
   };
 
-  return { config, loaded, updateConfig, cssVars };
+  return { config, loaded, updateConfig, updateDeep, cssVars };
 }

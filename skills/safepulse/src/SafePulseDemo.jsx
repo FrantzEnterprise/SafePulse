@@ -1033,7 +1033,7 @@ function AdZone({ config }) {
 }
 
 function SafeTriageDemo() {
-  const { config, loaded, updateConfig, cssVars } = useConfig();
+  const { config, loaded, updateConfig, updateDeep, cssVars } = useConfig();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
   const [showSplash, setShowSplash] = useState(true);
   const [showAdmin, setShowAdmin] = useState(() => new URLSearchParams(window.location.search).get('admin') === 'true');
@@ -1354,7 +1354,7 @@ Powered by Frantz Enterprise`;
   if (showAdmin) {
     return (
       <div>
-        <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />
+        <AdminPanel config={config} updateConfig={updateConfig} updateDeep={updateDeep} onClose={() => setShowAdmin(false)} />
       </div>
     );
   }

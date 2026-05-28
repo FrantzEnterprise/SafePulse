@@ -34,7 +34,7 @@ function LabelledInput({ label, value, onChange, placeholder, type, step, inputC
   );
 }
 
-export default function AdminPanel({ config, updateConfig, onClose }) {
+export default function AdminPanel({ config, updateConfig, updateDeep, onClose }) {
   const [tab, setTab] = useState('branding');
   const [cfg, setCfg] = useState(() => JSON.parse(JSON.stringify(config)));
   const [saved, setSaved] = useState(false);
