@@ -1,8 +1,27 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, Component } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useConfig } from "./useConfig";
 import AdminPanel from "./AdminPanel";
+
+class ErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { error: null, info: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidCatch(error, info) { this.setState({ info }); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{padding:40,textAlign:'center',fontFamily:'sans-serif',background:'#0f172a',minHeight:'100vh',color:'#fff'}}>
+          <h1 style={{color:'#ef4444'}}>🔐 SafeTriage — Render Error</h1>
+          <p style={{color:'#ef4444',marginTop:20}}>{this.state.error.toString()}</p>
+          <p style={{color:'#94a3b8',marginTop:10,fontSize:12}}>{this.state.info?.componentStack || ''}</p>
+          <button onClick={() => window.location.reload()} style={{marginTop:20,background:'#d4a843',color:'#1a3a5c',border:'none',padding:'12px 24px',borderRadius:8,fontWeight:'bold',cursor:'pointer'}}>Reload</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 import LoginModal from "./LoginModal";
 import { isLoggedIn, logout } from "./auth";
 
@@ -1013,7 +1032,7 @@ function AdZone({ config }) {
   );
 }
 
-export default function SafeTriageDemo() {
+function SafeTriageDemo() {
   const { config, loaded, updateConfig, cssVars } = useConfig();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
   const [showSplash, setShowSplash] = useState(true);
@@ -1647,6 +1666,14 @@ function DispatchModal({ technicians, onSelect, onClose }) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SafeTriageWithBoundary() {
+  return (
+    <ErrorBoundary>
+      <SafeTriageDemo />
+    </ErrorBoundary>
   );
 }
 
