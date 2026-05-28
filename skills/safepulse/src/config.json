@@ -100,6 +100,11 @@
     "demoTagline": "Sacramento's demo safe service — see what 90 days looks like",
     "maxScoreBeforeLockout": 100
   },
+  "reviewLinks": [
+    {"label": "Google","icon": "🔴","url": "https://g.page/r/Cb-BPkeRo65MEAg/review","active": true},
+    {"label": "Yelp","icon": "📕","url": "https://www.yelp.com/writeareview","active": true},
+    {"label": "Facebook","icon": "👍","url": "https://www.facebook.com","active": true}
+  ],
   "serviceNotes": "Likely requires onsite safe technician evaluation and possible repair work.",
   "serviceNotesToggle": true,
   "tagline": "Sacramento's Safe Specialist — Mobile Service Since 1985",

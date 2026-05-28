@@ -14,6 +14,7 @@ const TABS = [
   { id:'triagelog', label:'Triage Log', icon:'📜' },
   { id:'qa', label:'Q&A', icon:'💡' },
   { id:'ads', label:'Ads', icon:'📢' },
+  { id:'reviews', label:'Reviews', icon:'⭐' },
   { id:'symptoms', label:'Symptoms', icon:'🩺' },
   { id:'integrations', label:'Integrations', icon:'🔌' },
   { id:'export', label:'Export', icon:'📦' },
@@ -322,6 +323,10 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
             <AdManager config={cfg} setCfg={setCfg} setSaved={setSaved} />
           )}
 
+          {tab==='reviews' && (
+            <ReviewManager config={cfg} setCfg={setCfg} setSaved={setSaved} />
+          )}
+
           {tab==='symptoms' && (
             <div>
               <div style={{borderRadius:8,border:'1px solid #334155',background:'#1e293b',padding:10,marginBottom:8}}>
@@ -471,6 +476,86 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
       </div>
 
       {showEditor && <SymptomEditor onClose={()=>setShowEditor(false)} />}
+    </div>
+  );
+}
+
+/* ──────── Ad Manager ──────── */
+/* ──────── Review Manager ──────── */
+function ReviewManager({ config, setCfg, setSaved }) {
+  const cfg = config || {};
+  const [links, setLinks] = useState(() => Array.isArray(cfg.reviewLinks) ? [...cfg.reviewLinks] : []);
+  const [newLabel, setNewLabel] = useState('');
+  const [newUrl, setNewUrl] = useState('');
+  const [newIcon, setNewIcon] = useState('⭐');
+
+  const saveLinks = (updated) => {
+    setLinks(updated);
+    const n = { ...cfg };
+    n.reviewLinks = updated;
+    setCfg(n);
+    setSaved(false);
+  };
+
+  const addLink = () => {
+    if (!newLabel.trim() || !newUrl.trim()) return;
+    const updated = [...links, { label: newLabel.trim(), icon: newIcon, url: newUrl.trim(), active: true }];
+    saveLinks(updated);
+    setNewLabel(''); setNewUrl(''); setNewIcon('⭐');
+  };
+
+  const removeLink = (idx) => {
+    const updated = links.filter((_, i) => i !== idx);
+    saveLinks(updated);
+  };
+
+  const toggleLink = (idx) => {
+    const updated = links.map((l, i) => i === idx ? { ...l, active: !l.active } : l);
+    saveLinks(updated);
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-md font-bold text-slate-300">⭐ Review Site Links</h3>
+      <p className="text-xs text-slate-500">These links appear in the "Leave A Review" popup when a customer taps "Advice Helped?"</p>
+
+      {/* Existing links */}
+      <div className="space-y-2">
+        {links.map((l, idx) => (
+          <div key={idx} style={{display:'flex',alignItems:'center',gap:'8px',padding:'8px 10px',background:'#1a2a4a',borderRadius:'8px',border:'1px solid #2a3a5a'}}>
+            <span style={{cursor:'pointer',fontSize:'16px'}} onClick={() => toggleLink(idx)}>
+              {l.active !== false ? '🟢' : '⚪'}
+            </span>
+            <span style={{fontSize:'16px'}}>{l.icon || '⭐'}</span>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:'12px',fontWeight:600,color:'#e8edf5'}}>{l.label}</div>
+              <div style={{fontSize:'10px',color:'#6272a4',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{l.url}</div>
+            </div>
+            <button onClick={() => removeLink(idx)} style={{background:'transparent',border:'none',color:'#ff5555',cursor:'pointer',fontSize:'16px'}}>🗑</button>
+          </div>
+        ))}
+        {links.length === 0 && (
+          <p style={{color:'#6272a4',fontSize:'12px',textAlign:'center',padding:'12px'}}>No review links yet. Add your Google, Yelp, Facebook review URLs below.</p>
+        )}
+      </div>
+
+      {/* Add new link */}
+      <div style={{padding:'12px',background:'#1a2a4a',borderRadius:'8px',border:'1px solid #2a3a5a'}}>
+        <h4 className="text-xs font-bold text-slate-400 mb-2">Add Review Site</h4>
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <input value={newIcon} onChange={e => setNewIcon(e.target.value)} placeholder="emoji" maxLength="2"
+              style={{width:50,padding:'6px',background:'#0f1f3d',border:'1px solid #2a3a5a',borderRadius:'6px',color:'#e8edf5',fontSize:'12px',textAlign:'center'}} />
+            <input value={newLabel} onChange={e => setNewLabel(e.target.value)} placeholder="Site name (e.g. Google)"
+              style={{flex:1,padding:'6px',background:'#0f1f3d',border:'1px solid #2a3a5a',borderRadius:'6px',color:'#e8edf5',fontSize:'12px'}} />
+          </div>
+          <input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="Review URL"
+            style={{width:'100%',padding:'6px',background:'#0f1f3d',border:'1px solid #2a3a5a',borderRadius:'6px',color:'#e8edf5',fontSize:'12px',boxSizing:'border-box'}} />
+          <button onClick={addLink} style={{width:'100%',padding:'8px',background:'#d4a843',color:'#0a1628',border:'none',borderRadius:'6px',fontWeight:700,fontSize:'12px',cursor:'pointer'}}>
+            + Add Link
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -832,7 +832,8 @@ function RiskMeterCard({ score, risk }) {
 /* ──────── Right-Column: Ad Placeholders ──────── */
 /* ──────── Ad Popup Modal ──────── */
 /* ──────── Review Popup ──────── */
-function ReviewPopup({ onClose }) {
+function ReviewPopup({ onClose, reviewLinks }) {
+  const links = Array.isArray(reviewLinks) ? reviewLinks.filter(l => l && l.active !== false) : [];
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{background:'rgba(0,0,0,0.75)',backdropFilter:'blur(4px)'}} onClick={onClose}>
       <div onClick={e => e.stopPropagation()}
@@ -850,21 +851,14 @@ function ReviewPopup({ onClose }) {
           Leave A Review
         </div>
         <div style={{display:'flex',justifyContent:'center',gap:'12px',marginBottom:'20px',flexWrap:'wrap'}}>
-          {/* Google */}
-          <a href="https://g.page/r/Cb-BPkeRo65MEAg/review" target="_blank" rel="noopener"
-            style={{padding:'10px 14px',background:'#fff',borderRadius:'10px',textDecoration:'none',fontWeight:700,fontSize:'13px',color:'#1a3a5c'}}>
-            <span style={{marginRight:6}}>🔴</span>Google
-          </a>
-          {/* Yelp */}
-          <a href="https://www.yelp.com/writeareview" target="_blank" rel="noopener"
-            style={{padding:'10px 14px',background:'#fff',borderRadius:'10px',textDecoration:'none',fontWeight:700,fontSize:'13px',color:'#1a3a5c'}}>
-            <span style={{marginRight:6}}>📕</span>Yelp
-          </a>
-          {/* Facebook */}
-          <a href="https://www.facebook.com" target="_blank" rel="noopener"
-            style={{padding:'10px 14px',background:'#fff',borderRadius:'10px',textDecoration:'none',fontWeight:700,fontSize:'13px',color:'#1a3a5c'}}>
-            <span style={{marginRight:6}}>👍</span>Facebook
-          </a>
+          {links.length > 0 ? links.map((l, i) => (
+            <a key={i} href={l.url} target="_blank" rel="noopener"
+              style={{padding:'10px 14px',background:'#fff',borderRadius:'10px',textDecoration:'none',fontWeight:700,fontSize:'13px',color:'#1a3a5c'}}>
+              <span style={{marginRight:6}}>{l.icon || '⭐'}</span>{l.label}
+            </a>
+          )) : (
+            <p style={{color:'#94a3b8',fontSize:'12px'}}>No review links configured in Admin → Reviews</p>
+          )}
         </div>
         <button onClick={onClose}
           style={{
@@ -1476,7 +1470,7 @@ Powered by Frantz Enterprise`;
       </div>
       {lockedForService && <ServiceLockoutModal />}
       {showMapCalculator && <MapCalculatorModal distanceMiles={distanceMiles} setDistanceMiles={setDistanceMiles} calculatedTripFee={calculatedTripFee} setCalculatedTripFee={setCalculatedTripFee} setShowMapCalculator={setShowMapCalculator} config={config} />}
-      {showReview && <ReviewPopup onClose={() => setShowReview(false)} />}
+      {showReview && <ReviewPopup onClose={() => setShowReview(false)} reviewLinks={config?.reviewLinks} />}
       {showBatteryPopup && <BatteryPopup setShowBatteryPopup={setShowBatteryPopup} setBatteryAttempted={setBatteryAttempted} />}
       {customPopupData && <CustomPopupModal data={customPopupData} onClose={() => setCustomPopupData(null)} />}
       {showResultModal && lastSelectedSymptom && (
