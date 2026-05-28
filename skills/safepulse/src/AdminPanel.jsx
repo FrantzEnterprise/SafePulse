@@ -281,7 +281,7 @@ export default function AdminPanel({ config, updateConfig, onClose }) {
                 <LabelledInput label="Shop Address" value={cfg.serviceArea?.shopAddress||''} onChange={e=>setVal('serviceArea','shopAddress',e.target.value)} />
               </div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
-                <LabelledInput label="Base Fee ($)" type="number" step="0.01" value={cfg.serviceArea?.baseFee} onChange={e=>setVal('serviceArea','baseFee',parseFloat(e.target.value)||0)} />
+                <LabelledInput label="Base Fee ($)" type="number" step="0.01" value={cfg.serviceArea?.baseFee} onChange={e=>setVal('serviceArea','baseFee',e.target.value===''?'':parseFloat(e.target.value)||0)} />
                 <LabelledInput label="Miles Included" type="number" step="1" value={cfg.serviceArea?.baseMilesIncluded} onChange={e=>setVal('serviceArea','baseMilesIncluded',parseFloat(e.target.value)||0)} />
                 <LabelledInput label="Per Extra Mile ($)" type="number" step="0.01" value={cfg.serviceArea?.perExtraMileRate} onChange={e=>setVal('serviceArea','perExtraMileRate',parseFloat(e.target.value)||0)} />
                 <LabelledInput label="Max Radius (mi)" type="number" step="1" value={cfg.serviceArea?.maxRadiusMiles} onChange={e=>setVal('serviceArea','maxRadiusMiles',parseFloat(e.target.value)||0)} />
