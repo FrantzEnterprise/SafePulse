@@ -1,12 +1,27 @@
 import { useState, useEffect } from 'react';
 import defaultConfig from './config.json';
 
+function deepMerge(a, b) {
+  const result = { ...a };
+  for (const key of Object.keys(b || {})) {
+    if (
+      b[key] && typeof b[key] === 'object' && !Array.isArray(b[key]) &&
+      a[key] && typeof a[key] === 'object' && !Array.isArray(a[key])
+    ) {
+      result[key] = { ...a[key], ...b[key] };
+    } else {
+      result[key] = b[key];
+    }
+  }
+  return result;
+}
+
 export function useConfig() {
   const [config, setConfig] = useState(() => {
     try {
       const saved = localStorage.getItem('safepulse_config');
       if (saved) {
-        return { ...defaultConfig, ...JSON.parse(saved) };
+        return deepMerge(defaultConfig, JSON.parse(saved));
       }
     } catch (e) { /* ignore */ }
     return defaultConfig;
@@ -20,7 +35,7 @@ export function useConfig() {
       .then(r => r.ok ? r.json() : null)
       .then(serverConfig => {
         if (serverConfig) {
-          const merged = { ...defaultConfig, ...serverConfig };
+          const merged = deepMerge(defaultConfig, serverConfig);
           setConfig(merged);
         }
         setLoaded(true);
