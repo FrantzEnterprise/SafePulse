@@ -91,6 +91,8 @@
     "showCertificationTracking": false,
     "showLeadSourceTracking": false,
     "showMarketingEmails": false,
+    "showSocialComposer": false,
+    "showTestimonialsGallery": false,
     "showReviewRequests": false,
     "showLoyaltyProgram": false,
     "showIntegrations": false,

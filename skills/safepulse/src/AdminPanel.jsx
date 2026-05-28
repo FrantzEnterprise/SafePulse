@@ -987,10 +987,6 @@ function FeaturesPanel({ cfg, setCfg, setSaved }) {
         ['showDispatchSms','📱 SMS Dispatch','Send dispatch SMS notifications'],
         ['showReviewRequests','⭐ Review Requests','Auto-request Google/Yelp reviews'],
       ],
-      addons:[
-        { key:'showSocialComposer', title:'📱 Social Media Post', desc:'(+$10/mo) Post to Facebook, Instagram, LinkedIn, X, YouTube, TikTok', alwaysOn: false },
-        { key:'showTestimonialsGallery', title:'🎬 Video Testimonials', desc:'(+$10/mo) Collect video/photo testimonials with review wall', alwaysOn: false },
-      ]
     },
     {
       id:'pro', label:'Tier 3 — Pro ($59/mo)', color:'#ffb86c', icon:'💼',
@@ -1031,6 +1027,14 @@ function FeaturesPanel({ cfg, setCfg, setSaved }) {
         ['showDemoMode','🏪 Demo Mode','Show mock business data for sales demos'],
         ['showMultiLanguage','🌐 Multi-Language','Spanish & other language support'],
       ]
+    },
+    {
+      id:'extras', label:'🎯 Extras (Available to All Paid Subscribers)', color:'#ff79c6', icon:'🎯',
+      isExtras: true,
+      addons:[
+        { key:'showSocialComposer', title:'📱 Social Media Post Composer', desc:'(+$10/mo) Create & schedule posts to Facebook, Instagram, LinkedIn, X, YouTube, TikTok — standalone subscription extra', alwaysOn: false },
+        { key:'showTestimonialsGallery', title:'🎬 Video Testimonials Gallery', desc:'(+$10/mo) Collect, approve & display video/photo testimonials with customer review wall — standalone subscription extra', alwaysOn: false },
+      ]
     }
   ];
 
@@ -1058,12 +1062,16 @@ function FeaturesPanel({ cfg, setCfg, setSaved }) {
           {expanded[sec.id] && (
             <div style={{padding:'8px'}}>
               {/* Main items */}
-              {sec.items.map(([k, t, d]) => renderItem(k, t, d))}
+              {sec.items && sec.items.length > 0 && sec.items.map(([k, t, d]) => renderItem(k, t, d))}
 
               {/* Add-ons */}
               {sec.addons && sec.addons.length > 0 && (
-                <div style={{marginTop:8,marginBottom:4}}>
-                  <div style={{fontSize:'11px',fontWeight:600,color:'#d4a843',textTransform:'uppercase',letterSpacing:'1px',marginBottom:6}}>✨ Add-ons</div>
+                <div style={{marginTop: sec.items && sec.items.length > 0 ? 8 : 0, marginBottom:4}}>
+                  {sec.isExtras ? (
+                    <div style={{fontSize:'11px',fontWeight:600,color:'#ff79c6',textTransform:'uppercase',letterSpacing:'1px',marginBottom:8}}>🎯 Standalone Extras — Available with any paid subscription</div>
+                  ) : (
+                    <div style={{fontSize:'11px',fontWeight:600,color:'#d4a843',textTransform:'uppercase',letterSpacing:'1px',marginBottom:6}}>✨ Add-ons</div>
+                  )}
                   {sec.addons.map(addon => (
                     <div key={addon.key} style={{borderRadius:8,border:'1px dashed #d4a843',background:'#1a1f2e',padding:10,display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4}}>
                       <div style={{flex:1}}>
