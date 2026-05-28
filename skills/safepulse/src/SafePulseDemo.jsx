@@ -960,7 +960,7 @@ function AdZone({ config }) {
           <div style={{fontSize:'9px',fontWeight:600,color:'#d4a843',marginBottom:'4px',lineHeight:1.2}}>{ad.captionAbove}</div>
         )}
         {ad.imageData ? (
-          <img src={ad.imageData} alt="ad" style={{maxWidth:'100%',maxHeight:'120px',borderRadius:'4px',objectFit:'contain'}} />
+          <img src={ad.imageData} alt="ad" style={{width:'100%',maxHeight:'180px',borderRadius:'4px',objectFit:'contain'}} />
         ) : (
           <span style={{fontSize:'10px',fontWeight:600,color:'#d4a843',letterSpacing:'0.5px'}}>Click Here</span>
         )}
