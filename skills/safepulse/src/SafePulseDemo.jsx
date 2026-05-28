@@ -982,6 +982,9 @@ function AdZone({ config }) {
       <p style={{fontSize:'19px',color:'#6272a4',textAlign:'center',marginBottom:'4px',fontStyle:'italic',letterSpacing:'0.5px',fontWeight:600}}>
         ⚡ Paid Advertisements ⚡
       </p>
+      <p style={{fontSize:'19px',color:'#6272a4',textAlign:'center',marginBottom:'8px',fontStyle:'normal',letterSpacing:'0.5px',fontWeight:500}}>
+        From Our Vetted &amp; Trusted Business Partners
+      </p>
       <div style={{display:'flex',flexDirection:'column',gap:'6px',padding:'0 4px',width:'100%',boxSizing:'border-box'}}>
         {slots.map((ad, idx) => (
           <div key={idx} style={{width:'100%'}}>
