@@ -101,9 +101,10 @@
     "maxScoreBeforeLockout": 100
   },
   "reviewLinks": [
-    {"label": "Google","icon": "🔴","url": "https://g.page/r/Cb-BPkeRo65MEAg/review","active": true},
-    {"label": "Yelp","icon": "📕","url": "https://www.yelp.com/writeareview","active": true},
-    {"label": "Facebook","icon": "👍","url": "https://www.facebook.com","active": true}
+    {"label": "Google","icon": "🔴","url": "https://maps.app.goo.gl/S9gWNsgUXqNNYts19","active": true},
+    {"label": "Facebook","icon": "👍","url": "https://www.facebook.com/Frantz.Locksmith.Service","active": true},
+    {"label": "Yelp","icon": "📕","url": "https://m.yelp.com/biz/frantz-locksmith-service-west-sacramento","active": true},
+    {"label": "LocalWiki","icon": "📖","url": "https://localwiki.org/davis/Frantz_Locksmith_Service","active": true}
   ],
   "serviceNotes": "Likely requires onsite safe technician evaluation and possible repair work.",
   "serviceNotesToggle": true,
