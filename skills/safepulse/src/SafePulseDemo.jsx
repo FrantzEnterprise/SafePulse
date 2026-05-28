@@ -474,7 +474,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
 
         <div className="space-y-3" style={{marginBottom:'16px'}}>
           <h2 className="text-xl font-semibold">General Recommendation</h2>
-          <p style={{fontSize:'14px',color:'#4a4f55',margin:0}}>{risk.advice}</p>
+          <p style={{fontSize:'16px',color:'#4a4f55',margin:0}}>{risk.advice}</p>
           {symptomRecommendations.length > 0 && <div><p className="font-semibold" style={{marginTop:'12px'}}>Symptom Analysis</p><ul className="ml-5 list-disc text-sm space-y-2">{symptomRecommendations.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
         </div>
         {customerDamageRisk && <div className="rounded-2xl border border-red-300 bg-red-50 p-4 text-red-900"><div className="flex items-start gap-3"><div className="text-2xl">⚠</div><div><p className="font-semibold">Continued Attempts May Increase Repair Costs</p><p className="mt-1 text-sm">Repeated attempts, excessive handle pressure, or forcing the lock may worsen the condition or create a complete lockout.</p></div></div></div>}
