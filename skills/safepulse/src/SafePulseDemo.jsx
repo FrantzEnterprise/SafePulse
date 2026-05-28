@@ -778,6 +778,17 @@ function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setS
           </button>
         )}
       </div>
+      {/* Review button — original position in nav */}
+      <button onClick={() => { setForm({ ...form, helped: "Yes" }); setShowReview(true); }}
+        style={{
+          width:'100%', marginTop:'10px', padding:'14px 0', borderRadius:'10px',
+          border:'none', background:'linear-gradient(135deg, #1a3a5c, #2a5a8c)',
+          color:'#d4a843', fontWeight:800, fontSize:'16px', cursor:'pointer',
+          letterSpacing:'1px', fontFamily:"'Orbitron',monospace",
+          boxShadow:'0 3px 12px rgba(26,58,92,0.3)'
+        }}>
+        ✨ Did Our Advice Solve The Issue? Click Here
+      </button>
     </div>
   );
 }
