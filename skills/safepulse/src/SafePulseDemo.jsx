@@ -1036,9 +1036,10 @@ export default function SafeTriageDemo() {
   const [showReview, setShowReview] = useState(false);
   const [showDispatch, setShowDispatch] = useState(false);
   const [dispatchTech, setDispatchTech] = useState(null);
-  const [customPopupData, setCustomPopupData] = useState(null);
-  const [customerStep, setCustomerStep] = useState(1);
-  const goToCustomerStep = (s) => { setCustomerStep(s); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const [dispatchSmsSent, setDispatchSmsSent] = useState(false);
+  const [dispatchEmailSent, setDispatchEmailSent] = useState(false);
+  const [dispatchDone, setDispatchDone] = useState(false);
+  const [dispatchSending, setDispatchSending] = useState(false);
 
   // Feature-gating: respect config feature toggles from Admin panel
   useEffect(() => {
@@ -1046,8 +1047,11 @@ export default function SafeTriageDemo() {
     return () => clearTimeout(timer);
   }, []);
 
-  const sendDispatch = async (selectedTech) => {
-    // Save to triage history
+    const sendDispatch = async (selectedTech) => {
+    setDispatchSending(true);
+    setShowDispatch(false);
+
+    // Save to triage history — ALWAYS saved first
     const triageEntry = {
       id: Date.now().toString(36),
       createdAt: new Date().toISOString(),
@@ -1063,28 +1067,27 @@ export default function SafeTriageDemo() {
       score,
       risk: risk.level,
       dispatchType: dispatchType.type,
-      status: 'new',
-      notes: form.notes || ''
+      status: "new",
+      notes: form.notes || ""
     };
     try {
-      const existing = JSON.parse(localStorage.getItem('sp_triage_history') || '[]');
+      const existing = JSON.parse(localStorage.getItem("sp_triage_history") || "[]");
       existing.unshift(triageEntry);
-      localStorage.setItem('sp_triage_history', JSON.stringify(existing.slice(0, 500)));
-    } catch(e) { /* silent */ }
+      localStorage.setItem("sp_triage_history", JSON.stringify(existing.slice(0, 500)));
+    } catch(e) { }
 
     const ejs = config?.emailjs || {};
-    const isMulti = config?.company?.companyType === 'multi';
-    const companyPhone = config?.company?.phone || '';
+    const isMulti = config?.company?.companyType === "multi";
+    const companyPhone = config?.company?.phone || "";
     const safePhone = (isMulti && selectedTech) ? selectedTech.phone : companyPhone;
-    const cleanPhone = (safePhone || '').replace(/[\s\(\)\-]/g, '');
-    const photoSummarySMS = Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => '  - ' + f.name).join('\n') || '  None';
+    const cleanPhone = (safePhone || "").replace(/[\s\(\)\-]/g, "");
+    const photoSummarySMS = Object.entries(uploadedPhotos || {}).filter(([,f]) => f).map(([,f]) => "  - " + f.name).join("\n") || "  None";
 
-    // Build full tech report
-    const techReport = `SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || 'Not provided'}\nPhone: ${form.phone || 'Not provided'}\nSafe Brand: ${form.brand || 'Unknown'}\nLock Type: ${form.lockType}\nSafe Currently Open: ${form.safeOpen}\nYears Since Service: ${form.serviceAge || 'Unknown'}\n\nCurrent Symptoms: ${form.symptoms.map(getSymptomLabel).join(', ') || 'None'}\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nWhat Customer Tried:\n${form.tried || 'Not provided'}\n\nPhotos:\n${photoSummarySMS}\n\nEstimated Fee: \$${calculatedTripFee.toFixed(2)}\nDistance: ${distanceMiles || 'Not calculated'} miles`;
+    const techReport = `SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || "Not provided"}\nPhone: ${form.phone || "Not provided"}\nSafe Brand: ${form.brand || "Unknown"}\nLock Type: ${form.lockType}\nSafe Currently Open: ${form.safeOpen}\nYears Since Service: ${form.serviceAge || "Unknown"}\n\nCurrent Symptoms: ${form.symptoms.map(getSymptomLabel).join(", ") || "None"}\nRisk Score: ${score}/100 — ${risk.level}\nRecommendation: ${risk.advice}\n\nWhat Customer Tried:\n${form.tried || "Not provided"}\n\nPhotos:\n${photoSummarySMS}\n\nEstimated Fee: $${calculatedTripFee.toFixed(2)}\nDistance: ${distanceMiles || "Not calculated"} miles`;
 
-    const customerReport = `Hi ${form.name || 'Valued Customer'},\n\nThank you for using ${config?.company?.name || 'Frantz Locksmith Service'}'s SafeTriage tool.\n\nWe have received your safe service request and will contact you ASAP.\n\n=== SAFE-TRIAGE REPORT ===\n\n${techReport}\n\n---\nIf you have additional details, call ${config?.company?.phone || ''}.\n\nBest,\n${config?.company?.name || 'Frantz Locksmith Service'}`;
+    const customerReport = `Hi ${form.name || "Valued Customer"},\n\nThank you for using ${config?.company?.name || "Frantz Locksmith Service"}'s SafeTriage tool.\n\nWe have received your safe service request and will contact you ASAP.\n\n=== SAFE-TRIAGE REPORT ===\n\n${techReport}\n\n---\nIf you have additional details, call ${config?.company?.phone || ""}.\n\nBest,\n${config?.company?.name || "Frantz Locksmith Service"}`;
 
-    // 1. SMS to tech (mobile) or copy to clipboard (desktop)
+    // 1. SMS to tech — ALWAYS TRIGGERED FIRST, before showing any options
     if (cleanPhone) {
       const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobile) {
@@ -1092,84 +1095,81 @@ export default function SafeTriageDemo() {
       } else {
         try {
           await navigator.clipboard.writeText(
-            `📞 Tech: ${cleanPhone}\n\n${techReport}`
+            `Tech phone: ${cleanPhone}\n\n${techReport}`
           );
-          alert('📋 Tech report and phone number copied to clipboard!\n\nOpen your messaging app and paste to send the dispatch.');
         } catch {
-          // Fallback: create a text block for manual copy
-          const ta = document.createElement('textarea');
+          const ta = document.createElement("textarea");
           ta.value = `Tech phone: ${cleanPhone}\n\n${techReport}`;
           document.body.appendChild(ta);
           ta.select();
-          document.execCommand('copy');
+          document.execCommand("copy");
           document.body.removeChild(ta);
-          alert('📋 Report copied!\n\nTech phone: ' + cleanPhone + '\n\nPaste into your messaging app to send.');
         }
       }
+      setDispatchSmsSent(true);
     }
 
     // 2. Email via EmailJS (if configured)
     if (ejs.publicKey && ejs.serviceId) {
-      // Send customer confirmation
       if (form.email && ejs.templateIdConfirm) {
         try {
-          await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
+          await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
             body: JSON.stringify({
               service_id: ejs.serviceId,
               template_id: ejs.templateIdConfirm,
               user_id: ejs.publicKey,
               template_params: {
                 to_email: form.email,
-                to_name: form.name || 'Customer',
-                customer_name: form.name || 'Valued Customer',
-                company_name: config?.company?.name || '',
-                tech_name: selectedTech?.name || config?.company?.name || 'Technician',
+                to_name: form.name || "Customer",
+                customer_name: form.name || "Valued Customer",
+                company_name: config?.company?.name || "",
+                tech_name: selectedTech?.name || config?.company?.name || "Technician",
                 report: customerReport,
-                phone: config?.company?.phone || '',
-                branding: 'Powered by Frantz Enterprise',
+                phone: config?.company?.phone || "",
+                branding: "Powered by Frantz Enterprise",
               }
             })
           });
-        } catch(e) { /* silent */ }
+        } catch(e) { }
       }
 
-      // Send tech report
       const techEmail = isMulti && selectedTech?.email ? selectedTech.email : config?.company?.email;
       if (techEmail && ejs.templateIdReport) {
         try {
-          await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
+          await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
             body: JSON.stringify({
               service_id: ejs.serviceId,
               template_id: ejs.templateIdReport,
               user_id: ejs.publicKey,
               template_params: {
                 to_email: techEmail,
-                to_name: selectedTech?.name || 'Technician',
-                customer_name: form.name || 'Customer',
-                customer_phone: form.phone || '',
-                company_name: config?.company?.name || '',
+                to_name: selectedTech?.name || "Technician",
+                customer_name: form.name || "Customer",
+                customer_phone: form.phone || "",
+                company_name: config?.company?.name || "",
                 report: techReport,
                 risk_score: score,
                 risk_level: risk.level,
                 fee: calculatedTripFee.toFixed(2),
-                distance: distanceMiles || 'N/A',
-                branding: 'Powered by Frantz Enterprise',
+                distance: distanceMiles || "N/A",
+                branding: "Powered by Frantz Enterprise",
               }
             })
           });
-        } catch(e) { /* silent */ }
+          setDispatchEmailSent(true);
+        } catch(e) { }
       }
     }
 
-    setForm({ ...form, helped: 'No' });
-    setShowDispatch(false);
+    setForm({ ...form, helped: "No" });
     setDispatchTech(null);
+    setDispatchSending(false);
+    setDispatchDone(true);
   };
-  
   // Lock body scroll when any modal is open
   const anyModalOpen = showResultModal || showInstructions || showBatteryPopup || showMapCalculator || lockedForService || customPopupData !== null;
 
@@ -1517,6 +1517,70 @@ Powered by Frantz Enterprise`;
           onSelect={(tech) => sendDispatch(tech)}
           onClose={() => { setShowDispatch(false); setDispatchTech(null); }}
         />
+      )}
+
+      {/* Dispatch status overlay — shown while sending */}
+      {dispatchSending && (
+        <div className="fixed inset-0 flex items-center justify-center z-50"
+          style={{background:'rgba(0,0,0,0.7)',padding:'20px'}}>
+          <div style={{background:'#0f1f3d',border:'1px solid #d4a843',borderRadius:'16px',padding:'32px',maxWidth:'420px',width:'100%',textAlign:'center'}}>
+            <div style={{fontSize:'32px',marginBottom:'12px'}}>📡</div>
+            <h3 style={{fontWeight:700,fontSize:'16px',color:'#d4a843',marginBottom:'8px'}}>Dispatching to Technician...</h3>
+            <p style={{fontSize:'13px',color:'#94a3b8'}}>
+              Sending SMS to tech and emailing reports...
+            </p>
+            <div style={{margin:'16px auto',width:'40px',height:'40px',border:'3px solid #2a3a5a',borderTop:'3px solid #d4a843',borderRadius:'50%',animation:'spin 1s linear infinite'}} />
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+          </div>
+        </div>
+      )}
+
+      {/* Dispatch done overlay — shows after SMS is sent */}
+      {dispatchDone && !dispatchSending && (
+        <div className="fixed inset-0 flex items-center justify-center z-50"
+          style={{background:'rgba(0,0,0,0.7)',padding:'20px'}}
+          onClick={e => { if (e.target === e.currentTarget) setDispatchDone(false); }}>
+          <div style={{background:'#0f1f3d',border:'1px solid #50fa7b',borderRadius:'16px',padding:'28px',maxWidth:'440px',width:'100%'}}>
+            <div style={{fontSize:'32px',marginBottom:'8px',textAlign:'center'}}>✅</div>
+            <h3 style={{fontWeight:700,fontSize:'18px',color:'#50fa7b',marginBottom:'4px',textAlign:'center'}}>Tech Has Been Dispatched!</h3>
+            <p style={{fontSize:'12px',color:'#94a3b8',textAlign:'center',marginBottom:'16px'}}>
+              The technician has been notified. A record is saved in the Triage History.
+            </p>
+            
+            <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
+              <button onClick={() => {
+                const reportText = `SAFE-TRIAGE REPORT\n\nCustomer: ${form.name || ''}\nPhone: ${form.phone || ''}\nSafe: ${form.brand || ''}\nSymptoms: ${form.symptoms.map(getSymptomLabel).join(', ')}\nScore: ${score}/100\nFee: $${calculatedTripFee.toFixed(2)}`;
+                if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                  const cleanPhone = (config?.company?.phone || '').replace(/[\s\(\)\-]/g, '');
+                  window.location.href = `sms:${cleanPhone}?body=${encodeURIComponent(reportText)}`;
+                } else {
+                  navigator.clipboard.writeText(reportText).then(() => alert('Report copied to clipboard!'));
+                }
+              }}
+                style={{padding:'10px',borderRadius:'8px',border:'none',background:'#1a3a5c',color:'#d4a843',fontWeight:700,cursor:'pointer',fontSize:'13px'}}>
+                📱 Send SMS Again
+              </button>
+              <button onClick={() => {
+                // PDF download — auto-generate and download via browser
+                const pdfContent = `SAFE-TRIAGE TECHNICIAN REPORT\n\nCustomer: ${form.name || ""}\nPhone: ${form.phone || ""}\nBrand: ${form.brand || ""}\nSymptoms: ${form.symptoms.map(getSymptomLabel).join(", ")}\nRisk Score: ${score}/100\nFee: $${calculatedTripFee.toFixed(2)}`;
+                const blob = new Blob([pdfContent], {type: "text/plain"});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `SafeTriage-Report-${form.name || "customer"}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+                style={{padding:'10px',borderRadius:'8px',border:'1px solid #2a3a5a',background:'transparent',color:'#e8edf5',fontWeight:600,cursor:'pointer',fontSize:'13px'}}>
+                📄 Download Report
+              </button>
+              <button onClick={() => setDispatchDone(false)}
+                style={{padding:'10px',borderRadius:'8px',border:'1px solid #475569',background:'transparent',color:'#6272a4',fontWeight:600,cursor:'pointer',fontSize:'12px'}}>
+                ✕ Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Footer */}
