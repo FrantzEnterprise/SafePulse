@@ -473,7 +473,7 @@ function TriageResults({ score, risk, symptomRecommendations, customerDamageRisk
         </div>
 
         <div className="space-y-3" style={{marginBottom:'16px'}}>
-          <h2 style={{fontSize:'20px',fontWeight:800,color:'#1a3a5c',margin:0}}>General Recommendation</h2>
+          <h2 className="text-xl font-semibold">General Recommendation</h2>
           <p style={{fontSize:'14px',color:'#4a4f55',margin:0}}>{risk.advice}</p>
           {symptomRecommendations.length > 0 && <div><p className="font-semibold" style={{marginTop:'12px'}}>Symptom Analysis</p><ul className="ml-5 list-disc text-sm space-y-2">{symptomRecommendations.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
         </div>
