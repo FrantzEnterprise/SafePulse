@@ -799,12 +799,7 @@ function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setS
           </button>
         ) : (
           <button onClick={() => {
-            const isMulti = config?.company?.companyType === 'multi';
-            if (isMulti && config?.company?.technicians?.length > 0) {
-              setShowDispatch(true);
-            } else {
-              sendDispatch(null);
-            }
+            sendDispatch(null);
           }}
             style={{flex:3,padding:'12px 0',borderRadius:'8px',border:'none',background:'#d4a843',color:'#0a1628',fontWeight:800,fontSize:'14px',cursor:'pointer',boxShadow:'0 2px 8px rgba(212,168,67,0.3)'}}>
             🚚 Send To Tech Now
