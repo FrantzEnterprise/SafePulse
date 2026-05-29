@@ -254,7 +254,7 @@ function CustomerIntake({ form, setForm, showSymptoms, setShowSymptoms, visibleG
       )}
 
       {step === 2 && (
-        <div className="space-y-4">
+        <div id="symptom-select-area" className="space-y-4">
           <h3 className="font-semibold text-lg">Safe Details</h3>
           <input className="w-full rounded-xl border p-3" placeholder="Safe brand/model if known" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
           <div className="space-y-1">
@@ -787,7 +787,14 @@ function CustomerNavBar({ step, goToStep, totalSteps, sendDispatch, config, setS
       </div>
       <div style={{display:'flex',gap:'6px'}}>
         {step > 1 && (
-          <button onClick={() => goToStep(step - 1)}
+          <button onClick={() => {
+            goToStep(step - 1);
+            // Scroll to top of symptom area when going back to step 2
+            setTimeout(() => {
+              const el = document.getElementById('symptom-select-area');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+          }}
             style={{flex:1,padding:'8px 0',borderRadius:'8px',border:'1px solid #94a3b8',background:'#f1f5f9',color:'#1e293b',fontWeight:700,fontSize:'12px',cursor:'pointer'}}>
             ← Back
           </button>
