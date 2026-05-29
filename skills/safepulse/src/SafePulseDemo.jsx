@@ -1362,6 +1362,7 @@ Powered by Frantz Enterprise`;
     <div className="min-h-screen bg-slate-100 p-6 text-slate-900 relative" style={{overflowX:'hidden'}}>
       {showLogin && <LoginModal onLogin={() => { setIsAuthenticated(true); setShowLogin(false); setShowAdmin(true); }} onClose={() => setShowLogin(false)} />}
       <div className="mx-auto max-w-5xl space-y-6">
+        {(customerStep < 2) ? (
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
@@ -1387,6 +1388,19 @@ Powered by Frantz Enterprise`;
             )}
           </div>
         </div>
+      ) : (
+        <div className="flex justify-end gap-2 mb-2">
+          <button onClick={() => { setDarkMode(d => { const n = !d; localStorage.setItem('safepulse_dark', n); return n; }); }} className="rounded-full bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-300 shadow-sm" title="Toggle Dark Mode">
+            {darkMode ? '☀️' : '🌙'}
+          </button>
+          <button onClick={() => setShowInstructions(true)} className="rounded-full bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
+            ? Info
+          </button>
+          <button onClick={() => { if (isAuthenticated) { setShowAdmin(true); } else { setShowLogin(true); } }} className="rounded-full bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-300 shadow-sm">
+            ⚙️
+          </button>
+        </div>
+      )}
         <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
           {/* ── Left Column: Intake Steps ── */}
           <Card className="rounded-2xl shadow-sm">
