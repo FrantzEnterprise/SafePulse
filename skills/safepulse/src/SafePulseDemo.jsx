@@ -1028,6 +1028,10 @@ function AdZone({ config }) {
 }
 
 function SafeTriageDemo() {
+  const [showWelcome, setShowWelcome] = useState(() => {
+    try { return !localStorage.getItem('st_welcome_seen'); } catch { return true; }
+  });
+
   const { config, loaded, updateConfig, updateDeep, cssVars } = useConfig();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('safepulse_dark') === 'true');
   const [showSplash, setShowSplash] = useState(true);
@@ -1304,6 +1308,18 @@ Recommendation: ${risk.advice}
 Advice Helpful?: ${form.helped}
 ---
 Powered by Frantz Enterprise`;
+
+  // Mark welcome as seen when closed
+  useEffect(() => {
+    if (!showWelcome) {
+      try { localStorage.setItem('st_welcome_seen', '1'); } catch {}
+    }
+  }, [showWelcome]);
+
+  // Render welcome modal
+  if (showWelcome) {
+    return <WelcomeModal onClose={() => setShowWelcome(false)} />;
+  }
 
   if (showSplash) {
     return (
@@ -1679,6 +1695,85 @@ function DispatchModal({ technicians, onSelect, onClose }) {
                 cursor: selectedIdx !== null ? 'pointer' : 'default',
                 fontWeight:700,fontSize:13
               }}>Dispatch →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ──────── Welcome Modal (first visit only) ──────── */
+function WelcomeModal({ onClose }) {
+  const [showAdviceIdx, setShowAdviceIdx] = useState(0);
+  const advices = [
+    { title: 'Important Safety Notice', icon: '⚠️', color: '#f59e0b', bg: '#fffbeb',
+      text: 'Never attempt to open a safe unless you are a trained professional. Some safes contain firearms, hazardous materials, or other dangerous items. If you are not the owner, stop immediately. Safe opening without proper authorization may be illegal.' },
+    { title: 'Battery Advice', icon: '🔋', color: '#2563eb', bg: '#eff6ff',
+      text: "If your keypad is flashing but the safe won't open — replace the batteries first. Many digital safe issues are simply dead or dying batteries. Try fresh alkaline batteries (not rechargeable). Let the safe sit for 2-3 minutes after battery replacement before trying again." },
+    { title: 'Safe Basic Advice', icon: '🔒', color: '#2563eb', bg: '#eff6ff',
+      text: 'Check that the safe is in the correct mode (unlocked vs locked). Ensure the door is fully closed before engaging the locking bolts. For combination locks, rotate the dial slowly and deliberately. For electronic locks, wait for the green light before turning the handle.' },
+  ];
+  const [showAdvice, setShowAdvice] = useState(false);
+  const [showRiskGuide, setShowRiskGuide] = useState(false);
+  const riskSteps = [
+    { level: 'Low', color: '#50fa7b', text: 'A few mild symptoms. Likely user error or expired battery.' },
+    { level: 'Moderate', color: '#f1fa8c', text: 'Several symptoms but manageable. Try recommended remedies first.' },
+    { level: 'High', color: '#ffb86c', text: 'Multiple significant symptoms. Call a technician recommended.' },
+    { level: 'Critical', color: '#ff5555', text: 'Major failure indicators. Immediate technician visit required.' },
+  ];
+  return (
+    <div className="fixed inset-0 z-[10000] overflow-y-auto bg-black/60" onClick={onClose}>
+      <div className="py-12 px-4" onClick={e => e.stopPropagation()}>
+        <div className="mx-auto max-w-lg rounded-2xl shadow-2xl overflow-hidden" style={{background:'#f0f4ff'}}>
+          {/* Header */}
+          <div className="p-6 text-center" style={{background:'linear-gradient(135deg,#1e3a5f,#3b82f6)'}}>
+            <div className="text-4xl mb-2">🔐</div>
+            <h2 className="text-xl font-bold text-white">Welcome to SafeTriage</h2>
+            <p className="text-sm mt-1" style={{color:'#93c5fd'}}>Safe Failure Troubleshoot Tool</p>
+          </div>
+          {/* 6-Step Guide */}
+          <div className="px-6 pt-5 pb-2">
+            <h3 className="font-bold text-sm mb-3" style={{color:'#1e3a5f'}}>📋 How It Works (6 Steps)</h3>
+            <div className="space-y-1.5 text-xs" style={{color:'#475569'}}>
+              <div className="flex items-start gap-2"><span className="font-bold shrink-0" style={{color:'#d4a843',minWidth:18}}>1.</span><span>Enter your contact info</span></div>
+              <div className="flex items-start gap-2"><span className="font-bold shrink-0" style={{color:'#d4a843',minWidth:18}}>2.</span><span>Select all symptoms your safe is showing</span></div>
+              <div className="flex items-start gap-2"><span className="font-bold shrink-0" style={{color:'#d4a843',minWidth:18}}>3.</span><span>Upload photos of the safe/keypad (optional)</span></div>
+              <div className="flex items-start gap-2"><span className="font-bold shrink-0" style={{color:'#d4a843',minWidth:18}}>4.</span><span>Review distance &amp; service fee estimate</span></div>
+              <div className="flex items-start gap-2"><span className="font-bold shrink-0" style={{color:'#d4a843',minWidth:18}}>5.</span><span>Get your risk score &amp; recommendation</span></div>
+              <div className="flex items-start gap-2"><span className="font-bold shrink-0" style={{color:'#d4a843',minWidth:18}}>6.</span><span>Send report or dispatch a technician</span></div>
+            </div>
+          </div>
+          {/* 3-Tier Advice */}
+          <div className="px-6 py-3 space-y-3">
+            <h3 className="font-bold text-sm" style={{color:'#1e3a5f'}}>📌 Important Information</h3>
+            {advices.map((a,i)=>(
+              <div key={i} style={{background:a.bg,borderLeft:'4px solid '+a.color,borderRadius:6,padding:'10px 12px'}}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span>{a.icon}</span>
+                  <span className="font-bold text-xs" style={{color:a.color}}>{a.title}</span>
+                </div>
+                <p className="text-xs leading-relaxed" style={{color:'#334155'}}>{a.text}</p>
+              </div>
+            ))}
+          </div>
+          {/* Risk Level Guide */}
+          <div className="px-6 py-2 pb-5">
+            <h3 className="font-bold text-sm mb-2" style={{color:'#1e3a5f'}}>📊 Risk Level Guide</h3>
+            <div className="space-y-1.5">
+              {riskSteps.map((r,i)=>(
+                <div key={i} className="flex items-center gap-2 text-xs" style={{background:'#eff6ff',borderRadius:4,padding:'5px 8px'}}>
+                  <span className="font-bold shrink-0 text-center" style={{color:r.color,minWidth:60}}>{r.level}</span>
+                  <span style={{color:'#475569'}}>{r.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Close button */}
+          <div className="px-6 pb-6">
+            <button onClick={onClose}
+              style={{width:'100%',padding:'10px',border:'none',borderRadius:8,background:'linear-gradient(135deg,#1e3a5f,#3b82f6)',color:'#fff',fontWeight:700,cursor:'pointer',fontSize:13}}>
+              Got It — Let's Start
+            </button>
           </div>
         </div>
       </div>
